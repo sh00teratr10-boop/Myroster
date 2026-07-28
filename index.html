@@ -34,7 +34,7 @@ body { font-family: 'Cairo', sans-serif; }
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
 
-<!-- 🌟 شاشة السبلاش الافتتاحية الأصلية الخاصة بك -->
+<!-- 🌟 شاشة السبلاش الافتتاحية -->
 <div id="splash-screen" class="fixed inset-0 z-50 bg-gray-900 flex flex-col justify-between items-center p-8">
     <div></div>
     <div class="w-full max-w-md text-center flex flex-col items-center animate-pulse-logo">
@@ -119,11 +119,9 @@ body { font-family: 'Cairo', sans-serif; }
 <p id="welcomeMessage" class="text-sm font-semibold text-gray-500 mt-0.5">مرحباً بك</p>
 </div>
 <div class="relative">
-<!-- 🌟 زر الإعدادات مصغر وبخط صغير وشكل شيك جداً في الجنب -->
 <button onclick="toggleSettings()" class="flex items-center gap-1.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm transition-all">
     <span>⚙️ الإعدادات</span>
 </button>
-<!-- 🌟 قائمة الإعدادات مرتبة ومنسقة، والدعم الفني في الآخر قبل الخروج -->
 <div id="settingsMenu" class="hidden absolute left-0 mt-2 w-64 bg-white dark:bg-gray-800 rounded-xl shadow-xl overflow-hidden z-50 border dark:border-gray-700 text-right divide-y divide-gray-100 dark:divide-gray-700">
 <button onclick="openContactModal()" class="w-full text-right px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 font-bold text-green-600 text-xs">📞 التواصل مع الأقسام</button>
 <button onclick="openDriverSearchModal()" class="w-full text-right px-4 py-2.5 hover:bg-gray-50 dark:hover:bg-gray-700 font-bold text-blue-600 text-xs">🔍 البحث عن بيانات وقائد قطار</button>
@@ -140,7 +138,6 @@ body { font-family: 'Cairo', sans-serif; }
 </nav>
 
 <main class="max-w-6xl mx-auto p-4 mt-6 flex-1 w-full">
-<!-- أزرار بارزة وشيكة وبدون أيقونات -->
 <div class="flex flex-wrap gap-3 mb-6 bg-gray-50 dark:bg-gray-800/80 p-3 rounded-2xl shadow-inner border border-gray-200 dark:border-gray-700">
 <button onclick="switchTab('daily')" id="btn-daily" class="flex-1 py-3 px-4 rounded-xl bg-green-600 text-white font-bold shadow-md text-sm transition-all transform hover:-translate-y-0.5">اليومي</button>
 <button onclick="switchTab('weekly')" id="btn-weekly" class="flex-1 py-3 px-4 rounded-xl bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600 font-bold shadow-sm border border-gray-200 dark:border-gray-600 text-sm transition-all transform hover:-translate-y-0.5">الأسبوعي</button>
@@ -220,7 +217,6 @@ body { font-family: 'Cairo', sans-serif; }
         <div class="text-center text-gray-400 py-6 text-sm">جاري تحليل بلوكات الإجازات...</div>
     </div>
 </div>
-
 </div>
 
 <!-- البحث برمز الرحلة -->
@@ -234,11 +230,10 @@ body { font-family: 'Cairo', sans-serif; }
     <div class="text-center text-gray-400 py-8 text-sm">اكتب رمز الوردية أو رقم الرحلة في الأعلى لعرض المحتويات والمواعيد...</div>
 </div>
 </div>
-
 </main>
 </div>
 
-<!-- 🌟 نافذة التنبيه التفاعلية الجديدة (المنبه الذكي قبل الوصول بدقيقتين) -->
+<!-- نافذة التنبيه التفاعلية الجديدة (المنبه الذكي قبل الوصول بدقيقتين) -->
 <div id="customArrivalModal" class="hidden-section fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 max-w-md w-full text-center border-4 border-amber-500 animate-bounce-once">
         <div class="text-5xl mb-3">🚨</div>
@@ -250,7 +245,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- 🌟 نافذة الدعم الفني للأستاذ محمد رافت (برقمك الصحيح 01119866073) -->
+<!-- نافذة الدعم الفني -->
 <div id="techSupportModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3 mb-4">
@@ -259,22 +254,19 @@ body { font-family: 'Cairo', sans-serif; }
             </h3>
             <button onclick="closeTechSupportModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl leading-none">&times;</button>
         </div>
-
         <div class="text-center py-4 space-y-2 mb-6 bg-gray-50 dark:bg-gray-700/50 rounded-xl border">
             <h4 class="font-black text-base text-gray-900 dark:text-white">أ. محمد رافت</h4>
             <p class="text-xs text-gray-500 dark:text-gray-400">للدعم الفني ومساعدة قائدي القطارات</p>
         </div>
-
         <div class="grid grid-cols-2 gap-3 mb-4">
             <a href="tel:+201119866073" class="bg-green-600 hover:bg-green-700 text-white text-center py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow">📞 اتصال</a>
             <a href="https://api.whatsapp.com/send?phone=201119866073" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow">💬 واتساب</a>
         </div>
-
         <button onclick="closeTechSupportModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-2.5 rounded-xl text-sm">إغلاق</button>
     </div>
 </div>
 
-<!-- نافذة مواقع تواصل الشركة والخدمات (محدثة بالروابط الأربعة تماماً) -->
+<!-- نافذة مواقع تواصل الشركة -->
 <div id="companySitesModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3 mb-4">
@@ -283,27 +275,17 @@ body { font-family: 'Cairo', sans-serif; }
             </h3>
             <button onclick="closeCompanySitesModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl leading-none">&times;</button>
         </div>
-
         <div class="space-y-3 mb-6">
-            <a href="https://swap-app-v01-7xsu.vercel.app/" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">
-                🌐 تطبيق السواب (Swap App)
-            </a>
-            <a href="https://www.rdmc-portal.com/tasks" target="_blank" class="block w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">
-                🌐 بورتال RDMC
-            </a>
-            <a href="https://attendance.mobilitycairo.com/open/login#index" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">
-                🌐 نظام الحضور (Attendance)
-            </a>
-            <a href="https://hrservices.mobilitycairo.com/selfservice/personal/reports/payslip" target="_blank" class="block w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">
-                💰 مفردات المرتب (HR Payslip)
-            </a>
+            <a href="https://swap-app-v01-7xsu.vercel.app/" target="_blank" class="block w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">🌐 تطبيق السواب (Swap App)</a>
+            <a href="https://www.rdmc-portal.com/tasks" target="_blank" class="block w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">🌐 بورتال RDMC</a>
+            <a href="https://attendance.mobilitycairo.com/open/login#index" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">🌐 نظام الحضور (Attendance)</a>
+            <a href="https://hrservices.mobilitycairo.com/selfservice/personal/reports/payslip" target="_blank" class="block w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3.5 px-4 rounded-xl shadow transition-all text-center">💰 مفردات المرتب (HR Payslip)</a>
         </div>
-
         <button onclick="closeCompanySitesModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-2.5 rounded-xl text-sm">إغلاق</button>
     </div>
 </div>
 
-<!-- نافذة البحث عن قائدي القطارات برقم التشغيل أو الاسم -->
+<!-- نافذة البحث عن قائدي القطارات -->
 <div id="driverSearchModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3 mb-4 sticky top-0 bg-white dark:bg-gray-800 z-10">
@@ -312,7 +294,6 @@ body { font-family: 'Cairo', sans-serif; }
             </h3>
             <button onclick="closeDriverSearchModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl leading-none">&times;</button>
         </div>
-
         <div class="space-y-4 mb-4">
             <div>
                 <label class="block text-sm font-semibold mb-1 text-gray-700 dark:text-gray-300">أدخل رقم التشغيل أو رقم الراديو أو جزء من الاسم:</label>
@@ -321,17 +302,15 @@ body { font-family: 'Cairo', sans-serif; }
                     <button onclick="executeDriverSearch()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-5 py-3 rounded-xl shadow">بحث</button>
                 </div>
             </div>
-
             <div id="driverSearchResults" class="space-y-3 mt-4 max-h-96 overflow-y-auto">
                 <div class="text-center text-gray-400 py-6 text-sm">اكتب رقم التشغيل أو الكود في الأعلى للبحث الفوري...</div>
             </div>
         </div>
-
         <button onclick="closeDriverSearchModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-2.5 rounded-xl text-sm">إغلاق</button>
     </div>
 </div>
 
-<!-- دليل التواصل الشامل المحدث مرتب بالأقسام -->
+<!-- دليل التواصل -->
 <div id="contactModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3 mb-4 sticky top-0 bg-white dark:bg-gray-800 z-10">
@@ -340,9 +319,7 @@ body { font-family: 'Cairo', sans-serif; }
             </h3>
             <button onclick="closeContactModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl leading-none">&times;</button>
         </div>
-
         <div class="mb-6 space-y-6">
-            <!-- 1. قسم التشغيل -->
             <div>
                 <h4 class="font-black text-sm text-purple-600 dark:text-purple-400 mb-3 border-r-4 border-purple-600 pr-2">🚦 1. قسم التشغيل</h4>
                 <div class="space-y-3">
@@ -356,7 +333,6 @@ body { font-family: 'Cairo', sans-serif; }
                 </div>
             </div>
         </div>
-
         <button onclick="closeContactModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-2.5 rounded-xl text-sm">إغلاق</button>
     </div>
 </div>
@@ -379,14 +355,144 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- شاشة الأدمن -->
+<!-- 🌟 شاشة الأدمن (تم تحديثها بالكامل هنا) -->
 <div id="admin-page" class="hidden-section min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
-<nav class="bg-purple-800 text-white p-4 shadow-md">
-<div class="max-w-6xl mx-auto flex justify-between items-center">
-<h1 class="text-xl font-bold">🛠️ لوحة تحكم الأدمن (المعالج السحابي الشامل)</h1>
-<button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold text-sm">تسجيل الخروج 🚪</button>
-</div>
-</nav>
+    <nav class="bg-purple-800 text-white p-4 shadow-md">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold">🛠️ لوحة تحكم الأدمن (المعالج السحابي الشامل)</h1>
+            <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold text-sm">تسجيل الخروج 🚪</button>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-6 mt-6 w-full flex-1 space-y-6">
+        <!-- تبويب التنقل في الأدمن -->
+        <div class="flex flex-wrap border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm gap-1">
+            <button onclick="switchAdminSection('rosterSection')" id="tab-btn-roster" class="flex-1 py-3 font-black text-sm rounded-lg bg-purple-600 text-white transition-all">📅 الروستر واليومية</button>
+            <button onclick="switchAdminSection('mapSection')" id="tab-btn-map" class="flex-1 py-3 font-black text-sm rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">🗺️ خريطة الخط الثالث</button>
+            <button onclick="switchAdminSection('documentsSection')" id="tab-btn-docs" class="flex-1 py-3 font-black text-sm rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">📂 المستندات والكتالوجات</button>
+        </div>
+
+        <!-- 1. قسم الروستر واليومية -->
+        <div id="adminRosterContainer" class="space-y-6">
+            <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white p-6 rounded-2xl shadow-xl border border-purple-500/50">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
+                    <h3 class="text-xl font-black flex items-center gap-2 text-yellow-300">
+                        <span>📅</span> رفع وتطبيق روستر شهر 8 (أغسطس)
+                    </h3>
+                    <span class="bg-purple-500/30 text-purple-200 text-xs font-bold px-3 py-1 rounded-full border border-purple-400/30 w-fit">جدول كامل 31 يوم</span>
+                </div>
+                <p class="text-xs text-purple-200 mb-4">اختر ملف PDF الخاص بروستر شهر 8 واضغط رفع ليتم تحديث قاعدة البيانات لكل السائقين فوراً.</p>
+                <div class="flex flex-col sm:flex-row gap-3 items-center">
+                    <input type="file" id="augustPdfInput" accept=".pdf" class="w-full text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer bg-purple-950/60 p-2 rounded-xl border border-purple-700/60">
+                    <button type="button" onclick="uploadAugustRosterPdf()" class="w-full sm:w-auto whitespace-nowrap bg-green-600 hover:bg-green-700 text-white font-black py-3 px-6 rounded-xl shadow-lg transition-all text-sm flex items-center justify-center gap-2">
+                        <span>🚀</span> رفع واعتماد روستر شهر 8
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-purple-600 dark:text-purple-400 mb-2">🎯 تحديد نطاق التحديث:</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-purple-50 dark:hover:bg-gray-700">
+                            <input type="radio" name="updateScope" value="daily" checked onchange="toggleScopeUI()">
+                            <span class="font-bold text-sm">📅 يومية (تحديث يوم واحد محدد)</span>
+                        </label>
+                        <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-purple-50 dark:hover:bg-gray-700">
+                            <input type="radio" name="updateScope" value="full" onchange="toggleScopeUI()">
+                            <span class="font-bold text-sm">🗓️ روستر كامل (تحديث الشهر/جدول شامل)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="flex border-b border-gray-200 dark:border-gray-700 mb-4">
+                        <button onclick="switchAdminInputMode('pdf')" id="admin-tab-pdf" class="admin-tab-btn active py-2 px-6 font-bold text-sm rounded-t-lg transition-all">📄 رفع ملف PDF</button>
+                        <button onclick="switchAdminInputMode('text')" id="admin-tab-text" class="admin-tab-btn py-2 px-6 font-bold text-sm rounded-t-lg text-gray-500 hover:text-purple-600 transition-all">📝 لصق نص مكتوب</button>
+                    </div>
+
+                    <div id="admin-input-pdf">
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">اختر ملف اليومية أو الروستر بصيغة PDF:</p>
+                        <input type="file" id="pdfFileInput" accept=".pdf" onchange="processFullRosterPdf(event)" class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 text-sm">
+                    </div>
+
+                    <div id="admin-input-text" class="hidden-section space-y-3">
+                        <p class="text-xs text-gray-500 dark:text-gray-400">انسخ النص والبيانات والصقها هنا مباشرة:</p>
+                        <textarea id="rawTextInput" rows="7" class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 text-sm font-mono" placeholder="مثال للكتلة النصية: RDMC1174 M01 E02 Rest M05..."></textarea>
+                        <button type="button" onclick="processRawTextInput()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg shadow">🔍 قراءة وفلترة النص</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="parseResultBox" class="hidden-section bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-purple-300">
+                <div class="flex justify-between items-center border-b pb-3 mb-4">
+                    <h4 class="text-lg font-bold text-green-600">🎯 نتائج الفلترة والاستخراج:</h4>
+                    <span id="detectedDate" class="bg-purple-100 text-purple-800 font-bold px-3 py-1 rounded-full text-xs">تاريخ اليومية: --/--/----</span>
+                </div>
+                <p class="text-xs text-gray-400 mb-3">عدد السائقين المستخرجين: <span id="driverCount" class="font-bold text-purple-500">0</span> سائق</p>
+                <div class="max-h-80 overflow-y-auto border rounded-lg mb-4">
+                    <table class="w-full text-right text-sm">
+                        <thead class="bg-gray-100 dark:bg-gray-700 sticky top-0">
+                            <tr><th class="p-3 border-b">كود السائق (RDMC ID)</th><th class="p-3 border-b">البيانات / الورادي المستخرجة</th></tr>
+                        </thead>
+                        <tbody id="parsedRosterTable" class="divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+                    </table>
+                </div>
+                <button type="button" onclick="saveAllRosterToFirebase()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-lg text-lg">🚀 اعتماد وتحديث البيانات سحابياً (Firebase)</button>
+                <p id="adminMsg" class="text-center text-sm font-bold mt-2 text-green-600"></p>
+            </div>
+        </div>
+
+        <!-- 2. قسم خريطة الخط الثالث المحدثة بالكامل -->
+        <div id="adminMapContainer" class="hidden-section space-y-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border space-y-4">
+                <div class="flex flex-col sm:flex-row justify-between items-center border-b pb-4 gap-3">
+                    <div>
+                        <h3 class="text-xl font-black text-purple-600 dark:text-purple-400 flex items-center gap-2">
+                            <span>🗺️</span> خريطة ومتابعة الخط الثالث المباشرة
+                        </h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">متابعة القطارات، السائقين، وأرقام الرحلات على (سكة 1) و(سكة 2) لكل محطة.</p>
+                    </div>
+                    <div class="w-full sm:w-72">
+                        <input type="text" id="mapSearchInput" oninput="filterLineMap()" class="w-full px-4 py-2 border rounded-xl bg-gray-50 dark:bg-gray-700 text-sm font-bold text-purple-600" placeholder="🔍 بحث برقم رحلة أو سائق أو محطة...">
+                    </div>
+                </div>
+                <div id="lineMapStationsContainer" class="space-y-3 max-h-[65vh] overflow-y-auto pr-1"></div>
+            </div>
+        </div>
+
+        <!-- 3. قسم رفع مستندات الـ PDF (أعطال / SOP / تعليمات) -->
+        <div id="adminDocsContainer" class="hidden-section space-y-6">
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border space-y-6">
+                <h3 class="text-lg font-black text-purple-600 dark:text-purple-400 border-b pb-3">📤 مركز رفع الكتالوجات والتعليمات المباشر</h3>
+
+                <div class="p-4 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-200">
+                    <label class="block font-bold text-amber-800 dark:text-amber-300 mb-1">🛠️ ملف: أعطال وحدات متحركة</label>
+                    <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                        <input type="file" id="pdfFaultsInput" accept=".pdf" class="w-full text-sm p-2 border rounded-xl bg-white dark:bg-gray-800">
+                        <button onclick="uploadDocumentPdf('faults')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2 rounded-xl whitespace-nowrap shadow">رفع أعطال الوحدات</button>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-purple-50 dark:bg-gray-700/50 rounded-xl border border-purple-200">
+                    <label class="block font-bold text-purple-800 dark:text-purple-300 mb-1">📖 ملف: إجراءات التشغيل القياسية (SOP)</label>
+                    <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                        <input type="file" id="pdfSopInput" accept=".pdf" class="w-full text-sm p-2 border rounded-xl bg-white dark:bg-gray-800">
+                        <button onclick="uploadDocumentPdf('sop')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2 rounded-xl whitespace-nowrap shadow">رفع SOP</button>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-blue-50 dark:bg-gray-700/50 rounded-xl border border-blue-200">
+                    <label class="block font-bold text-blue-800 dark:text-blue-300 mb-1">📜 ملف: تعليمات تشغيل</label>
+                    <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                        <input type="file" id="pdfInstructionsInput" accept=".pdf" class="w-full text-sm p-2 border rounded-xl bg-white dark:bg-gray-800">
+                        <button onclick="uploadDocumentPdf('instructions')" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-6 py-2 rounded-xl whitespace-nowrap shadow">رفع تعليمات التشغيل</button>
+                    </div>
+                </div>
+                <p id="docUploadMsg" class="text-center font-bold text-sm text-green-600 mt-2"></p>
+            </div>
+        </div>
+    </main>
 </div>
 
 <script>
@@ -1917,7 +2023,7 @@ function toggleScopeUI() { document.getElementById('parseResultBox').classList.a
 
 function processRawTextInput() {
 const rawText = document.getElementById('rawTextInput').value;
-if (!rawText.trim()) { alert("يرجى كتابة أو لصق النص أولاًလိုက်!"); return; }
+if (!rawText.trim()) { alert("يرجى كتابة أو لصق النص أولاً!"); return; }
 parseUnifiedRosterText(rawText);
 }
 
