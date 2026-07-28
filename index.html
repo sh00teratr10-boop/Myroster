@@ -412,7 +412,7 @@ body { font-family: 'Cairo', sans-serif; }
                     </div>
 
                     <div id="admin-input-pdf">
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">اختر ملف اليومية أو الروستر بصيغة PDF:</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-2">اختر ملف اليومية أو الروستر بصيغة PDF وسيتم الفحص الشامل بدقة:</p>
                         <input type="file" id="pdfFileInput" accept=".pdf" onchange="processFullRosterPdf(event)" class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 text-sm">
                     </div>
 
@@ -429,13 +429,16 @@ body { font-family: 'Cairo', sans-serif; }
                     <h4 class="text-lg font-bold text-green-600">🎯 نتائج الفلترة والاستخراج:</h4>
                     <span id="detectedDate" class="bg-purple-100 text-purple-800 font-bold px-3 py-1 rounded-full text-xs">تاريخ اليومية: --/--/----</span>
                 </div>
-                <p class="text-xs text-gray-400 mb-3">عدد السائقين المستخرجين: <span id="driverCount" class="font-bold text-purple-500">0</span> سائق</p>
-                <div class="max-h-80 overflow-y-auto border rounded-lg mb-4">
+                <p class="text-xs text-gray-400 mb-3">عدد السائقين المستخرجين: <span id="driverCount" class="font-bold text-purple-500 text-lg">0</span> سائق</p>
+                <div class="max-h-80 overflow-y-auto border rounded-lg mb-4 bg-gray-50 dark:bg-gray-900">
                     <table class="w-full text-right text-sm">
-                        <thead class="bg-gray-100 dark:bg-gray-700 sticky top-0">
-                            <tr><th class="p-3 border-b">كود السائق (RDMC ID)</th><th class="p-3 border-b">البيانات / الورادي المستخرجة</th></tr>
+                        <thead class="bg-gray-200 dark:bg-gray-700 sticky top-0 shadow-sm">
+                            <tr>
+                                <th class="p-3 border-b">كود السائق (RDMC ID)</th>
+                                <th class="p-3 border-b">البيانات / الورادي المستخرجة</th>
+                            </tr>
                         </thead>
-                        <tbody id="parsedRosterTable" class="divide-y divide-gray-200 dark:divide-gray-700"></tbody>
+                        <tbody id="parsedRosterTable" class="divide-y divide-gray-200 dark:divide-gray-700 text-xs"></tbody>
                     </table>
                 </div>
                 <button type="button" onclick="saveAllRosterToFirebase()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-lg shadow-lg text-lg">🚀 اعتماد وتحديث البيانات سحابياً (Firebase)</button>
@@ -565,8 +568,6 @@ const dbURL = 'https://docs.google.com/spreadsheets/d/1W292oVl-gvwRP6MtRA5n8xq_g
 const rosterURL = 'https://docs.google.com/spreadsheets/d/1H00eFiQFBWx6QzBFwuSmfUT4TywknKw_X_sf908Jhdc/export?format=csv';
 const aswanURL = 'https://docs.google.com/spreadsheets/d/1PKOrSSHb80Ay-zHvloh6TiI12oWPN3GhqsRTilTxRKI/export?format=csv';
 const tripsScheduleURL = 'https://docs.google.com/spreadsheets/d/13t7NS0cFYrkKYAq9IL4Nwn_QThhnRhV_mfXuAcP-jIU/export?format=csv';
-
-// 🌟 رابط الشيت الجديد المضاف للقطار الوارد
 const cercrlURL = 'https://docs.google.com/spreadsheets/d/1RXHF9kGmhJbI77C71bSL-il1nkTvfi9ZPA7mCQQjI9E/export?format=csv';
 
 let driversData = [];
@@ -580,7 +581,7 @@ let schedulesByDay = {
 26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
 };
 
-// محطات الخط الثالث كاملة من عدلي منصور وحتى التفرعات
+// محطات الخط الثالث كاملة
 const line3Stations = [
     "عدلي منصور", "الهايكستب", "عمر بن الخطاب", "قباء", "هشام بركات", "النزهة", 
     "نادي الشمس", "ألف مسكن", "هليوبوليس", "هارون", "الأهرام", "كلية البنات", 
@@ -594,17 +595,15 @@ let aswanDataMap = {};
 let luxorDataMap = {};
 let alexDataMap = {};
 let tripsScheduleMap = {};
-
-// 🌟 خريطة لربط رقم الرحلة بالقطار الوارد
 let incomingTripsMap = {};
 
 let currentDriver = null;
 let validShiftsSet = new Set();
 let currentParsedDay = new Date().getDate();
+let extractedBatchRoster = [];
 
-// متغيرات خاصة بنظام التنبيه الصوتي الذكي
 let alarmInterval = null;
-let alertedTripsToday = new Set(); // منع تكرار التنبيه لنفس الرحلة في اليوم
+let alertedTripsToday = new Set(); 
 
 function getTodayYYYYMMDD() {
 const d = new Date();
@@ -633,7 +632,6 @@ else { cur += str[i]; }
 result.push(cur); return result;
 }
 
-// 🌟 دوال التنبيه الذكي والصوت المتكرر
 function playLoopingAlarm() {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
@@ -653,7 +651,6 @@ function triggerArrivalModal(msgText) {
     document.getElementById('arrivalAlertText').textContent = msgText;
     document.getElementById('customArrivalModal').classList.remove('hidden-section');
     
-    // تشغيل الصوت فوراً ثم تكراره كل ثانية
     playLoopingAlarm();
     if (alarmInterval) clearInterval(alarmInterval);
     alarmInterval = setInterval(() => {
@@ -669,12 +666,12 @@ function dismissArrivalAlert() {
     document.getElementById('customArrivalModal').classList.add('hidden-section');
 }
 
-// 🌟 فحص ما إذا كان وقت وصول القطار الوارد اقترب (قبلها بدقيقتين)
 function checkUpcomingTrainsAlarm() {
     if (!currentDriver) return;
     
     const selectedDateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
     const dayNum = parseInt(selectedDateVal.split('-')[2], 10);
+    
     let driverRoster = rosterDataMap[smartNormalize(currentDriver.serviceId)] || {};
     let shiftCode = driverRoster[dayNum] || 'راحة';
     if (shiftCode === 'راحة' || shiftCode === 'R' || shiftCode.includes('OFF')) return;
@@ -687,28 +684,41 @@ function checkUpcomingTrainsAlarm() {
 
     if (!myShiftData || !myShiftData.tripNumbers) return;
 
+    // جلب الوقت الحالي بالدقائق لتسهيل الحسابات
     const now = new Date();
     const currentHours = now.getHours();
     const currentMinutes = now.getMinutes();
-    const currentTimeInMinutes = currentHours * 60 + currentMinutes;
+    const currentTimeInMinutes = (currentHours * 60) + currentMinutes;
 
     myShiftData.tripNumbers.forEach(tNum => {
         let incomingCode = incomingTripsMap[tNum];
         if (incomingCode && /^\d{3,4}$/.test(incomingCode) && tripsScheduleMap[incomingCode]) {
-            let arrTimeStr = tripsScheduleMap[incomingCode].arrTime; // مثال: "08:30" أو "8:30:00"
+            
+            let arrTimeStr = tripsScheduleMap[incomingCode].arrTime; 
             let timeParts = arrTimeStr.split(':');
+            
             if (timeParts.length >= 2) {
                 let arrHours = parseInt(timeParts[0], 10);
                 let arrMinutes = parseInt(timeParts[1], 10);
-                let arrTimeInMinutes = arrHours * 60 + arrMinutes;
+                let arrTimeInMinutes = (arrHours * 60) + arrMinutes;
 
-                // التنبيه قبل وصول القطار بدقيقتين تماماً
-                let alertTimeInMinutes = arrTimeInMinutes - 2;
-                let tripUniqueKey = `${tNum}_${dayNum}`;
+                // حساب الفارق الزمني بين وقت الوصول والوقت الحالي
+                let timeDifference = arrTimeInMinutes - currentTimeInMinutes;
+                
+                // مفتاح فريد لعدم تكرار المنبه لنفس القطار في نفس اليوم
+                let tripUniqueKey = `${incomingCode}_${dayNum}`;
 
-                if (currentTimeInMinutes === alertTimeInMinutes && !alertedTripsToday.has(tripUniqueKey)) {
-                    alertedTripsToday.add(tripUniqueKey);
-                    triggerArrivalModal(`القطار قادم برحلة رقم (${incomingCode}) وسوف يصل رصيف الاستلام الساعة ${arrTimeStr} خلال دقيقتين!`);
+                // التحديث الجديد: تشغيل المنبه إذا كان متبقياً 3 دقائق أو أقل
+                if (timeDifference >= 0 && timeDifference <= 3) {
+                    if (!alertedTripsToday.has(tripUniqueKey)) {
+                        
+                        // تسجيل الرحلة فوراً
+                        alertedTripsToday.add(tripUniqueKey);
+                        
+                        // تشغيل المنبه
+                        console.log(`[المنبه] تم تشغيل المنبه للرحلة ${incomingCode}`);
+                        triggerArrivalModal(`القطار قادم برحلة رقم (${incomingCode}) وسوف يصل رصيف الاستلام الساعة ${arrTimeStr}!`);
+                    }
                 }
             }
         }
@@ -830,7 +840,6 @@ try {
     }
 } catch(e) { console.log("تنبيه شيت المواعيد:", e); }
 
-// 🌟 تحميل وتحليل شيت القطار الوارد (cercrl) برمجياً
 try {
     const cercrlRes = await fetch(cercrlURL);
     const cercrlText = await cercrlRes.text();
@@ -852,7 +861,6 @@ try {
         }
     }
 } catch(e) { console.log("تنبيه شيت القطار الوارد:", e); }
-// 🌟 نهاية التحديث الجديد
 
 const aswanRes = await fetch(aswanURL);
 const aswanLines = (await aswanRes.text()).split('\n');
@@ -1263,7 +1271,6 @@ function login() {
     }
 }
 
-// 🔄 وظائف التبويبات الفرعية للمبادلات
 function switchSwapSubTab(subTabId) {
     document.getElementById('sub-tab-dailySwap').classList.add('hidden-section');
     document.getElementById('sub-tab-weeklySwap').classList.add('hidden-section');
@@ -1279,7 +1286,6 @@ function switchSwapSubTab(subTabId) {
     }
 }
 
-// 📅 مقارنة المبادلة اليومية
 function compareDailySwaps() {
     const dateVal = document.getElementById('swapDailyDate').value;
     const targetQuery = document.getElementById('swapTargetDriverInput').value.trim().toLowerCase();
@@ -1361,7 +1367,6 @@ function isRestDay(code) {
     return c === 'راحة' || c === 'R' || c === 'OFF' || c.includes('REST') || c === '-';
 }
 
-// 📊 المبادلة الأسبوعية الذكية
 function loadWeeklyBlockSwap() {
     const resultBox = document.getElementById('weeklySwapResultBox');
     if (!currentDriver) return;
@@ -1501,7 +1506,6 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
 
             matchingHTML += `</div></div>`;
 
-            // 🌟 الأزرار الأربعة تحت كل قائد قطار
             matchingHTML += `<div class="flex items-center gap-2 flex-wrap pt-2 border-t dark:border-gray-600">`;
             
             if (phoneNum) {
@@ -1527,7 +1531,6 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
     contentBox.innerHTML = matchingHTML;
 }
 
-// 🔍 البحث عن قادة القطارات برقم التشغيل أو الاسم
 function openDriverSearchModal() {
     toggleSettings();
     document.getElementById('driverSearchModal').classList.remove('hidden-section');
@@ -1590,7 +1593,6 @@ function executeDriverSearch() {
     resultsContainer.innerHTML = html;
 }
 
-// 🌐 مواقع تواصل الشركة والخدمات
 function openCompanySitesModal() {
     toggleSettings();
     document.getElementById('companySitesModal').classList.remove('hidden-section');
@@ -1600,7 +1602,6 @@ function closeCompanySitesModal() {
     document.getElementById('companySitesModal').classList.add('hidden-section');
 }
 
-// 🛠️ نافذة الدعم الفني للأستاذ محمد رافت (برقمك الصحيح 01119866073)
 function openTechSupportModal() {
     toggleSettings();
     document.getElementById('techSupportModal').classList.remove('hidden-section');
@@ -1610,7 +1611,6 @@ function closeTechSupportModal() {
     document.getElementById('techSupportModal').classList.add('hidden-section');
 }
 
-// 🔍 البحث برمز الوردية أو رقم الرحلة
 function searchByTripCode() {
     const query = document.getElementById('tripCodeInput').value.trim();
     const resultBox = document.getElementById('tripSearchResultBox');
@@ -1671,7 +1671,6 @@ function searchByTripCode() {
     }
 }
 
-// 🗺️ خريطة الخط الثالث
 function renderLineMapStations(filter = '') {
     const container = document.getElementById('lineMapStationsContainer');
     if (!container) return;
@@ -1804,7 +1803,6 @@ let dep = scheduleMatch ? scheduleMatch.depTime : '---';
 let arr = scheduleMatch ? scheduleMatch.arrTime : '---';
 let route = scheduleMatch ? scheduleMatch.route : 'مسار تشغيل الخط الثالث';
 
-// 🌟 جلب تفاصيل القطار الوارد وموعد وصوله بكل دقة
 let incomingCode = incomingTripsMap[tNum] || 'غير محدد';
 let incomingTime = '---';
 if (/^\d{3,4}$/.test(incomingCode) && tripsScheduleMap[incomingCode]) {
@@ -1822,7 +1820,6 @@ tripsHTML += `
         </span>
     </div>
     
-    <!-- 🌟 كارت القطار الوارد في واجهة المستخدم -->
     <div class="bg-amber-50 dark:bg-amber-900/20 p-2.5 rounded-lg border border-amber-200 mb-3 flex justify-between items-center text-xs shadow-inner">
         <span class="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1">
             <span>⬅️ القطار قادم بـ:</span> 
@@ -2002,7 +1999,6 @@ if(tabId === 'swaps') {
 }
 }
 
-// 🌟 تحديث حالة زر الوضع الليلي/النهاري بشكل تفاعلي صحيح
 function toggleTheme() { 
     document.documentElement.classList.toggle('dark');
     const isDark = document.documentElement.classList.contains('dark');
@@ -2021,13 +2017,50 @@ document.getElementById('admin-tab-text').classList.toggle('active', mode === 't
 
 function toggleScopeUI() { document.getElementById('parseResultBox').classList.add('hidden-section'); }
 
-function processRawTextInput() {
-const rawText = document.getElementById('rawTextInput').value;
-if (!rawText.trim()) { alert("يرجى كتابة أو لصق النص أولاً!"); return; }
-parseUnifiedRosterText(rawText);
+// 🌟 النظام الفعّال والدقيق لاستخراج الـ PDF (نظام الإحداثيات وطابور الكلمات)
+function extractPdfWordsStream(file, callback) {
+    const fileReader = new FileReader();
+    
+    fileReader.onload = async function() {
+        try {
+            const typedarray = new Uint8Array(this.result);
+            const pdf = await pdfjsLib.getDocument(typedarray).promise;
+            let allWords = [];
+            
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const textContent = await page.getTextContent();
+                
+                textContent.items.forEach(item => {
+                    let str = item.str.trim();
+                    if (str) {
+                        allWords.push({
+                            str: str,
+                            x: item.transform[4],
+                            y: item.transform[5],
+                            page: i
+                        });
+                    }
+                });
+            }
+            
+            // ترتيب الكلمات بدقة باستخدام الإحداثيات والتسامح 8 بكسل
+            allWords.sort((a, b) => {
+                if (a.page !== b.page) return a.page - b.page;
+                if (Math.abs(b.y - a.y) > 8) return b.y - a.y; 
+                return b.x - a.x; 
+            });
+            
+            callback(allWords);
+        } catch(err) {
+            alert('حدث خطأ أثناء قراءة الملف: ' + err.message);
+        }
+    };
+    fileReader.readAsArrayBuffer(file);
 }
 
-async function uploadAugustRosterPdf() {
+// 🌟 تشغيل الفلترة عند رفع ملف شهر 8
+function uploadAugustRosterPdf() {
     const fileInput = document.getElementById('augustPdfInput');
     const file = fileInput ? fileInput.files[0] : null;
     if (!file || file.type !== "application/pdf") { alert("يرجى اختيار ملف PDF الخاص بروستر شهر 8 أولاً!"); return; }
@@ -2035,119 +2068,149 @@ async function uploadAugustRosterPdf() {
     const fullScopeRadio = document.querySelector('input[name="updateScope"][value="full"]');
     if (fullScopeRadio) { fullScopeRadio.checked = true; toggleScopeUI(); }
 
-    try {
-        const fileReader = new FileReader();
-        fileReader.onload = async function() {
-            const typedarray = new Uint8Array(this.result);
-            const pdf = await pdfjsLib.getDocument(typedarray).promise;
-            let fullText = "";
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                fullText += textContent.items.map(item => item.str).join(" ") + "\n";
+    document.getElementById('adminMsg').textContent = "⏳ جاري الفحص الشامل والاستخراج...";
+    extractPdfWordsStream(file, function(wordsList) {
+        parseWordStreamRoster(wordsList, 'full');
+        document.getElementById('adminMsg').textContent = "";
+    });
+}
+
+// 🌟 تشغيل الفلترة عند رفع الـ PDF المعتاد
+function processFullRosterPdf(event) {
+    const file = event.target.files[0];
+    if (!file || file.type !== "application/pdf") { alert("يرجى اختيار ملف PDF صحيح!"); return; }
+    
+    const scope = document.querySelector('input[name="updateScope"]:checked').value;
+    document.getElementById('adminMsg').textContent = "⏳ جاري الفحص الشامل والاستخراج...";
+    
+    extractPdfWordsStream(file, function(wordsList) {
+        parseWordStreamRoster(wordsList, scope);
+        document.getElementById('adminMsg').textContent = "";
+    });
+}
+
+// 🌟 معالجة النص المنسوخ يدوياً
+function processRawTextInput() {
+    const rawText = document.getElementById('rawTextInput').value;
+    if (!rawText.trim()) { alert("يرجى كتابة أو لصق النص أولاً!"); return; }
+    const scope = document.querySelector('input[name="updateScope"]:checked').value;
+    
+    // تحويل النص لكائنات مشابهة للـ PDF
+    const wordsObjArray = rawText.split(/\s+/).filter(w => w.trim() !== "").map(w => ({str: w}));
+    parseWordStreamRoster(wordsObjArray, scope);
+}
+
+// 🌟 عقل الفلترة الذي نجح في التجربة (دمج كامل)
+function parseWordStreamRoster(wordsObjArray, scope) {
+    extractedBatchRoster = [];
+    
+    // الـ Regex المدمج والشامل الذي يصطاد جميع الورادي
+    const shiftPattern = /\b(?:M-?\d{1,2}|E-?\d{1,2}|N-?\d{1,2}|M-RES-?\d{1,2}|E-RES-?\d{1,2}|N-RES-?\d{1,2}|M-TRG[A-Z]+|Rest|OFF|R|Absent|Sick\s*leave|Annual\s*leave[- A-Z]*)\b/i;
+    const rdmcPattern = /\b(RDMC|ROMC)[-_]?[A-Z0-9]+\b/i;
+
+    let extractedMap = new Map();
+    let words = wordsObjArray.map(w => w.str); 
+    let processedIds = new Set();
+
+    if (scope === 'daily') {
+        document.getElementById('detectedDate').textContent = 'تاريخ اليومية: جاري التحديث...';
+    } else {
+        document.getElementById('detectedDate').textContent = 'نطاق التحديث: روستر كامل شامل';
+    }
+
+    for (let i = 0; i < words.length; i++) {
+        let currentWord = words[i];
+        let idMatch = currentWord.match(rdmcPattern);
+
+        if (idMatch) {
+            let rawId = idMatch[0].toUpperCase();
+            let cleanId = rawId.replace('ROMC', 'RDMC');
+
+            if (processedIds.has(cleanId)) continue;
+            processedIds.add(cleanId);
+
+            if (scope === 'daily') {
+                // البحث في النطاق المحيط بـ 6 كلمات قبل وبعد كود السائق (كما في التجربة)
+                let foundShift = 'راحة'; 
+                let startIdx = Math.max(0, i - 6);
+                let endIdx = Math.min(words.length, i + 7);
+
+                for (let j = startIdx; j < endIdx; j++) {
+                    let sMatch = words[j].match(shiftPattern);
+                    if (sMatch) {
+                        foundShift = sMatch[0].toUpperCase().replace('-', '');
+                        break;
+                    }
+                }
+                extractedMap.set(cleanId, { rdmcId: cleanId, shift: foundShift, mode: 'daily' });
+
+            } else {
+                // في حالة الشهر الكامل: نبحث عن 31 وردية متتابعة في الـ 45 كلمة القادمة
+                let daysMap = {};
+                let dayCount = 1;
+                let searchLimit = Math.min(words.length - 1, i + 45);
+
+                for (let j = i + 1; j <= searchLimit; j++) {
+                    if (shiftPattern.test(words[j])) {
+                        let matchStr = words[j].match(shiftPattern)[0].toUpperCase().replace('-', '');
+                        daysMap[dayCount] = matchStr;
+                        dayCount++;
+                        if (dayCount > 31) break;
+                    } else if (rdmcPattern.test(words[j])) {
+                        break; // التوقف فوراً عند رؤية سائق آخر
+                    }
+                }
+
+                if (Object.keys(daysMap).length > 0) {
+                    extractedMap.set(cleanId, { rdmcId: cleanId, shiftsMap: daysMap, mode: 'full' });
+                }
             }
-            parseUnifiedRosterText(fullText);
-        };
-        fileReader.readAsArrayBuffer(file);
-    } catch(err) { alert('حدث خطأ أثناء قراءة ملف الـ PDF بشهر 8!'); }
-}
+        }
+    }
 
-async function processFullRosterPdf(event) {
-const file = event.target.files[0];
-if (!file || file.type !== "application/pdf") { alert("يرجى اختيار ملف PDF صحيح!"); return; }
+    extractedBatchRoster = Array.from(extractedMap.values());
 
-try {
-const fileReader = new FileReader();
-fileReader.onload = async function() {
-const typedarray = new Uint8Array(this.result);
-const pdf = await pdfjsLib.getDocument(typedarray).promise;
-let fullText = "";
-for (let i = 1; i <= pdf.numPages; i++) {
-const page = await pdf.getPage(i);
-const textContent = await page.getTextContent();
-fullText += textContent.items.map(item => item.str).join(" ") + "\n";
-}
-parseUnifiedRosterText(fullText);
-};
-fileReader.readAsArrayBuffer(file);
-} catch(err) { alert('حدث خطأ أثناء قراءة ملف الـ PDF!'); }
-}
+    // 🌟 طباعة النتائج بدقة في الجدول
+    const tbody = document.getElementById('parsedRosterTable');
+    tbody.innerHTML = '';
+    
+    if(extractedBatchRoster.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="2" class="text-center p-4 text-red-500 font-bold">لم يتم العثور على أرقام تشغيل مطابقة. تأكد من الملف.</td></tr>`;
+    } else {
+        extractedBatchRoster.forEach(item => {
+            const tr = document.createElement('tr');
+            let displayShifts = item.mode === 'daily' ? item.shift : `جدول شهري (${Object.keys(item.shiftsMap).length} يوم)`;
+            tr.innerHTML = `<td class="p-3 border-b font-bold text-blue-600">${item.rdmcId}</td><td class="p-3 border-b font-bold text-green-600">${displayShifts}</td>`;
+            tbody.appendChild(tr);
+        });
+    }
 
-function parseUnifiedRosterText(text) {
-extractedBatchRoster = [];
-const scope = document.querySelector('input[name="updateScope"]:checked').value;
-
-if (scope === 'daily') {
-const dateMatch = text.match(/(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-let rosterDate = dateMatch ? `${dateMatch[1]}/${dateMatch[2]}/${dateMatch[3]}` : new Date().toLocaleDateString('en-GB');
-document.getElementById('detectedDate').textContent = 'تاريخ اليومية: ' + rosterDate;
-
-const rdmcRegex = /(RDMC[-_]?[A-Z0-9]+)/gi;
-const matches = text.match(rdmcRegex);
-
-if (matches) {
-const uniqueIds = [...new Set(matches.map(m => m.toUpperCase()))];
-uniqueIds.forEach(id => {
-const idIndex = text.indexOf(id);
-const snippet = text.substring(idIndex, idIndex + 120);
-const shiftMatch = snippet.match(/(M-?\d+|E-?\d+|N-?\d+|M-RES\d+|E-RES\d+|N-RES\d+|Rest|OFF)/i);
-let shift = shiftMatch ? shiftMatch[0].toUpperCase() : 'راحة';
-extractedBatchRoster.push({ rdmcId: id, shift: shift, mode: 'daily' });
-});
-}
-} else {
-document.getElementById('detectedDate').textContent = 'نطاق التحديث: روستر كامل شامل';
-const lines = text.split('\n');
-lines.forEach(line => {
-const rdmcMatch = line.match(/(RDMC[-_]?[A-Z0-9]+)/i);
-if (rdmcMatch) {
-const id = rdmcMatch[1].toUpperCase();
-const shiftsInLine = line.match(/(M-?\d+|E-?\d+|N-?\d+|M-RES\d+|E-RES\d+|N-RES\d+|Rest|OFF)/gi);
-if (shiftsInLine && shiftsInLine.length > 0) {
-let daysMap = {};
-shiftsInLine.forEach((sCode, idx) => {
-if (idx + 1 <= 31) daysMap[idx + 1] = sCode.toUpperCase();
-});
-extractedBatchRoster.push({ rdmcId: id, shiftsMap: daysMap, mode: 'full' });
-}
-}
-});
-}
-
-const tbody = document.getElementById('parsedRosterTable');
-tbody.innerHTML = '';
-extractedBatchRoster.forEach(item => {
-const tr = document.createElement('tr');
-let displayShifts = item.mode === 'daily' ? item.shift : `جدول شهري (${Object.keys(item.shiftsMap).length} يوم)`;
-tr.innerHTML = `<td class="p-3 border-b font-bold text-blue-600">${item.rdmcId}</td><td class="p-3 border-b font-bold text-green-600">${displayShifts}</td>`;
-tbody.appendChild(tr);
-});
-
-document.getElementById('driverCount').textContent = extractedBatchRoster.length;
-document.getElementById('parseResultBox').classList.remove('hidden-section');
+    document.getElementById('driverCount').textContent = extractedBatchRoster.length;
+    document.getElementById('parseResultBox').classList.remove('hidden-section');
 }
 
 function saveAllRosterToFirebase() {
-if (!extractedBatchRoster || extractedBatchRoster.length === 0) { alert("لا توجد بيانات لتحديثها!"); return; }
-const scope = document.querySelector('input[name="updateScope"]:checked').value;
+    if (!extractedBatchRoster || extractedBatchRoster.length === 0) { alert("لا توجد بيانات لتحديثها!"); return; }
+    const scope = document.querySelector('input[name="updateScope"]:checked').value;
 
-extractedBatchRoster.forEach(item => {
-let normId = smartNormalize(item.rdmcId);
-if (!rosterDataMap[normId]) rosterDataMap[normId] = {};
-if (scope === 'daily') {
-rosterDataMap[normId][currentParsedDay] = item.shift;
-} else {
-for (let dayKey in item.shiftsMap) {
-rosterDataMap[normId][dayKey] = item.shiftsMap[dayKey];
-}
-}
-});
+    extractedBatchRoster.forEach(item => {
+        let normId = smartNormalize(item.rdmcId);
+        if (!rosterDataMap[normId]) rosterDataMap[normId] = {};
+        
+        if (scope === 'daily') {
+            rosterDataMap[normId][currentParsedDay] = item.shift;
+        } else {
+            for (let dayKey in item.shiftsMap) {
+                rosterDataMap[normId][dayKey] = item.shiftsMap[dayKey];
+            }
+        }
+    });
 
-db.ref('rosterDataMap').set(rosterDataMap).then(() => {
-alert("🌐✅ تم حفظ وتحديث البيانات سحابياً على Firebase بنجاح!");
-}).catch((err) => {
-alert("⚠️ حدث خطأ أثناء الحفظ السحابي: " + err.message);
-});
+    db.ref('rosterDataMap').set(rosterDataMap).then(() => {
+        alert("🌐✅ تم حفظ وتحديث البيانات سحابياً على Firebase بنجاح!");
+    }).catch((err) => {
+        alert("⚠️ حدث خطأ أثناء الحفظ السحابي: " + err.message);
+    });
 }
 </script>
 </body>
