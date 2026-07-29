@@ -49,7 +49,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
     <div class="w-full flex justify-between items-end text-[11px] font-mono tracking-widest text-gray-500 select-none">
         <span>Directed by Mohamed Raafat</span>
-        <span>v2.1</span>
+        <span>v3.1 - Dynamic Engine</span>
     </div>
 </div>
 
@@ -221,19 +221,30 @@ body { font-family: 'Cairo', sans-serif; }
 
 <!-- البحث برمز الرحلة -->
 <div id="tripSearch" class="tab-content bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg mt-4">
-<h3 class="text-xl font-black text-purple-600 mb-4 border-b pb-3 text-right">🔍 البحث برمز الوردية أو رقم الرحلة</h3>
-<div class="mb-6 flex flex-col sm:flex-row gap-3">
-    <input type="text" id="tripCodeInput" oninput="searchByTripCode()" placeholder="أدخل رمز الوردية (مثل M01, E01) أو رقم الرحلة..." class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-700 border rounded-xl text-lg font-bold text-purple-600">
-    <button onclick="searchByTripCode()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-3 rounded-xl shadow">بحث</button>
-</div>
-<div id="tripSearchResultBox" class="space-y-3">
-    <div class="text-center text-gray-400 py-8 text-sm">اكتب رمز الوردية أو رقم الرحلة في الأعلى لعرض المحتويات والمواعيد...</div>
-</div>
+    <h3 class="text-xl font-black text-purple-600 mb-4 border-b pb-3 text-right">🔍 البحث المتقدم برمز الوردية</h3>
+    
+    <div class="mb-6 bg-purple-50 dark:bg-purple-900/20 p-4 rounded-xl border border-purple-200 dark:border-purple-800 flex flex-col md:flex-row gap-4 items-center">
+        <div class="w-full md:w-1/3">
+            <label class="block text-sm font-bold text-purple-700 dark:text-purple-300 mb-1">📅 تاريخ البحث:</label>
+            <input type="date" id="tripSearchDateInput" onchange="searchByTripCode()" class="w-full px-4 py-2 bg-white dark:bg-gray-700 border rounded-xl font-bold text-purple-600">
+        </div>
+        <div class="w-full md:w-2/3">
+            <label class="block text-sm font-bold text-purple-700 dark:text-purple-300 mb-1">✍️ رمز الوردية (مثال M01, E02):</label>
+            <div class="flex gap-2">
+                <input type="text" id="tripCodeInput" oninput="searchByTripCode()" placeholder="أدخل رمز الوردية..." class="w-full px-4 py-2 bg-white dark:bg-gray-700 border rounded-xl text-lg font-bold text-purple-600">
+                <button onclick="searchByTripCode()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2 rounded-xl shadow transition-all">بحث</button>
+            </div>
+        </div>
+    </div>
+    
+    <div id="tripSearchResultBox" class="space-y-3">
+        <div class="text-center text-gray-400 py-8 text-sm">حدد التاريخ واكتب رمز الوردية لعرض تفاصيل الرحلات وقائد القطار...</div>
+    </div>
 </div>
 </main>
 </div>
 
-<!-- نافذة التنبيه التفاعلية الجديدة (المنبه الذكي قبل الوصول بدقيقتين) -->
+<!-- نافذة التنبيه التفاعلية الجديدة (المنبه الذكي قبل الوصول بدقائق) -->
 <div id="customArrivalModal" class="hidden-section fixed inset-0 bg-black/70 backdrop-blur-sm z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 max-w-md w-full text-center border-4 border-amber-500 animate-bounce-once">
         <div class="text-5xl mb-3">🚨</div>
@@ -310,7 +321,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- دليل التواصل (تم إرجاع جميع الأقسام والأرقام كاملة هنا) -->
+<!-- دليل التواصل الشامل -->
 <div id="contactModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3 mb-4 sticky top-0 bg-white dark:bg-gray-800 z-10">
@@ -319,7 +330,9 @@ body { font-family: 'Cairo', sans-serif; }
             </h3>
             <button onclick="closeContactModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl leading-none">&times;</button>
         </div>
+
         <div class="mb-6 space-y-6">
+            <!-- 1. قسم التشغيل -->
             <div>
                 <h4 class="font-black text-sm text-purple-600 dark:text-purple-400 mb-3 border-r-4 border-purple-600 pr-2">🚦 1. قسم التشغيل</h4>
                 <div class="space-y-3">
@@ -330,41 +343,158 @@ body { font-family: 'Cairo', sans-serif; }
                             <a href="https://api.whatsapp.com/send?phone=201211155705" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
                         </div>
                     </div>
-                </div>
-            </div>
-            <div>
-                <h4 class="font-black text-sm text-blue-600 dark:text-blue-400 mb-3 border-r-4 border-blue-600 pr-2">🏢 2. مكاتب التشغيل والمحطات</h4>
-                <div class="space-y-3">
                     <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
-                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مكتب محطة العتبة</h5></div>
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">م. عمرو عاطف</h5><span class="text-xs font-semibold text-purple-700 dark:text-purple-300 bg-purple-100 dark:bg-purple-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">نائب مدير قائدي القطارات</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201002065296" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201002065296" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">سوبرفايزر مكتب عدلي منصور</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201157422561" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201157422561" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">سوبرفايزر مكتب العتبة</h5></div>
                         <div class="grid grid-cols-2 gap-2">
                             <a href="tel:+201149076809" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
                             <a href="https://api.whatsapp.com/send?phone=201149076809" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
                         </div>
                     </div>
                     <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
-                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مكتب محطة عدلي منصور</h5></div>
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">سوبرفايزر مكتب جامعة القاهرة</h5></div>
                         <div class="grid grid-cols-2 gap-2">
-                            <a href="tel:+201157422561" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
-                            <a href="https://api.whatsapp.com/send?phone=201157422561" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                            <a href="tel:+201157883321" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201157883321" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- 2. قسم سي سي بي (CCP) والورش -->
             <div>
-                <h4 class="font-black text-sm text-emerald-600 dark:text-emerald-400 mb-3 border-r-4 border-emerald-600 pr-2">🎛️ 3. قسم الحركة (الديسباتشر)</h4>
+                <h4 class="font-black text-sm text-indigo-600 dark:text-indigo-400 mb-3 border-r-4 border-indigo-600 pr-2">🎛️ 2. قسم سي سي بي (CCP) والورش</h4>
                 <div class="space-y-3">
                     <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
-                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مسؤول الديسباتشر</h5></div>
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">سوبرفايزر CCP</h5><span class="text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">CCP</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201102330033" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201102330033" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مراقب CCP</h5><span class="text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">CCP</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201157414956" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201157414956" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مراقب ورشة السلام</h5><span class="text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">ورشة السلام</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201159529347" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201159529347" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مراقب ورشة العباسية</h5><span class="text-xs font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-100 dark:bg-indigo-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">ورشة العباسية</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201149567779" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201149567779" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. قسم التخطيط -->
+            <div>
+                <h4 class="font-black text-sm text-blue-600 dark:text-blue-400 mb-3 border-r-4 border-blue-600 pr-2">📊 3. قسم التخطيط</h4>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">م. سامح شلبي</h5><span class="text-xs font-semibold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">مدير التخطيط</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201143809893" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201143809893" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مكتب التخطيط (ديسباتشر)</h5></div>
                         <div class="grid grid-cols-2 gap-2">
                             <a href="tel:+201125807602" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
                             <a href="https://api.whatsapp.com/send?phone=201125807602" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
                         </div>
                     </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">م. محمد فهمي</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201279312913" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201279312913" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">م. برهان طارق</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201120051731" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201120051731" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">م. مسامح</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201285890236" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201285890236" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">م. يحيى</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201112227043" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201112227043" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. قسم الـ HR -->
+            <div>
+                <h4 class="font-black text-sm text-emerald-600 dark:text-emerald-400 mb-3 border-r-4 border-emerald-600 pr-2">👥 4. قسم الـ HR</h4>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">محمود إسماعيل</h5><span class="text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">HR</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201154477787" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201154477787" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">محمود جمال</h5><span class="text-xs font-semibold text-emerald-700 dark:text-emerald-300 bg-emerald-100 dark:bg-emerald-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">HR</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201113277708" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201113277708" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. قسم المهمات -->
+            <div>
+                <h4 class="font-black text-sm text-amber-600 dark:text-amber-400 mb-3 border-r-4 border-amber-600 pr-2">📦 5. قسم المهمات</h4>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">فلفل</h5><span class="text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/40 px-2.5 py-0.5 rounded-md inline-block mt-1">مهمات</span></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201283132629" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201283132629" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <button onclick="closeContactModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-2.5 rounded-xl text-sm">إغلاق</button>
+
+        <button onclick="closeContactModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold py-2.5 rounded-xl mt-2 text-sm">إغلاق</button>
     </div>
 </div>
 
@@ -406,15 +536,15 @@ body { font-family: 'Cairo', sans-serif; }
             <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white p-6 rounded-2xl shadow-xl border border-purple-500/50">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
                     <h3 class="text-xl font-black flex items-center gap-2 text-yellow-300">
-                        <span>📅</span> رفع وتطبيق روستر شهر 8 (أغسطس)
+                        <span>📅</span> رفع وتطبيق الروستر
                     </h3>
                     <span class="bg-purple-500/30 text-purple-200 text-xs font-bold px-3 py-1 rounded-full border border-purple-400/30 w-fit">جدول كامل 31 يوم</span>
                 </div>
-                <p class="text-xs text-purple-200 mb-4">اختر ملف PDF الخاص بروستر شهر 8 واضغط رفع ليتم تحديث قاعدة البيانات لكل السائقين فوراً.</p>
+                <p class="text-xs text-purple-200 mb-4">اختر ملف PDF الخاص بالروستر واضغط رفع ليتم تحديث قاعدة البيانات لكل السائقين فوراً.</p>
                 <div class="flex flex-col sm:flex-row gap-3 items-center">
                     <input type="file" id="augustPdfInput" accept=".pdf" class="w-full text-sm text-gray-300 file:mr-4 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-sm file:font-bold file:bg-purple-600 file:text-white hover:file:bg-purple-700 cursor-pointer bg-purple-950/60 p-2 rounded-xl border border-purple-700/60">
                     <button type="button" onclick="uploadAugustRosterPdf()" class="w-full sm:w-auto whitespace-nowrap bg-green-600 hover:bg-green-700 text-white font-black py-3 px-6 rounded-xl shadow-lg transition-all text-sm flex items-center justify-center gap-2">
-                        <span>🚀</span> رفع واعتماد روستر شهر 8
+                        <span>🚀</span> رفع واعتماد الروستر
                     </button>
                 </div>
             </div>
@@ -458,13 +588,13 @@ body { font-family: 'Cairo', sans-serif; }
                     <h4 class="text-lg font-bold text-green-600">🎯 نتائج الفلترة والاستخراج:</h4>
                     <span id="detectedDate" class="bg-purple-100 text-purple-800 font-bold px-3 py-1 rounded-full text-xs">تاريخ اليومية: --/--/----</span>
                 </div>
-                <p class="text-xs text-gray-400 mb-3">عدد السائقين المستخرجين: <span id="driverCount" class="font-bold text-purple-500 text-lg">0</span> سائق</p>
+                <p class="text-xs text-gray-400 mb-3">عدد المستخرجين: <span id="driverCount" class="font-bold text-purple-500 text-lg">0</span></p>
                 <div class="max-h-80 overflow-y-auto border rounded-lg mb-4 bg-gray-50 dark:bg-gray-900">
                     <table class="w-full text-right text-sm">
                         <thead class="bg-gray-200 dark:bg-gray-700 sticky top-0 shadow-sm">
                             <tr>
-                                <th class="p-3 border-b">كود السائق (RDMC ID)</th>
-                                <th class="p-3 border-b">البيانات / الورادي المستخرجة</th>
+                                <th class="p-3 border-b">كود (RDMC ID)</th>
+                                <th class="p-3 border-b">البيانات المستخرجة</th>
                             </tr>
                         </thead>
                         <tbody id="parsedRosterTable" class="divide-y divide-gray-200 dark:divide-gray-700 text-xs"></tbody>
@@ -482,10 +612,10 @@ body { font-family: 'Cairo', sans-serif; }
                         <h3 class="text-xl font-black text-purple-600 dark:text-purple-400 flex items-center gap-2">
                             <span>🗺️</span> خريطة ومتابعة الخط الثالث المباشرة
                         </h3>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">متابعة القطارات، السائقين، وأرقام الرحلات على (سكة 1) و(سكة 2) لكل محطة.</p>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">متابعة القطارات، والقادة، وأرقام الرحلات على (سكة 1) و(سكة 2) لكل محطة.</p>
                     </div>
                     <div class="w-full sm:w-72">
-                        <input type="text" id="mapSearchInput" oninput="filterLineMap()" class="w-full px-4 py-2 border rounded-xl bg-gray-50 dark:bg-gray-700 text-sm font-bold text-purple-600" placeholder="🔍 بحث برقم رحلة أو سائق أو محطة...">
+                        <input type="text" id="mapSearchInput" oninput="filterLineMap()" class="w-full px-4 py-2 border rounded-xl bg-gray-50 dark:bg-gray-700 text-sm font-bold text-purple-600" placeholder="🔍 بحث برقم رحلة أو اسم أو محطة...">
                     </div>
                 </div>
                 <div id="lineMapStationsContainer" class="space-y-3 max-h-[65vh] overflow-y-auto pr-1"></div>
@@ -523,6 +653,30 @@ body { font-family: 'Cairo', sans-serif; }
 </div>
 
 <script>
+// 🌟 الدالة الجديدة لاستخراج اسم الشهر تلقائياً
+function getMonthNameAr(dateString) {
+    if (!dateString) return "الشهر الحالي";
+    const monthNum = parseInt(dateString.split('-')[1], 10);
+    const months = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
+    return months[monthNum - 1]; // نطرح 1 لأن المصفوفات تبدأ من صفر
+}
+
+// 🌟 الدالة الجديدة لحفظ رقم الوحدة (Train Unit Number)
+function saveUnitNumber(tNum) {
+    const unitInput = document.getElementById('unitInput_' + tNum);
+    if (!unitInput) return;
+    const unitVal = unitInput.value.trim();
+    
+    if(!unitVal) {
+        alert("يرجى كتابة رقم الوحدة أولاً!");
+        return;
+    }
+    
+    // نقوم بحفظ الرقم محلياً على المتصفح
+    localStorage.setItem('unit_' + tNum, unitVal);
+    alert('✅ تم حفظ رقم الوحدة (' + unitVal + ') للرحلة رقم ' + tNum + ' بنجاح!');
+}
+
 window.alert = function(message) {
     const existingAlert = document.getElementById('customAlertBox');
     if (existingAlert) existingAlert.remove();
@@ -560,8 +714,10 @@ document.addEventListener('DOMContentLoaded', function() {
     renderLineMapStations();
     document.getElementById('swapDailyDate').value = getTodayYYYYMMDD();
     
-    // تفعيل فحص موعد وصول القطارات في الخلفية كل 30 ثانية
-    setInterval(checkUpcomingTrainsAlarm, 30000);
+    let searchDateEl = document.getElementById('tripSearchDateInput');
+    if(searchDateEl) searchDateEl.value = getTodayYYYYMMDD();
+    
+    setInterval(checkUpcomingTrainsAlarm, 2000);
 });
 
 function forgotPassword() {
@@ -587,8 +743,21 @@ const db = firebase.database();
 const dbURL = 'https://docs.google.com/spreadsheets/d/1W292oVl-gvwRP6MtRA5n8xq_gh0wJ_N249-pbYL6HHU/export?format=csv';
 const rosterURL = 'https://docs.google.com/spreadsheets/d/1H00eFiQFBWx6QzBFwuSmfUT4TywknKw_X_sf908Jhdc/export?format=csv';
 const aswanURL = 'https://docs.google.com/spreadsheets/d/1PKOrSSHb80Ay-zHvloh6TiI12oWPN3GhqsRTilTxRKI/export?format=csv';
-const tripsScheduleURL = 'https://docs.google.com/spreadsheets/d/13t7NS0cFYrkKYAq9IL4Nwn_QThhnRhV_mfXuAcP-jIU/export?format=csv';
-const cercrlURL = 'https://docs.google.com/spreadsheets/d/1RXHF9kGmhJbI77C71bSL-il1nkTvfi9ZPA7mCQQjI9E/export?format=csv';
+const siwaTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/13t7NS0cFYrkKYAq9IL4Nwn_QThhnRhV_mfXuAcP-jIU/export?format=csv';
+const siwaCercrlURL = 'https://docs.google.com/spreadsheets/d/1RXHF9kGmhJbI77C71bSL-il1nkTvfi9ZPA7mCQQjI9E/export?format=csv';
+
+const luxorTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1eINA-xLIDFSDvjMFgS9xWKBNQBMRlkrb31UHTWAbo9c/export?format=csv';
+const luxorCercrlURL = 'https://docs.google.com/spreadsheets/d/1FAR2CV6mDM5Iq7gQSPIPNzRaLM4NPI-LIGJ8EB0kyUY/export?format=csv';
+
+const alexTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1vs7X7cyBP2jJMJbl2Lan8CHgICno36N8bD3EL7FZZDM/export?format=csv';
+const alexCercrlURL = 'https://docs.google.com/spreadsheets/d/1pnK_P08R3vBY-R0cjCdrfjAaQ2hIBlc-BACbrvXr_kU/export?format=csv';
+
+let siwaTripsMap = {};
+let siwaIncomingMap = {};
+let luxorTripsMap = {};
+let luxorIncomingMap = {};
+let alexTripsMap = {};
+let alexIncomingMap = {};
 
 let driversData = [];
 let rosterDataMap = {};
@@ -613,14 +782,11 @@ const line3Stations = [
 let aswanDataMap = {};
 let luxorDataMap = {};
 let alexDataMap = {};
-let tripsScheduleMap = {};
-let incomingTripsMap = {};
 
 let currentDriver = null;
 let validShiftsSet = new Set();
 let currentParsedDay = new Date().getDate();
 let extractedBatchRoster = [];
-
 let alarmInterval = null;
 let alertedTripsToday = new Set(); 
 
@@ -669,29 +835,20 @@ function playLoopingAlarm() {
 function triggerArrivalModal(msgText) {
     document.getElementById('arrivalAlertText').textContent = msgText;
     document.getElementById('customArrivalModal').classList.remove('hidden-section');
-    
     playLoopingAlarm();
     if (alarmInterval) clearInterval(alarmInterval);
-    alarmInterval = setInterval(() => {
-        playLoopingAlarm();
-    }, 1000);
+    alarmInterval = setInterval(() => { playLoopingAlarm(); }, 1000);
 }
 
 function dismissArrivalAlert() {
-    if (alarmInterval) {
-        clearInterval(alarmInterval);
-        alarmInterval = null;
-    }
+    if (alarmInterval) { clearInterval(alarmInterval); alarmInterval = null; }
     document.getElementById('customArrivalModal').classList.add('hidden-section');
 }
 
-// 🌟 المنبه الذكي المُحدّث (يعمل مع سيوة ويحسب الوقت بالثواني بدقة)
 function checkUpcomingTrainsAlarm() {
     if (!currentDriver) return;
-    
     const selectedDateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
     const dayNum = parseInt(selectedDateVal.split('-')[2], 10);
-    
     let driverRoster = rosterDataMap[smartNormalize(currentDriver.serviceId)] || {};
     let shiftCode = driverRoster[dayNum] || 'راحة';
     if (shiftCode === 'راحة' || shiftCode === 'R' || shiftCode.includes('OFF')) return;
@@ -704,12 +861,21 @@ function checkUpcomingTrainsAlarm() {
     let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST");
 
     let myShiftData = null;
+    let activeTripsMap = {};
+    let activeIncomingMap = {};
+
     if (isLuxor) {
         myShiftData = luxorDataMap[smartNormalize(shiftCode)];
+        activeTripsMap = luxorTripsMap;
+        activeIncomingMap = luxorIncomingMap;
     } else if (isSiwa) {
         myShiftData = aswanDataMap[smartNormalize(shiftCode)];
+        activeTripsMap = siwaTripsMap;
+        activeIncomingMap = siwaIncomingMap;
     } else if (isAlex) {
         myShiftData = alexDataMap[smartNormalize(shiftCode)];
+        activeTripsMap = alexTripsMap; 
+        activeIncomingMap = alexIncomingMap; 
     }
 
     if (!myShiftData || !myShiftData.tripNumbers) return;
@@ -718,27 +884,22 @@ function checkUpcomingTrainsAlarm() {
     const currentHours = now.getHours();
     const currentMinutes = now.getMinutes();
     const currentSeconds = now.getSeconds();
-    
-    // تحويل الوقت الحالي بالكامل إلى ثواني لدقة أعلى
     const currentTimeInSeconds = (currentHours * 3600) + (currentMinutes * 60) + currentSeconds;
 
     myShiftData.tripNumbers.forEach(tNum => {
-        let incomingCode = incomingTripsMap[tNum];
-        if (incomingCode && /^\d{3,4}$/.test(incomingCode) && tripsScheduleMap[incomingCode]) {
-            let arrTimeStr = tripsScheduleMap[incomingCode].arrTime; 
+        let incomingCode = activeIncomingMap[tNum];
+        if (incomingCode && /^\d{3,4}$/.test(incomingCode) && activeTripsMap[incomingCode]) {
+            let arrTimeStr = activeTripsMap[incomingCode].arrTime; 
             let timeParts = arrTimeStr.split(':');
             
             if (timeParts.length >= 2) {
                 let arrHours = parseInt(timeParts[0], 10);
                 let arrMinutes = parseInt(timeParts[1], 10);
                 let arrSeconds = timeParts.length === 3 ? parseInt(timeParts[2], 10) : 0; 
-                
                 let arrTimeInSeconds = (arrHours * 3600) + (arrMinutes * 60) + arrSeconds;
-
                 let timeDifferenceInSeconds = arrTimeInSeconds - currentTimeInSeconds;
                 let tripUniqueKey = `${incomingCode}_${dayNum}`;
 
-                // التنبيه يعمل إذا كان متبقي 180 ثانية (3 دقائق) أو أقل
                 if (timeDifferenceInSeconds >= 0 && timeDifferenceInSeconds <= 180) {
                     if (!alertedTripsToday.has(tripUniqueKey)) {
                         alertedTripsToday.add(tripUniqueKey);
@@ -826,7 +987,7 @@ buildDashboardData(currentDriver);
 });
 
 try {
-    const tripsRes = await fetch(tripsScheduleURL);
+    const tripsRes = await fetch(siwaTripsScheduleURL);
     const tripsLines = (await tripsRes.text()).split('\n');
     let headers = parseCSVRow(tripsLines[0]); 
 
@@ -838,13 +999,10 @@ try {
             let cell = cleanTxt(cols[c]);
             if (/^\d{3,4}$/.test(cell) && !cell.includes(":")) {
                 let tripNum = cell;
-                let firstTime = null;
-                let firstStation = null;
-                let lastTime = null;
-                let lastStation = null;
+                let firstTime = null, firstStation = null, lastTime = null, lastStation = null;
 
                 for (let k = c + 1; k < cols.length; k++) {
-                    let nextCell = cleanTxt(cols[k]);
+                    let nextCell = cleanTxt(k < cols.length ? cols[k] : "");
                     if (/^\d{3,4}$/.test(nextCell) && !nextCell.includes(":")) { break; }
                     if (/\d{1,2}:\d{2}(:\d{2})?/.test(nextCell)) {
                         let stationName = cleanTxt(headers[k]) || 'محطة غير معروفة';
@@ -852,21 +1010,16 @@ try {
                         lastTime = nextCell; lastStation = stationName; 
                     }
                 }
-
                 if (firstTime && lastTime) {
-                    tripsScheduleMap[tripNum] = { 
-                        depTime: firstTime, 
-                        arrTime: lastTime, 
-                        route: `من محطة ${firstStation} إلى محطة ${lastStation}` 
-                    };
+                    siwaTripsMap[tripNum] = { depTime: firstTime, arrTime: lastTime, route: `من محطة ${firstStation} إلى محطة ${lastStation}` };
                 }
             }
         }
     }
-} catch(e) { console.log("تنبيه شيت المواعيد:", e); }
+} catch(e) {}
 
 try {
-    const cercrlRes = await fetch(cercrlURL);
+    const cercrlRes = await fetch(siwaCercrlURL);
     const cercrlText = await cercrlRes.text();
     const cercrlRows = cercrlText.split('\n').map(row => parseCSVRow(row));
     const numRows = cercrlRows.length;
@@ -880,12 +1033,119 @@ try {
             if (currentCell === "") continue;
 
             if (/^\d{3,4}$/.test(currentCell) && prevCell !== null) {
-                incomingTripsMap[currentCell] = prevCell;
+                siwaIncomingMap[currentCell] = prevCell;
             }
             prevCell = currentCell;
         }
     }
-} catch(e) { console.log("تنبيه شيت القطار الوارد:", e); }
+} catch(e) {}
+
+try {
+    const luxTripsRes = await fetch(luxorTripsScheduleURL);
+    const luxLines = (await luxTripsRes.text()).split('\n');
+    let luxHeaders = parseCSVRow(luxLines[0]);
+
+    for(let i = 1; i < luxLines.length; i++) {
+        let cols = parseCSVRow(luxLines[i]);
+        if(cols.join('').trim() === '') continue;
+
+        for (let c = 0; c < cols.length; c++) {
+            let cell = cleanTxt(cols[c]);
+            if (/^\d{3,4}$/.test(cell) && !cell.includes(":")) {
+                let tripNum = cell;
+                let firstTime = null, firstStation = null, lastTime = null, lastStation = null;
+                for (let k = c + 1; k < cols.length; k++) {
+                    let nextCell = cleanTxt(k < cols.length ? cols[k] : "");
+                    if (/^\d{3,4}$/.test(nextCell) && !nextCell.includes(":")) break;
+                    if (/\d{1,2}:\d{2}(:\d{2})?/.test(nextCell)) {
+                        let stationName = cleanTxt(luxHeaders[k]) || 'محطة غير معروفة';
+                        if (!firstTime) { firstTime = nextCell; firstStation = stationName; }
+                        lastTime = nextCell; lastStation = stationName; 
+                    }
+                }
+                if (firstTime && lastTime) {
+                    luxorTripsMap[tripNum] = { depTime: firstTime, arrTime: lastTime, route: `من محطة ${firstStation} إلى محطة ${lastStation} (الأقصر)` };
+                }
+            }
+        }
+    }
+} catch(e) {}
+
+try {
+    const luxCercrlRes = await fetch(luxorCercrlURL);
+    const luxCercrlText = await luxCercrlRes.text();
+    const luxCercrlRows = luxCercrlText.split('\n').map(row => parseCSVRow(row));
+    const numRows = luxCercrlRows.length;
+    const numCols = luxCercrlRows[0] ? luxCercrlRows[0].length : 0;
+
+    for (let col = 0; col < numCols; col++) {
+        let prevCell = null;
+        for (let row = 0; row < numRows; row++) {
+            if (!luxCercrlRows[row] || luxCercrlRows[row][col] === undefined) continue;
+            let currentCell = cleanTxt(luxCercrlRows[row][col]);
+            if (currentCell === "") continue;
+
+            if (/^\d{3,4}$/.test(currentCell) && prevCell !== null) {
+                luxorIncomingMap[currentCell] = prevCell;
+            }
+            prevCell = currentCell;
+        }
+    }
+} catch(e) {}
+
+try {
+    const alexTripsRes = await fetch(alexTripsScheduleURL);
+    const alexLines = (await alexTripsRes.text()).split('\n');
+    let alexHeaders = parseCSVRow(alexLines[0]);
+
+    for(let i = 1; i < alexLines.length; i++) {
+        let cols = parseCSVRow(alexLines[i]);
+        if(cols.join('').trim() === '') continue;
+
+        for (let c = 0; c < cols.length; c++) {
+            let cell = cleanTxt(cols[c]);
+            if (/^\d{3,4}$/.test(cell) && !cell.includes(":")) {
+                let tripNum = cell;
+                let firstTime = null, firstStation = null, lastTime = null, lastStation = null;
+                for (let k = c + 1; k < cols.length; k++) {
+                    let nextCell = cleanTxt(k < cols.length ? cols[k] : "");
+                    if (/^\d{3,4}$/.test(nextCell) && !nextCell.includes(":")) break;
+                    if (/\d{1,2}:\d{2}(:\d{2})?/.test(nextCell)) {
+                        let stationName = cleanTxt(alexHeaders[k]) || 'محطة غير معروفة';
+                        if (!firstTime) { firstTime = nextCell; firstStation = stationName; }
+                        lastTime = nextCell; lastStation = stationName; 
+                    }
+                }
+                if (firstTime && lastTime) {
+                    alexTripsMap[tripNum] = { depTime: firstTime, arrTime: lastTime, route: `من محطة ${firstStation} إلى محطة ${lastStation} (الإسكندرية)` };
+                }
+            }
+        }
+    }
+} catch(e) {}
+
+try {
+    const alexCercrlRes = await fetch(alexCercrlURL);
+    const alexCercrlText = await alexCercrlRes.text();
+    const alexCercrlRows = alexCercrlText.split('\n').map(row => parseCSVRow(row));
+    const numRows = alexCercrlRows.length;
+    const numCols = alexCercrlRows[0] ? alexCercrlRows[0].length : 0;
+
+    for (let col = 0; col < numCols; col++) {
+        let prevCell = null;
+        for (let row = 0; row < numRows; row++) {
+            if (!alexCercrlRows[row] || alexCercrlRows[row][col] === undefined) continue;
+            let currentCell = cleanTxt(alexCercrlRows[row][col]);
+            if (currentCell === "") continue;
+
+            if (/^\d{3,4}$/.test(currentCell) && prevCell !== null) {
+                alexIncomingMap[currentCell] = prevCell;
+            }
+            prevCell = currentCell;
+        }
+    }
+} catch(e) {}
+
 
 const aswanRes = await fetch(aswanURL);
 const aswanLines = (await aswanRes.text()).split('\n');
@@ -988,7 +1248,6 @@ function autoProcessWhatsAppText(text) {
 
         if (hasChanges) {
             db.ref('rosterDataMap').set(rosterDataMap).then(() => {
-                console.log("تم تحديث الروستر وترتيبه سحابياً أوتوماتيكياً من الواتساب!");
                 if (currentDriver) {
                     buildDashboardData(currentDriver);
                 }
@@ -1052,96 +1311,6 @@ const luxorRaw = [
 { shift: "E24", trips: ["293", "310", "347", "364", "401"], handover: "N18" },
 { shift: "E25", trips: ["297", "314", "351", "368", "405"], handover: "N19" },
 { shift: "E26", trips: ["301", "318", "355", "372", "409"], handover: "N20" },
-{ shift: "E27", trips: ["268", "305", "322", "359", "376", "413"], handover: null },
-{ shift: "N01", trips: ["417"], handover: null },
-{ shift: "N02", trips: ["421", "434", "123"], handover: "M08" },
-{ shift: "N03", trips: ["425", "438", "139"], handover: "M26" },
-{ shift: "N04", trips: ["429", "104", "127"], handover: "M23" },
-{ shift: "N05", trips: ["408", "435", "108", "131"], handover: "M24" },
-{ shift: "N06", trips: ["412", "439", "101", "114"], handover: "M01" },
-{ shift: "N07", trips: ["416", "103", "116"], handover: "M15" },
-{ shift: "N08", trips: ["420", "107", "120"], handover: "M16" },
-{ shift: "N09", trips: ["424", "111", "124"], handover: "M17" },
-{ shift: "N10", trips: ["428", "115"], handover: "M06" },
-{ shift: "N11", trips: ["419", "432", "119"], handover: "M07" },
-{ shift: "N12", trips: ["423", "436", "125"], handover: "M22" },
-{ shift: "N13", trips: ["427", "440"], handover: null },
-{ shift: "N14", trips: ["431", "106", "129"], handover: "M10" },
-{ shift: "N15", trips: ["433", "102", "121"], handover: "M21" },
-{ shift: "N16", trips: ["410", "437", "110", "133"], handover: "M11" },
-{ shift: "N17", trips: ["414", "441", "112"], handover: "M14" },
-{ shift: "N18", trips: ["418", "105", "118"], handover: "M02" },
-{ shift: "N19", trips: ["422", "109", "122"], handover: "M03" },
-{ shift: "N20", trips: ["426", "113", "126"], handover: "M04" }
-];
-
-luxorRaw.forEach(item => {
-luxorDataMap[smartNormalize(item.shift)] = {
-tripNumbers: item.trips,
-handoverCode: item.handover ? smartNormalize(item.handover) : null
-};
-validShiftsSet.add(smartNormalize(item.shift));
-});
-}
-
-function loadAlexHardcodedData() {
-const alexRaw = [
-{ shift: "M01", trips: ["159", "178", "221", "236", "279", "298"], handover: "E01" },
-{ shift: "M02", trips: ["163", "182", "225", "240", "283", "302"], handover: "E02" },
-{ shift: "M03", trips: ["167", "186", "229", "244", "287"], handover: "E03" },
-{ shift: "M04", trips: ["171", "190", "233", "248", "291"], handover: "E04" },
-{ shift: "M05", trips: ["132", "175", "194", "237", "252", "295"], handover: "E05" },
-{ shift: "M06", trips: ["136", "179", "198", "241", "256", "299"], handover: "E06" },
-{ shift: "M07", trips: ["140", "183", "202", "245", "260", "303"], handover: "E07" },
-{ shift: "M08", trips: ["144", "187", "206", "249", "264"], handover: "E08" },
-{ shift: "M09", trips: ["148", "191", "210", "253", "268"], handover: "E09" },
-{ shift: "M10", trips: ["152", "195", "214", "257", "272"], handover: "E10" },
-{ shift: "M11", trips: ["141", "156", "199", "218", "261", "276"], handover: "E11" },
-{ shift: "M12", trips: ["145", "160", "203", "222", "265", "280"], handover: "E12" },
-{ shift: "M13", trips: ["149", "164", "207", "226", "269", "284"], handover: "E13" },
-{ shift: "M14", trips: ["153", "168", "211", "230", "273", "288"], handover: "E14" },
-{ shift: "M15", trips: ["157", "172", "215", "234", "277", "292"], handover: "E15" },
-{ shift: "M16", trips: ["161", "176", "219", "238", "281", "296"], handover: "E16" },
-{ shift: "M17", trips: ["165", "180", "223", "242", "285", "300"], handover: "E17" },
-{ shift: "M18", trips: ["169", "184", "227", "246", "289", "304"], handover: "E18" },
-{ shift: "M19", trips: ["130", "173", "188", "231", "250", "293"], handover: "E19" },
-{ shift: "M20", trips: ["134", "177", "192", "235", "254", "297"], handover: "E20" },
-{ shift: "M21", trips: ["138", "181", "196", "239", "258"], handover: "E21" },
-{ shift: "M22", trips: ["142", "185", "200", "243", "262"], handover: "E22" },
-{ shift: "M23", trips: ["144", "189", "204", "247", "266"], handover: "E23" },
-{ shift: "M24", trips: ["150", "193", "208", "251", "270"], handover: "E24" },
-{ shift: "M25", trips: ["154", "197", "212", "255", "274"], handover: "E25" },
-{ shift: "M26", trips: ["158", "201", "216", "259", "278"], handover: "E26" },
-{ shift: "M27", trips: ["143", "162", "205", "220", "263", "282"], handover: "E27" },
-{ shift: "M28", trips: ["147", "166", "209", "224", "267", "286"], handover: "E28" },
-{ shift: "M29", trips: ["151", "170", "213", "228", "271", "290"], handover: "E29" },
-{ shift: "M30", trips: ["155", "174", "217", "232", "275", "294"], handover: "E30" },
-{ shift: "E01", trips: ["341", "356", "399", "418", "461"], handover: "N02" },
-{ shift: "E02", trips: ["345", "360", "403", "422", "465"], handover: "N04" },
-{ shift: "E03", trips: ["306", "349", "364", "407", "426"], handover: null },
-{ shift: "E04", trips: ["310", "353", "368", "411", "430", "471"], handover: null },
-{ shift: "E05", trips: ["314", "357", "372", "415", "434", "475"], handover: null },
-{ shift: "E06", trips: ["318", "361", "376", "419", "438"], handover: "N10" },
-{ shift: "E07", trips: ["322", "365", "380", "423", "442"], handover: "N09" },
-{ shift: "E08", trips: ["307", "326", "369", "384", "427", "446"], handover: "N11" },
-{ shift: "E09", trips: ["311", "330", "373", "388", "431", "450"], handover: "N13" },
-{ shift: "E10", trips: ["315", "334", "377", "392", "435", "454"], handover: null },
-{ shift: "E11", trips: ["319", "338", "381", "396", "439", "456"], handover: "N16" },
-{ shift: "E12", trips: ["323", "342", "385", "400", "443", "460"], handover: null },
-{ shift: "E13", trips: ["327", "346", "389", "404", "447", "464"], handover: null },
-{ shift: "E14", trips: ["331", "350", "393", "408", "451"], handover: "N18" },
-{ shift: "E15", trips: ["335", "354", "397", "412", "455"], handover: "N20" },
-{ shift: "E16", trips: ["339", "358", "401", "416", "459"], handover: "N01" },
-{ shift: "E17", trips: ["343", "362", "405", "420", "463"], handover: "N03" },
-{ shift: "E18", trips: ["347", "366", "409", "424", "467"], handover: "N05" },
-{ shift: "E19", trips: ["308", "351", "370", "413", "428", "469"], handover: null },
-{ shift: "E20", trips: ["312", "355", "374", "417", "432", "473"], handover: null },
-{ shift: "E21", trips: ["301", "316", "359", "378", "421", "436"], handover: "N08" },
-{ shift: "E22", trips: ["305", "320", "363", "382", "425", "440"], handover: null },
-{ shift: "E23", trips: ["309", "324", "367", "386", "429", "444"], handover: "N12" },
-{ shift: "E24", trips: ["313", "328", "371", "390", "433", "448"], handover: "N14" },
-{ shift: "E25", trips: ["317", "332", "375", "394", "437", "452"], handover: "N15" },
-{ shift: "E26", trips: ["321", "336", "379", "398", "441", "458"], handover: "N17" },
 { shift: "E27", trips: ["325", "340", "383", "402", "445", "462"], handover: null },
 { shift: "E28", trips: ["329", "344", "387", "406", "449", "466"], handover: null },
 { shift: "E29", trips: ["333", "348", "391", "410", "453"], handover: "N19" },
@@ -1170,14 +1339,109 @@ const alexRaw = [
 { shift: "N22", trips: ["131"], handover: "M24" },
 { shift: "N23", trips: ["135"], handover: "M25" }
 ];
+luxorRaw.forEach(item => {
+luxorDataMap[smartNormalize(item.shift)] = { tripNumbers: item.trips, handoverCode: item.handover ? smartNormalize(item.handover) : null };
+validShiftsSet.add(smartNormalize(item.shift));
+});
+}
 
+function loadAlexHardcodedData() {
+const alexRaw = [
+{ shift: "M01", trips: ["245", "313", "190", "258", "177"], handover: "E01" },
+{ shift: "M02", trips: ["344", "199", "206", "263", "272"], handover: "E02" },
+{ shift: "M03", trips: ["259", "195", "204", "140", "268", "323"], handover: "E03" },
+{ shift: "M04", trips: ["279", "215", "151", "160", "224"], handover: "E23" },
+{ shift: "M05", trips: ["216", "152", "207", "271", "280"], handover: "E06" },
+{ shift: "M06", trips: ["297", "174", "229", "161", "242"], handover: "E07" },
+{ shift: "M07", trips: ["262", "126", "181", "194", "249"], handover: "E32" },
+{ shift: "M08", trips: ["203", "212", "267", "276", "148", "331"], handover: "E04" },
+{ shift: "M09", trips: ["163", "172", "227", "236", "291"], handover: "E05" },
+{ shift: "M10", trips: ["235", "180", "299", "244", "171"], handover: "E08" },
+{ shift: "M11", trips: ["301", "165", "238", "178", "245"], handover: "E09" },
+{ shift: "M12", trips: ["169", "237", "182", "250", "305"], handover: "E10" },
+{ shift: "M13", trips: ["275", "211", "147", "220", "156", "284"], handover: "E28" },
+{ shift: "M14", trips: ["130", "198", "266", "185", "253"], handover: "E11" },
+{ shift: "M15", trips: ["248", "303", "175", "239", "181"], handover: "E12" },
+{ shift: "M16", trips: ["256", "192", "247", "183", "128"], handover: "E29" },
+{ shift: "M17", trips: ["274", "261", "138", "193", "206"], handover: "E15" },
+{ shift: "M18", trips: ["136", "200", "191", "255", "254", "319"], handover: "E13" },
+{ shift: "M19", trips: ["145", "158", "213", "226", "281"], handover: "E14" },
+{ shift: "M20", trips: ["210", "197", "265", "142", "278"], handover: "E16" },
+{ shift: "M21", trips: ["214", "269", "282", "201", "146"], handover: "E18" },
+{ shift: "M22", trips: ["293", "238", "157", "170", "225"], handover: "E33" },
+{ shift: "M23", trips: ["176", "231", "240", "157", "304", "295"], handover: "E22" },
+{ shift: "M24", trips: ["150", "238", "205", "273", "286"], handover: "E31" },
+{ shift: "M25", trips: ["149", "217", "230", "162", "285"], handover: "E21" },
+{ shift: "M26", trips: ["154", "209", "222", "290", "277"], handover: "E19" },
+{ shift: "M27", trips: ["186", "241", "309", "173", "254"], handover: "E24" },
+{ shift: "M28", trips: ["187", "196", "251", "260", "315", "132"], handover: "E27" },
+{ shift: "M29", trips: ["159", "232", "168", "223", "287"], handover: "E26" },
+{ shift: "M30", trips: ["179", "188", "243", "252", "307"], handover: "E25" },
+{ shift: "M31", trips: ["166", "221", "234", "289", "153"], handover: "E17" },
+{ shift: "M32", trips: ["189", "202", "134", "257", "270"], handover: "E20" },
+{ shift: "M33", trips: ["283", "292", "155", "164", "219", "228"], handover: "E30" },
+
+{ shift: "E01", trips: ["326", "381", "394", "450", "455"], handover: "N03" },
+{ shift: "E02", trips: ["327", "391", "387", "451", "462"], handover: "N04" },
+{ shift: "E03", trips: ["332", "336", "396", "470", "459"], handover: "N01" },
+{ shift: "E04", trips: ["340", "395", "404", "466"], handover: "N11" },
+{ shift: "E05", trips: ["300", "355", "364", "419", "428"], handover: "N01" },
+{ shift: "E06", trips: ["335", "200", "408", "344", "463"], handover: "N21" },
+{ shift: "E07", trips: ["310", "365", "433", "444", "378"], handover: "N22" },
+{ shift: "E08", trips: ["308", "363", "372", "427", "438"], handover: "N15" },
+{ shift: "E09", trips: ["314", "369", "448", "437", "373"], handover: "N20" },
+{ shift: "E10", trips: ["318", "386", "441", "452", "334"], handover: "N16" },
+{ shift: "E11", trips: ["321", "389", "422", "452", "367", "312"], handover: "N12" },
+{ shift: "E12", trips: ["376", "431", "442"], handover: "N08" },
+{ shift: "E13", trips: ["328", "383", "392", "458", "447"], handover: "N07" },
+{ shift: "E14", trips: ["294", "349", "362", "437", "430"], handover: "N10" },
+{ shift: "E15", trips: ["329", "342", "397", "410", "465"], handover: "N13" },
+{ shift: "E16", trips: ["333", "346", "401", "414", "425"], handover: "N06" },
+{ shift: "E17", trips: ["302", "357", "370", "436"], handover: "N17" },
+{ shift: "E18", trips: ["337", "350", "405", "418", "471"], handover: "N09" },
+{ shift: "E19", trips: ["345", "358", "422", "413", "426"], handover: "N18" },
+{ shift: "E20", trips: ["325", "393", "461", "298", "353"], handover: "N05" },
+{ shift: "E21", trips: ["366", "432", "421", "368", "359"], handover: "N14" },
+{ shift: "E22", trips: ["423", "434", "483", "288", "343"], handover: "N02" },
+{ shift: "E23", trips: ["352", "456", "377", "390", "445"], handover: "N19" },
+{ shift: "E24", trips: ["322", "380", "316", "371", "435"], handover: null },
+{ shift: "E25", trips: ["446", "360", "296", "353", "415"], handover: null },
+{ shift: "E26", trips: ["424", "324", "379", "388", "443"], handover: null },
+{ shift: "E27", trips: ["454", "348", "403", "412", "467"], handover: null },
+{ shift: "E28", trips: ["320", "375", "384", "439", "311"], handover: null },
+{ shift: "E29", trips: ["347", "356", "411", "420", "473"], handover: null },
+{ shift: "E30", trips: ["341", "354", "409", "422", "330"], handover: null },
+{ shift: "E31", trips: ["398", "453", "317", "385"], handover: null },
+{ shift: "E32", trips: ["361", "374", "440", "429"], handover: null },
+{ shift: "E33", trips: ["306", "361", "374"], handover: null },
+
+{ shift: "N01", trips: ["511", "474", "484", "519"], handover: "M09" },
+{ shift: "N02", trips: ["507", "509", "478", "480"], handover: "M11" },
+{ shift: "N03", trips: ["515", "482", "517", "476"], handover: "M08" },
+{ shift: "N04", trips: ["486", "513", "488", "490"], handover: "M05" },
+{ shift: "N05", trips: ["492", "494", "497", "504"], handover: "M24" },
+{ shift: "N06", trips: ["499", "506", "505", "512"], handover: "M02" },
+{ shift: "N07", trips: ["508", "510", "501", "508"], handover: "M06" },
+{ shift: "N08", trips: ["496", "489", "498", "491"], handover: "M23" },
+{ shift: "N09", trips: ["500", "495", "502", "105"], handover: "M12" },
+{ shift: "N10", trips: ["112", "114", "107", "75"], handover: "M27" },
+{ shift: "N11", trips: ["106", "108", "101", "143"], handover: "M15" },
+{ shift: "N12", trips: ["102", "110", "103", "109"], handover: "M30" },
+{ shift: "N13", trips: ["118", "115", "113", "120"], handover: "M14" },
+{ shift: "N14", trips: ["115", "122", "124", "117"], handover: "M28" },
+{ shift: "N15", trips: ["119", "121", "123", "125"], handover: "M32" },
+{ shift: "N16", trips: ["127", "129", "131", "133"], handover: "M18" },
+{ shift: "N17", trips: ["141", "139", "104", "137"], handover: "M17" },
+{ shift: "N18", trips: ["135"], handover: "M20" },
+{ shift: "N19", trips: ["116"], handover: "M03" },
+{ shift: "N20", trips: ["121"], handover: "M21" },
+{ shift: "N21", trips: ["123"], handover: "M26" },
+{ shift: "N22", trips: ["125"], handover: "M31" }
+];
 alexRaw.forEach(item => {
 let shiftName = item.shift || item.sign;
 if (shiftName) {
-    alexDataMap[smartNormalize(shiftName)] = {
-        tripNumbers: item.trips,
-        handoverCode: item.handover ? smartNormalize(item.handover) : null
-    };
+    alexDataMap[smartNormalize(shiftName)] = { tripNumbers: item.trips, handoverCode: item.handover ? smartNormalize(item.handover) : null };
     validShiftsSet.add(smartNormalize(shiftName));
 }
 });
@@ -1212,15 +1476,8 @@ const rId = smartNormalize(document.getElementById('regRadioId').value);
 const pass = document.getElementById('regPassword').value.trim();
 const name = document.getElementById('regDriverName').value.trim();
 
-if(!rId || !pass) {
-    alert('يرجى كتابة رقم الراديو وكلمة المرور أولاً!');
-    return;
-}
-
-if(name === 'قائد القطار غير موجود' || !name) {
-    alert('رقم الراديو غير متوفر بقاعدة البيانات!');
-    return;
-}
+if(!rId || !pass) { alert('يرجى كتابة رقم الراديو وكلمة المرور أولاً!'); return; }
+if(name === 'قائد القطار غير موجود' || !name) { alert('رقم الراديو غير متوفر بقاعدة البيانات!'); return; }
 
 let localAccounts = JSON.parse(localStorage.getItem('localAccounts') || '{}');
 localAccounts[rId] = { password: pass, name: name };
@@ -1239,16 +1496,10 @@ function login() {
     const passVal = document.getElementById('loginPassword').value.trim();
     const rememberMe = document.getElementById('rememberMeCheck').checked;
 
-    if (!userVal) {
-        alert('يرجى إدخال رقم الراديو أولاً!');
-        return;
-    }
+    if (!userVal) { alert('يرجى إدخال رقم الراديو أولاً!'); return; }
 
-    if (rememberMe) {
-        localStorage.setItem('savedRadioId', userVal);
-    } else {
-        localStorage.removeItem('savedRadioId');
-    }
+    if (rememberMe) { localStorage.setItem('savedRadioId', userVal); } 
+    else { localStorage.removeItem('savedRadioId'); }
 
     if (userVal.toLowerCase() === 'admin') {
         if (passVal === '123456') {
@@ -1266,22 +1517,12 @@ function login() {
     let localAccounts = JSON.parse(localStorage.getItem('localAccounts') || '{}');
     let driver = null;
 
-    if (localAccounts[rId]) {
-        driver = driversData.find(d => d.radioId === rId);
-    }
-
-    if (!driver) {
-        driver = driversData.find(d => d.radioId === rId);
-    }
+    if (localAccounts[rId]) { driver = driversData.find(d => d.radioId === rId); }
+    if (!driver) { driver = driversData.find(d => d.radioId === rId); }
 
     if (driver || driversData.length > 0) {
         if (!driver) {
-            driver = {
-                radioId: rId,
-                serviceId: 'RDM01',
-                rawServiceId: 'RDM01',
-                name: 'كابتن ' + userVal
-            };
+            driver = { radioId: rId, serviceId: 'RDM01', rawServiceId: 'RDM01', name: 'كابتن ' + userVal };
         }
 
         currentDriver = driver;
@@ -1306,9 +1547,7 @@ function switchSwapSubTab(subTabId) {
     document.getElementById('sub-tab-' + subTabId).classList.remove('hidden-section');
     document.getElementById('btn-sub-' + (subTabId === 'dailySwap' ? 'daily' : 'weekly')).className = "flex-1 py-2 font-bold text-sm bg-blue-600 text-white rounded-t-xl transition-all";
 
-    if(subTabId === 'weeklySwap') {
-        loadWeeklyBlockSwap();
-    }
+    if(subTabId === 'weeklySwap') { loadWeeklyBlockSwap(); }
 }
 
 function compareDailySwaps() {
@@ -1322,7 +1561,6 @@ function compareDailySwaps() {
     }
 
     const dayNum = parseInt(dateVal.split('-')[2], 10);
-    
     const targetDriver = driversData.find(d => 
         d.serviceId.toLowerCase().includes(targetQuery) || 
         d.rawServiceId.toLowerCase().includes(targetQuery) || 
@@ -1347,7 +1585,6 @@ function compareDailySwaps() {
         `- مرسل من نظام إدارة قائدي القطارات.`;
 
     const encodedMsg = encodeURIComponent(swapText);
-
     const atabaPhone = "+201149076809";
     const adlyPhone = "+201157422561";
     const dispatcherPhone = "+201125807602";
@@ -1365,22 +1602,14 @@ function compareDailySwaps() {
                 <p class="text-xs text-gray-500 mt-1 font-mono">رقم التشغيل: ${targetDriver.rawServiceId}</p>
             </div>
         </div>
-
         <div class="p-4 bg-gray-50 dark:bg-gray-700/50 rounded-xl border space-y-3">
             <label class="block text-xs font-bold text-gray-700 dark:text-gray-300">📝 معاينة رسالة المبادلة الجاهزة للإرسال:</label>
             <textarea readonly rows="4" class="w-full p-3 text-xs font-mono bg-white dark:bg-gray-800 border rounded-lg">${swapText}</textarea>
-            
             <p class="text-xs font-bold text-gray-600 dark:text-gray-400">إرسال الرسالة مباشرة عبر واتساب إلى:</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <a href="https://api.whatsapp.com/send?phone=${atabaPhone}&text=${encodedMsg}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow">
-                    💬 مكتب العتبة
-                </a>
-                <a href="https://api.whatsapp.com/send?phone=${adlyPhone}&text=${encodedMsg}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow">
-                    💬 مكتب عدلي
-                </a>
-                <a href="https://api.whatsapp.com/send?phone=${dispatcherPhone}&text=${encodedMsg}" target="_blank" class="bg-emerald-600 hover:bg-emerald-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow">
-                    💬 الديسباتشر
-                </a>
+                <a href="https://api.whatsapp.com/send?phone=${atabaPhone}&text=${encodedMsg}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow">💬 مكتب العتبة</a>
+                <a href="https://api.whatsapp.com/send?phone=${adlyPhone}&text=${encodedMsg}" target="_blank" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow">💬 مكتب عدلي</a>
+                <a href="https://api.whatsapp.com/send?phone=${dispatcherPhone}&text=${encodedMsg}" target="_blank" class="bg-emerald-600 hover:bg-emerald-600 text-white font-bold py-2 px-3 rounded-xl text-xs flex items-center justify-center gap-1 shadow">💬 الديسباتشر</a>
             </div>
         </div>
     `;
@@ -1401,9 +1630,7 @@ function loadWeeklyBlockSwap() {
 
     let restDays = [0];
     for (let d = 1; d <= 31; d++) {
-        if (isRestDay(myRoster[d])) {
-            restDays.push(d);
-        }
+        if (isRestDay(myRoster[d])) { restDays.push(d); }
     }
     restDays.push(32);
 
@@ -1416,13 +1643,7 @@ function loadWeeklyBlockSwap() {
 
         if (start <= end && start <= 31) {
             if (end > 31) end = 31;
-            blocks.push({ 
-                blockIndex: blocks.length + 1, 
-                start, 
-                end,
-                startRestDay,
-                endRestDay
-            });
+            blocks.push({ blockIndex: blocks.length + 1, start, end, startRestDay, endRestDay });
         }
     }
 
@@ -1433,6 +1654,9 @@ function loadWeeklyBlockSwap() {
         blocks.push({ blockIndex: 4, start: 22, end: 31, startRestDay: 21, endRestDay: 32 });
     }
 
+    const dateVal = document.getElementById('swapDailyDate').value || getTodayYYYYMMDD();
+    const currentMonthName = getMonthNameAr(dateVal); // 🌟 إدخال الشهر الديناميكي هنا
+
     let html = `
         <div class="mb-4">
             <p class="text-xs font-bold text-gray-600 dark:text-gray-400 mb-2">اختر البلوك الأسبوعي (من ريست لريست) لاستعراض قائدي القطارات المطابقين لإجازتك:</p>
@@ -1441,7 +1665,7 @@ function loadWeeklyBlockSwap() {
 
     blocks.forEach((b, idx) => {
         let activeClass = idx === 0 ? 'bg-purple-600 text-white shadow' : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300';
-        html += `<button onclick="selectWeeklyBlock(${b.start}, ${b.end}, ${b.startRestDay}, ${b.endRestDay}, this)" class="px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeClass}">البلوك ${b.blockIndex} (من ${b.start} إلى ${b.end} يوليو)</button>`;
+        html += `<button onclick="selectWeeklyBlock(${b.start}, ${b.end}, ${b.startRestDay}, ${b.endRestDay}, this)" class="px-4 py-2 rounded-xl text-xs font-bold transition-all ${activeClass}">البلوك ${b.blockIndex} (من ${b.start} إلى ${b.end} ${currentMonthName})</button>`;
     });
 
     html += `</div></div><div id="blockDriversContent" class="mt-4 space-y-3"></div>`;
@@ -1464,9 +1688,12 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
     let myServiceId = smartNormalize(currentDriver.serviceId);
     let myRoster = rosterDataMap[myServiceId] || {};
 
+    const dateVal = document.getElementById('swapDailyDate').value || getTodayYYYYMMDD();
+    const currentMonthName = getMonthNameAr(dateVal); // 🌟 إدخال الشهر الديناميكي هنا
+
     let matchingHTML = `
         <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 text-xs font-bold text-purple-800 dark:text-purple-300 mb-3 flex justify-between items-center">
-            <span>🎯 قادة القطارات المطابقون لإجازتك في هذا البلوك (من يوم ${start} إلى يوم ${end} يوليو):</span>
+            <span>🎯 قادة القطارات المطابقون لإجازتك في هذا البلوك (من يوم ${start} إلى يوم ${end} ${currentMonthName}):</span>
         </div>
         <div class="space-y-3">
     `;
@@ -1503,12 +1730,12 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
                 `السلام عليكم، طلب مبادلة أسبوعية:\n` +
                 `- مقدم الطلب: كابتن ${myName} (تشغيل: ${myCode}) - الشفت: ${sampleMyShift}\n` +
                 `- مع الزميل: كابتن ${d.name} (تشغيل: ${d.rawServiceId}) - الشفت: ${sampleColleagueShift}\n` +
-                `- فترة البلوك: من يوم ${start} إلى يوم ${end} يوليو\n` +
+                `- فترة البلوك: من يوم ${start} إلى يوم ${end} ${currentMonthName}\n` +
                 `- مرسل من نظام إدارة قائدي القطارات.`
             );
 
             let captainWaMsg = encodeURIComponent(
-                `السلام عليكم كابتن ${d.name}، بخصوص بلوك العمل من يوم ${start} ليوم ${end} يوليو (معي شفت ${sampleMyShift} ومعك شفت ${sampleColleagueShift}), هل متاح نعمل مبادلة أسبوعية؟`
+                `السلام عليكم كابتن ${d.name}، بخصوص بلوك العمل من يوم ${start} ليوم ${end} ${currentMonthName} (معي شفت ${sampleMyShift} ومعك شفت ${sampleColleagueShift}), هل متاح نعمل مبادلة أسبوعية؟`
             );
 
             matchingHTML += `
@@ -1518,7 +1745,6 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
                             <span class="bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 font-mono text-xs font-bold px-2.5 py-1 rounded-md">تشغيل: ${d.rawServiceId}</span>
                             <span class="font-black text-gray-900 dark:text-white text-sm">${d.name}</span>
                         </div>
-                        
                         <div class="text-[11px] bg-white dark:bg-gray-800 px-3 py-1.5 rounded-lg border font-mono flex gap-1 items-center flex-wrap">
                             <span class="text-gray-400 ms-1">الحلقات:</span>
             `;
@@ -1529,9 +1755,7 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
                 matchingHTML += `<span class="px-1.5 py-0.5 rounded text-[10px] font-bold ${badgeColor}">${sh}</span>`;
             }
 
-            matchingHTML += `</div></div>`;
-
-            matchingHTML += `<div class="flex items-center gap-2 flex-wrap pt-2 border-t dark:border-gray-600">`;
+            matchingHTML += `</div></div><div class="flex items-center gap-2 flex-wrap pt-2 border-t dark:border-gray-600">`;
             
             if (phoneNum) {
                 matchingHTML += `<a href="https://api.whatsapp.com/send?phone=${waPhone}&text=${captainWaMsg}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-xs font-bold shadow flex items-center gap-1">💬 واتساب الكابتن</a>`;
@@ -1638,59 +1862,107 @@ function closeTechSupportModal() {
 
 function searchByTripCode() {
     const query = document.getElementById('tripCodeInput').value.trim();
+    const dateVal = document.getElementById('tripSearchDateInput').value;
     const resultBox = document.getElementById('tripSearchResultBox');
     
     if (!query) {
-        resultBox.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">اكتب رمز الوردية أو رقم الرحلة في الأعلى لعرض المحتويات والمواعيد...</div>';
+        resultBox.innerHTML = '<div class="text-center text-gray-400 py-8 text-sm">حدد التاريخ واكتب رمز الوردية لعرض تفاصيل الرحلات وقائد القطار...</div>';
+        return;
+    }
+
+    if (!dateVal) {
+        resultBox.innerHTML = '<div class="text-center text-red-500 py-8 text-sm font-bold">⚠️ يرجى اختيار تاريخ البحث أولاً!</div>';
         return;
     }
 
     const normQuery = smartNormalize(query);
-    let shiftData = luxorDataMap[normQuery] || aswanDataMap[normQuery] || alexDataMap[normQuery];
+    const dayNum = parseInt(dateVal.split('-')[2], 10); 
+    const currentMonthName = getMonthNameAr(dateVal); // 🌟 إدخال الشهر الديناميكي هنا
+
+    let scheduleRaw = schedulesByDay[dayNum] || "WD-447-[SIWA]";
+    let scheduleName = scheduleNameDisplay(scheduleRaw);
+    let upperSch = scheduleRaw.toUpperCase();
+    
+    let isLuxorActive = upperSch.includes("LUXOR") || upperSch.includes("WE");
+    let isAlexActive = upperSch.includes("ALEX") || upperSch.includes("ST");
+    
+    let activeDataMap = isLuxorActive ? luxorDataMap : (isAlexActive ? alexDataMap : aswanDataMap);
+    let activeTripsMap = isLuxorActive ? luxorTripsMap : (isAlexActive ? alexTripsMap : siwaTripsMap);
+    
+    let shiftData = activeDataMap[normQuery];
+
+    let assignedDriver = null;
+    for (let i = 0; i < driversData.length; i++) {
+        let d = driversData[i];
+        let dRoster = rosterDataMap[smartNormalize(d.serviceId)];
+        if (dRoster && smartNormalize(dRoster[dayNum]) === normQuery) {
+            assignedDriver = d;
+            break;
+        }
+    }
+
+    let driverHTML = '';
+    if (assignedDriver) {
+        let phoneNum = assignedDriver.phone && assignedDriver.phone !== 'غير متوفر' ? assignedDriver.phone : '';
+        driverHTML = `
+            <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-xl border border-blue-200 dark:border-blue-700 mb-4 flex flex-col md:flex-row justify-between items-center gap-3 shadow-sm">
+                <div>
+                    <h5 class="font-black text-blue-800 dark:text-blue-300 text-sm mb-1">👨‍✈️ قائد القطار المعين يوم (${dayNum} ${currentMonthName}):</h5>
+                    <p class="text-lg font-bold text-gray-900 dark:text-white">${assignedDriver.name}</p>
+                    <p class="text-xs text-gray-500 font-mono mt-1">تشغيل: ${assignedDriver.rawServiceId} | راديو: ${assignedDriver.radioId}</p>
+                </div>
+                ${phoneNum ? `
+                <div class="flex gap-2">
+                    <a href="tel:${phoneNum}" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-1 shadow">📞 اتصال</a>
+                    <a href="https://api.whatsapp.com/send?phone=${phoneNum.startsWith('0') ? '2' + phoneNum : '20' + phoneNum}" target="_blank" class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg font-bold text-xs flex items-center gap-1 shadow">💬 واتساب</a>
+                </div>` : '<span class="text-xs text-gray-400 font-bold bg-white dark:bg-gray-800 px-3 py-1.5 rounded-lg border">لا يوجد رقم مسجل</span>'}
+            </div>
+        `;
+    } else {
+        driverHTML = `
+            <div class="bg-gray-100 dark:bg-gray-700/50 p-4 rounded-xl border border-gray-300 dark:border-gray-600 mb-4 text-center shadow-sm">
+                <p class="text-sm font-bold text-gray-600 dark:text-gray-300">🤷‍♂️ لم يتم العثور على قائد قطار مسجل لهذه الوردية في يومية ${dayNum} ${currentMonthName}.</p>
+            </div>
+        `;
+    }
 
     if (shiftData && shiftData.tripNumbers) {
         let tripsHTML = `<div class="bg-purple-50 dark:bg-purple-900/30 p-5 rounded-2xl border border-purple-200 dark:border-purple-700 text-right shadow-sm space-y-3">
-            <h4 class="font-black text-lg text-purple-700 dark:text-purple-300 border-b pb-2">🚆 محتويات ورحلات الوردية (${query.toUpperCase()})</h4>
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">`;
+            <div class="flex justify-between items-center border-b border-purple-200 dark:border-purple-700 pb-3">
+                <h4 class="font-black text-lg text-purple-800 dark:text-purple-300">🚆 محتويات وردية (${query.toUpperCase()})</h4>
+                <span class="bg-purple-200 text-purple-800 text-xs font-bold px-3 py-1 rounded-full">الجدول: ${scheduleName}</span>
+            </div>
+            ${driverHTML}
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">`;
         
         shiftData.tripNumbers.forEach((tNum, idx) => {
-            let match = tripsScheduleMap[tNum];
+            let match = activeTripsMap[tNum]; 
             let dep = match ? match.depTime : '---';
             let arr = match ? match.arrTime : '---';
-            let route = match ? match.route : 'مسار تشغيل الخط الثالث';
+            let route = match ? match.route : 'مسار غير معروف';
+            
             tripsHTML += `
-                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border shadow-sm">
+                <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border shadow-sm hover:shadow-md transition-shadow">
                     <div class="flex justify-between font-bold text-sm mb-1">
-                        <span class="text-blue-600">رحلة رقم: ${tNum}</span>
-                        <span class="text-xs text-gray-400">#${idx + 1}</span>
+                        <span class="text-blue-600 dark:text-blue-400">رحلة رقم: <span class="text-lg">${tNum}</span></span>
+                        <span class="text-xs text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">#${idx + 1}</span>
                     </div>
-                    <div class="text-[11px] text-gray-500 dark:text-gray-400 mb-1"><b>الاتجاه:</b> ${route}</div>
-                    <div class="grid grid-cols-2 gap-1 text-center text-xs">
-                        <div class="bg-green-50 text-green-700 p-1 rounded">🟢 القيام: ${dep}</div>
-                        <div class="bg-red-50 text-red-700 p-1 rounded">🔴 الوصول: ${arr}</div>
+                    <div class="text-[11px] font-bold text-gray-500 dark:text-gray-400 mb-2 p-1.5 bg-gray-50 dark:bg-gray-900 rounded border">🛤️ ${route}</div>
+                    <div class="grid grid-cols-2 gap-2 text-center text-xs">
+                        <div class="bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 p-1.5 rounded border border-green-100 dark:border-green-800">🟢 قيام: <b>${dep}</b></div>
+                        <div class="bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 p-1.5 rounded border border-red-100 dark:border-red-800">🔴 وصول: <b>${arr}</b></div>
                     </div>
                 </div>
             `;
         });
         tripsHTML += `</div></div>`;
         resultBox.innerHTML = tripsHTML;
-    } else if (tripsScheduleMap[query]) {
-        let match = tripsScheduleMap[query];
-        resultBox.innerHTML = `
-            <div class="bg-purple-50 dark:bg-purple-900/30 p-5 rounded-2xl border border-purple-200 dark:border-purple-700 text-right shadow-sm">
-                <h4 class="font-black text-base text-purple-700 dark:text-purple-300 mb-3 border-b pb-2">🚆 تفاصيل رحلة رقم (${query})</h4>
-                <div class="grid grid-cols-2 gap-3 mb-3">
-                    <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border"><b>🟢 القيام:</b> <span class="text-green-600 font-bold">${match.depTime}</span></div>
-                    <div class="bg-white dark:bg-gray-800 p-3 rounded-xl border"><b>🔴 الوصول:</b> <span class="text-red-600 font-bold">${match.arrTime}</span></div>
-                </div>
-                <p class="text-xs text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 p-3 rounded-xl border"><b>🛤️ المسار والاتجاه:</b> ${match.route}</p>
-            </div>
-        `;
     } else {
         resultBox.innerHTML = `
-            <div class="bg-amber-50 dark:bg-amber-900/20 p-5 rounded-2xl border border-amber-200 text-right shadow-sm">
-                <h4 class="font-black text-base text-amber-700 dark:text-amber-400 mb-1">⚠️ عذراً</h4>
-                <p class="text-xs text-gray-600 dark:text-gray-300">لم يتم العثور على رحلات مسجلة لهذا الرمز أو الرقم (${query}).</p>
+            <div class="bg-amber-50 dark:bg-amber-900/20 p-5 rounded-2xl border border-amber-200 text-center shadow-sm">
+                <span class="text-3xl block mb-2">⚠️</span>
+                <h4 class="font-black text-base text-amber-800 dark:text-amber-400 mb-1">الوردية غير موجودة</h4>
+                <p class="text-sm text-gray-600 dark:text-gray-300">الرمز (${query.toUpperCase()}) غير مسجل في جدول (<b>${scheduleName}</b>) المطبق يوم ${dayNum}.</p>
             </div>
         `;
     }
@@ -1740,13 +2012,10 @@ function renderLineMapStations(filter = '') {
             </div>
         `;
     });
-
     container.innerHTML = html;
 }
 
-function filterLineMap() {
-    renderLineMapStations(document.getElementById('mapSearchInput').value);
-}
+function filterLineMap() { renderLineMapStations(document.getElementById('mapSearchInput').value); }
 
 function buildDashboardData(driver) {
 renderDailyDetails();
@@ -1804,16 +2073,24 @@ let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST");
 
 let myShiftData = null;
 let scheduleTypeName = "";
+let activeTripsMap = {};
+let activeIncomingMap = {};
 
 if (isLuxor) {
 myShiftData = luxorDataMap[normShift];
 scheduleTypeName = "الأقصر";
+activeTripsMap = luxorTripsMap;
+activeIncomingMap = luxorIncomingMap;
 } else if (isSiwa) {
 myShiftData = aswanDataMap[normShift];
 scheduleTypeName = "سيوة";
+activeTripsMap = siwaTripsMap;
+activeIncomingMap = siwaIncomingMap;
 } else if (isAlex) {
 myShiftData = alexDataMap[normShift];
 scheduleTypeName = "الإسكندرية (الكس)";
+activeTripsMap = alexTripsMap; 
+activeIncomingMap = alexIncomingMap;
 } else {
 let schedDisp = scheduleNameDisplay(scheduleRaw);
 return `<div class="text-center py-6 font-bold bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 text-amber-700 dark:text-amber-400"><span class="text-2xl block mb-1">⚠️</span><p class="text-sm">عذراً، جدول (${schedDisp}) غير متوفر في قاعدة البيانات حالياً.</p></div>`;
@@ -1823,18 +2100,21 @@ if (myShiftData && myShiftData.tripNumbers && myShiftData.tripNumbers.length > 0
 let tripsHTML = '';
 
 myShiftData.tripNumbers.forEach((tNum, index) => {
-let scheduleMatch = tripsScheduleMap[tNum];
+let scheduleMatch = activeTripsMap[tNum];
 let dep = scheduleMatch ? scheduleMatch.depTime : '---';
 let arr = scheduleMatch ? scheduleMatch.arrTime : '---';
 let route = scheduleMatch ? scheduleMatch.route : 'مسار تشغيل الخط الثالث';
 
-let incomingCode = incomingTripsMap[tNum] || 'غير محدد';
+let incomingCode = activeIncomingMap[tNum] || 'غير محدد';
 let incomingTime = '---';
-if (/^\d{3,4}$/.test(incomingCode) && tripsScheduleMap[incomingCode]) {
-    incomingTime = tripsScheduleMap[incomingCode].arrTime;
+if (/^\d{3,4}$/.test(incomingCode) && activeTripsMap[incomingCode]) {
+    incomingTime = activeTripsMap[incomingCode].arrTime;
 } else if (incomingCode !== 'غير محدد') {
     incomingTime = 'تخزين / سكة';
 }
+
+// 🌟 استدعاء رقم الوحدة المحفوظ سابقاً (إن وُجد)
+let savedUnit = localStorage.getItem('unit_' + tNum) || '';
 
 tripsHTML += `
 <div class="flex flex-col p-4 bg-white dark:bg-gray-800 rounded-xl border shadow-sm mb-3">
@@ -1845,6 +2125,15 @@ tripsHTML += `
         </span>
     </div>
     
+    <!-- 🌟 المربع الجديد الخاص برقم الوحدة -->
+    <div class="mb-3 bg-gray-50 dark:bg-gray-700/80 p-2 rounded-lg flex items-center justify-between gap-2 border border-gray-200 dark:border-gray-600 shadow-inner">
+        <label class="text-[11px] font-black text-gray-700 dark:text-gray-300">رقم الوحدة (Train Unit):</label>
+        <div class="flex gap-1.5 w-full sm:w-auto">
+            <input type="text" id="unitInput_${tNum}" value="${savedUnit}" class="w-full sm:w-24 px-2 py-1 text-xs font-bold text-center border rounded-md bg-white dark:bg-gray-900 text-blue-700 dark:text-blue-400 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="مثال: 7031">
+            <button onclick="saveUnitNumber('${tNum}')" class="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-md text-xs font-bold shadow-md transition-all">✔️ حفظ</button>
+        </div>
+    </div>
+
     <div class="bg-amber-50 dark:bg-amber-900/20 p-2.5 rounded-lg border border-amber-200 mb-3 flex justify-between items-center text-xs shadow-inner">
         <span class="font-bold text-amber-800 dark:text-amber-400 flex items-center gap-1">
             <span>⬅️ القطار قادم بـ:</span> 
@@ -1852,7 +2141,6 @@ tripsHTML += `
         </span>
         <span class="font-bold text-amber-700 dark:text-amber-500 bg-white dark:bg-gray-800 px-2 py-1 rounded border dark:border-gray-600">وصول: ${incomingTime}</span>
     </div>
-
     <div class="text-sm font-bold text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 p-2 rounded-lg mb-2 text-center">
         🛤️ الاتجاه: <span class="text-purple-600">${route}</span>
     </div>
@@ -1876,10 +2164,7 @@ if (handoverCode) {
 for (let i = 0; i < driversData.length; i++) {
 let d = driversData[i];
 let dRoster = rosterDataMap[smartNormalize(d.serviceId)];
-if (dRoster && smartNormalize(dRoster[dayNum]) === handoverCode) {
-handoverDriverName = d.name;
-break;
-}
+if (dRoster && smartNormalize(dRoster[dayNum]) === handoverCode) { handoverDriverName = d.name; break; }
 }
 }
 
@@ -1907,6 +2192,9 @@ let container = document.getElementById('fullMonthContainer');
 if(!container) return;
 let html = '';
 
+const dateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
+const currentMonthName = getMonthNameAr(dateVal); // 🌟 إدخال الشهر الديناميكي هنا
+
 for (let d = 1; d <= 31; d++) {
 let shiftCode = driverRoster[d] || 'راحة';
 let scheduleRaw = schedulesByDay[d] || "WD-447-[SIWA]";
@@ -1916,7 +2204,7 @@ let normShift = smartNormalize(shiftCode);
 let dayContent = generateDayTripsHTML(d, shiftCode, normShift, scheduleRaw, driverRoster);
 let isRest = (shiftCode === 'راحة' || shiftCode === 'R' || shiftCode.includes('OFF'));
 
-html += `<div class="p-5 rounded-2xl border bg-white dark:bg-gray-800 shadow-sm border-gray-200 dark:border-gray-700"><div class="flex justify-between items-center border-b pb-3 mb-3"><span class="text-lg font-black text-green-600">📅 يوم ${d} يوليو</span><div class="flex gap-2"><span class="px-3 py-1 rounded-lg text-sm font-bold ${isRest ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'}">وردية: ${shiftCode}</span><span class="px-3 py-1 rounded-lg text-sm font-bold bg-purple-100 text-purple-700">الجدول: ${scheduleName}</span></div></div><div>${dayContent}</div></div>`;
+html += `<div class="p-5 rounded-2xl border bg-white dark:bg-gray-800 shadow-sm border-gray-200 dark:border-gray-700"><div class="flex justify-between items-center border-b pb-3 mb-3"><span class="text-lg font-black text-green-600">📅 يوم ${d} ${currentMonthName}</span><div class="flex gap-2"><span class="px-3 py-1 rounded-lg text-sm font-bold ${isRest ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'}">وردية: ${shiftCode}</span><span class="px-3 py-1 rounded-lg text-sm font-bold bg-purple-100 text-purple-700">الجدول: ${scheduleName}</span></div></div><div>${dayContent}</div></div>`;
 }
 container.innerHTML = html;
 }
@@ -1928,30 +2216,16 @@ function openPdfModal(docType) {
     const loading = document.getElementById('pdfLoadingState');
     const titleEl = document.getElementById('pdfModalTitle');
 
-    const titles = {
-        'faults': '🛠️ أعطال وحدات متحركة',
-        'sop': '📖 إجراءات التشغيل القياسية (SOP)',
-        'instructions': '📜 تعليمات تشغيل'
-    };
-
+    const titles = { 'faults': '🛠️ أعطال وحدات متحركة', 'sop': '📖 إجراءات التشغيل القياسية (SOP)', 'instructions': '📜 تعليمات تشغيل' };
     titleEl.textContent = titles[docType] || 'استعراض المستند';
-    modal.classList.remove('hidden-section');
-    frame.classList.add('hidden-section');
-    loading.classList.remove('hidden-section');
+    modal.classList.remove('hidden-section'); frame.classList.add('hidden-section'); loading.classList.remove('hidden-section');
     loading.innerHTML = "⏳ جاري تحميل المستند من السيرفر السحابي...";
 
     db.ref('documents/' + docType).once('value').then(snapshot => {
         const pdfBase64 = snapshot.val();
-        if (pdfBase64) {
-            frame.src = pdfBase64;
-            loading.classList.add('hidden-section');
-            frame.classList.remove('hidden-section');
-        } else {
-            loading.innerHTML = "⚠️ لم يتم رفع هذا المستند بعد من قبل الأدمن.";
-        }
-    }).catch(err => {
-        loading.innerHTML = "⚠️ حدث خطأ أثناء تحميل المستند: " + err.message;
-    });
+        if (pdfBase64) { frame.src = pdfBase64; loading.classList.add('hidden-section'); frame.classList.remove('hidden-section'); } 
+        else { loading.innerHTML = "⚠️ لم يتم رفع هذا المستند بعد من قبل الأدمن."; }
+    }).catch(err => { loading.innerHTML = "⚠️ حدث خطأ أثناء تحميل المستند: " + err.message; });
 }
 
 function closePdfModal() {
@@ -1964,10 +2238,7 @@ function uploadDocumentPdf(docType) {
     const fileInput = document.getElementById(inputId);
     const file = fileInput ? fileInput.files[0] : null;
 
-    if (!file || file.type !== "application/pdf") {
-        alert("يرجى اختيار ملف PDF صحيح أولاً!");
-        return;
-    }
+    if (!file || file.type !== "application/pdf") { alert("يرجى اختيار ملف PDF صحيح أولاً!"); return; }
 
     const msgEl = document.getElementById('docUploadMsg');
     msgEl.textContent = "⏳ جاري تحويل ورفع الملف للسيرفر السحابي...";
@@ -1976,11 +2247,8 @@ function uploadDocumentPdf(docType) {
     reader.onload = function(e) {
         const base64Data = e.target.result;
         db.ref('documents/' + docType).set(base64Data).then(() => {
-            msgEl.textContent = "🌐✅ تم رفع وتحديث المستند سحابياً بنجاح!";
-            fileInput.value = "";
-        }).catch(err => {
-            msgEl.textContent = "⚠️ حدث خطأ في الرفع: " + err.message;
-        });
+            msgEl.textContent = "🌐✅ تم رفع وتحديث المستند سحابياً بنجاح!"; fileInput.value = "";
+        }).catch(err => { msgEl.textContent = "⚠️ حدث خطأ في الرفع: " + err.message; });
     };
     reader.readAsDataURL(file);
 }
@@ -2006,7 +2274,15 @@ function switchAdminSection(section) {
 function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('hidden'); }
 function openContactModal() { toggleSettings(); document.getElementById('contactModal').classList.remove('hidden-section'); }
 function closeContactModal() { document.getElementById('contactModal').classList.add('hidden-section'); }
-function logout() { location.reload(); }
+
+function logout() { 
+    currentDriver = null;
+    document.getElementById('dashboard-page').classList.add('hidden-section');
+    document.getElementById('admin-page').classList.add('hidden-section');
+    document.getElementById('auth-page').classList.remove('hidden-section');
+    document.getElementById('settingsMenu').classList.add('hidden');
+    document.getElementById('loginPassword').value = '';
+}
 
 function switchTab(tabId) {
 document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -2018,19 +2294,14 @@ document.getElementById(tabId).classList.add('active');
 let activeBtn = document.getElementById('btn-'+tabId);
 activeBtn.classList.remove('bg-white', 'dark:bg-gray-700', 'text-gray-700', 'dark:text-gray-200', 'shadow-sm', 'border', 'border-gray-200', 'dark:border-gray-600');
 activeBtn.classList.add('bg-green-600', 'text-white', 'shadow-md');
-
-if(tabId === 'swaps') {
-    loadWeeklyBlockSwap();
-}
+if(tabId === 'swaps') { loadWeeklyBlockSwap(); }
 }
 
 function toggleTheme() { 
     document.documentElement.classList.toggle('dark');
     const isDark = document.documentElement.classList.contains('dark');
     const themeBtn = document.getElementById('themeToggleBtn');
-    if(themeBtn) {
-        themeBtn.textContent = isDark ? "الوضع النهاري ☀️" : "الوضع الليلي 🌙";
-    }
+    if(themeBtn) { themeBtn.textContent = isDark ? "الوضع النهاري ☀️" : "الوضع الليلي 🌙"; }
 }
 
 function switchAdminInputMode(mode) {
@@ -2044,40 +2315,26 @@ function toggleScopeUI() { document.getElementById('parseResultBox').classList.a
 
 function extractPdfWordsStream(file, callback) {
     const fileReader = new FileReader();
-    
     fileReader.onload = async function() {
         try {
             const typedarray = new Uint8Array(this.result);
             const pdf = await pdfjsLib.getDocument(typedarray).promise;
             let allWords = [];
-            
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
                 const textContent = await page.getTextContent();
-                
                 textContent.items.forEach(item => {
                     let str = item.str.trim();
-                    if (str) {
-                        allWords.push({
-                            str: str,
-                            x: item.transform[4],
-                            y: item.transform[5],
-                            page: i
-                        });
-                    }
+                    if (str) { allWords.push({ str: str, x: item.transform[4], y: item.transform[5], page: i }); }
                 });
             }
-            
             allWords.sort((a, b) => {
                 if (a.page !== b.page) return a.page - b.page;
                 if (Math.abs(b.y - a.y) > 8) return b.y - a.y; 
                 return b.x - a.x; 
             });
-            
             callback(allWords);
-        } catch(err) {
-            alert('حدث خطأ أثناء قراءة الملف: ' + err.message);
-        }
+        } catch(err) { alert('حدث خطأ أثناء قراءة الملف: ' + err.message); }
     };
     fileReader.readAsArrayBuffer(file);
 }
@@ -2085,7 +2342,7 @@ function extractPdfWordsStream(file, callback) {
 function uploadAugustRosterPdf() {
     const fileInput = document.getElementById('augustPdfInput');
     const file = fileInput ? fileInput.files[0] : null;
-    if (!file || file.type !== "application/pdf") { alert("يرجى اختيار ملف PDF الخاص بروستر شهر 8 أولاً!"); return; }
+    if (!file || file.type !== "application/pdf") { alert("يرجى اختيار ملف PDF الخاص بالروستر أولاً!"); return; }
 
     const fullScopeRadio = document.querySelector('input[name="updateScope"][value="full"]');
     if (fullScopeRadio) { fullScopeRadio.checked = true; toggleScopeUI(); }
@@ -2121,19 +2378,14 @@ function processRawTextInput() {
 
 function parseWordStreamRoster(wordsObjArray, scope) {
     extractedBatchRoster = [];
-    
     const shiftPattern = /\b(?:M-?\d{1,2}|E-?\d{1,2}|N-?\d{1,2}|M-RES-?\d{1,2}|E-RES-?\d{1,2}|N-RES-?\d{1,2}|M-TRG[A-Z]+|Rest|OFF|R|Absent|Sick\s*leave|Annual\s*leave[- A-Z]*)\b/i;
     const rdmcPattern = /\b(RDMC|ROMC)[-_]?[A-Z0-9]+\b/i;
-
     let extractedMap = new Map();
     let words = wordsObjArray.map(w => w.str); 
     let processedIds = new Set();
 
-    if (scope === 'daily') {
-        document.getElementById('detectedDate').textContent = 'تاريخ اليومية: جاري التحديث...';
-    } else {
-        document.getElementById('detectedDate').textContent = 'نطاق التحديث: روستر كامل شامل';
-    }
+    if (scope === 'daily') { document.getElementById('detectedDate').textContent = 'تاريخ اليومية: جاري التحديث...'; } 
+    else { document.getElementById('detectedDate').textContent = 'نطاق التحديث: روستر كامل شامل'; }
 
     for (let i = 0; i < words.length; i++) {
         let currentWord = words[i];
@@ -2142,7 +2394,6 @@ function parseWordStreamRoster(wordsObjArray, scope) {
         if (idMatch) {
             let rawId = idMatch[0].toUpperCase();
             let cleanId = rawId.replace('ROMC', 'RDMC');
-
             if (processedIds.has(cleanId)) continue;
             processedIds.add(cleanId);
 
@@ -2150,41 +2401,28 @@ function parseWordStreamRoster(wordsObjArray, scope) {
                 let foundShift = 'راحة'; 
                 let startIdx = Math.max(0, i - 6);
                 let endIdx = Math.min(words.length, i + 7);
-
                 for (let j = startIdx; j < endIdx; j++) {
                     let sMatch = words[j].match(shiftPattern);
-                    if (sMatch) {
-                        foundShift = sMatch[0].toUpperCase().replace('-', '');
-                        break;
-                    }
+                    if (sMatch) { foundShift = sMatch[0].toUpperCase().replace('-', ''); break; }
                 }
                 extractedMap.set(cleanId, { rdmcId: cleanId, shift: foundShift, mode: 'daily' });
-
             } else {
                 let daysMap = {};
                 let dayCount = 1;
                 let searchLimit = Math.min(words.length - 1, i + 45);
-
                 for (let j = i + 1; j <= searchLimit; j++) {
                     if (shiftPattern.test(words[j])) {
                         let matchStr = words[j].match(shiftPattern)[0].toUpperCase().replace('-', '');
-                        daysMap[dayCount] = matchStr;
-                        dayCount++;
+                        daysMap[dayCount] = matchStr; dayCount++;
                         if (dayCount > 31) break;
-                    } else if (rdmcPattern.test(words[j])) {
-                        break; 
-                    }
+                    } else if (rdmcPattern.test(words[j])) { break; }
                 }
-
-                if (Object.keys(daysMap).length > 0) {
-                    extractedMap.set(cleanId, { rdmcId: cleanId, shiftsMap: daysMap, mode: 'full' });
-                }
+                if (Object.keys(daysMap).length > 0) { extractedMap.set(cleanId, { rdmcId: cleanId, shiftsMap: daysMap, mode: 'full' }); }
             }
         }
     }
 
     extractedBatchRoster = Array.from(extractedMap.values());
-
     const tbody = document.getElementById('parsedRosterTable');
     tbody.innerHTML = '';
     
@@ -2198,7 +2436,6 @@ function parseWordStreamRoster(wordsObjArray, scope) {
             tbody.appendChild(tr);
         });
     }
-
     document.getElementById('driverCount').textContent = extractedBatchRoster.length;
     document.getElementById('parseResultBox').classList.remove('hidden-section');
 }
@@ -2211,20 +2448,15 @@ function saveAllRosterToFirebase() {
         let normId = smartNormalize(item.rdmcId);
         if (!rosterDataMap[normId]) rosterDataMap[normId] = {};
         
-        if (scope === 'daily') {
-            rosterDataMap[normId][currentParsedDay] = item.shift;
-        } else {
-            for (let dayKey in item.shiftsMap) {
-                rosterDataMap[normId][dayKey] = item.shiftsMap[dayKey];
-            }
+        if (scope === 'daily') { rosterDataMap[normId][currentParsedDay] = item.shift; } 
+        else {
+            for (let dayKey in item.shiftsMap) { rosterDataMap[normId][dayKey] = item.shiftsMap[dayKey]; }
         }
     });
 
     db.ref('rosterDataMap').set(rosterDataMap).then(() => {
         alert("🌐✅ تم حفظ وتحديث البيانات سحابياً على Firebase بنجاح!");
-    }).catch((err) => {
-        alert("⚠️ حدث خطأ أثناء الحفظ السحابي: " + err.message);
-    });
+    }).catch((err) => { alert("⚠️ حدث خطأ أثناء الحفظ السحابي: " + err.message); });
 }
 </script>
 </body>
