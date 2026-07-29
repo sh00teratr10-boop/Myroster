@@ -49,7 +49,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
     <div class="w-full flex justify-between items-end text-[11px] font-mono tracking-widest text-gray-500 select-none">
         <span>Directed by Mohamed Raafat</span>
-        <span>v2.0</span>
+        <span>v2.1</span>
     </div>
 </div>
 
@@ -238,7 +238,7 @@ body { font-family: 'Cairo', sans-serif; }
     <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl p-6 max-w-md w-full text-center border-4 border-amber-500 animate-bounce-once">
         <div class="text-5xl mb-3">🚨</div>
         <h3 class="text-xl font-black text-amber-600 dark:text-amber-400 mb-2">تنبيه اقتراب موعد الاستلام</h3>
-        <p id="arrivalAlertText" class="text-gray-700 dark:text-gray-200 text-base font-bold mb-6">القطار قادم برحلة على وشك الوصول خلال دقيقتين!</p>
+        <p id="arrivalAlertText" class="text-gray-700 dark:text-gray-200 text-base font-bold mb-6">القطار قادم برحلة على وشك الوصول خلال 3 دقائق!</p>
         <button onclick="dismissArrivalAlert()" class="w-full bg-green-600 hover:bg-green-700 text-white font-black py-3 px-6 rounded-2xl shadow-lg text-lg transition-all">
             ✅ فهمت وموافق (إيقاف المنبه)
         </button>
@@ -310,7 +310,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- دليل التواصل -->
+<!-- دليل التواصل (تم إرجاع جميع الأقسام والأرقام كاملة هنا) -->
 <div id="contactModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-2xl shadow-2xl p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-3 mb-4 sticky top-0 bg-white dark:bg-gray-800 z-10">
@@ -328,6 +328,37 @@ body { font-family: 'Cairo', sans-serif; }
                         <div class="grid grid-cols-2 gap-2">
                             <a href="tel:+201211155705" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
                             <a href="https://api.whatsapp.com/send?phone=201211155705" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-black text-sm text-blue-600 dark:text-blue-400 mb-3 border-r-4 border-blue-600 pr-2">🏢 2. مكاتب التشغيل والمحطات</h4>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مكتب محطة العتبة</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201149076809" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201149076809" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مكتب محطة عدلي منصور</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201157422561" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201157422561" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="font-black text-sm text-emerald-600 dark:text-emerald-400 mb-3 border-r-4 border-emerald-600 pr-2">🎛️ 3. قسم الحركة (الديسباتشر)</h4>
+                <div class="space-y-3">
+                    <div class="bg-gray-50 dark:bg-gray-700/50 p-3.5 rounded-xl border dark:border-gray-600 shadow-sm">
+                        <div class="mb-2.5"><h5 class="font-bold text-gray-900 dark:text-white text-base">مسؤول الديسباتشر</h5></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <a href="tel:+201125807602" class="bg-green-600 hover:bg-green-700 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">📞 اتصال</a>
+                            <a href="https://api.whatsapp.com/send?phone=201125807602" class="bg-emerald-500 hover:bg-emerald-600 text-white text-center py-2 rounded-xl font-bold text-xs flex items-center justify-center gap-1 shadow">💬 واتساب</a>
                         </div>
                     </div>
                 </div>
@@ -355,7 +386,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- 🌟 شاشة الأدمن (تم تحديثها بالكامل هنا) -->
+<!-- 🌟 شاشة الأدمن -->
 <div id="admin-page" class="hidden-section min-h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
     <nav class="bg-purple-800 text-white p-4 shadow-md">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
@@ -365,14 +396,12 @@ body { font-family: 'Cairo', sans-serif; }
     </nav>
 
     <main class="max-w-5xl mx-auto p-6 mt-6 w-full flex-1 space-y-6">
-        <!-- تبويب التنقل في الأدمن -->
         <div class="flex flex-wrap border-b border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-xl p-1 shadow-sm gap-1">
             <button onclick="switchAdminSection('rosterSection')" id="tab-btn-roster" class="flex-1 py-3 font-black text-sm rounded-lg bg-purple-600 text-white transition-all">📅 الروستر واليومية</button>
             <button onclick="switchAdminSection('mapSection')" id="tab-btn-map" class="flex-1 py-3 font-black text-sm rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">🗺️ خريطة الخط الثالث</button>
             <button onclick="switchAdminSection('documentsSection')" id="tab-btn-docs" class="flex-1 py-3 font-black text-sm rounded-lg text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all">📂 المستندات والكتالوجات</button>
         </div>
 
-        <!-- 1. قسم الروستر واليومية -->
         <div id="adminRosterContainer" class="space-y-6">
             <div class="bg-gradient-to-r from-purple-900 via-indigo-900 to-purple-800 text-white p-6 rounded-2xl shadow-xl border border-purple-500/50">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-3">
@@ -446,7 +475,6 @@ body { font-family: 'Cairo', sans-serif; }
             </div>
         </div>
 
-        <!-- 2. قسم خريطة الخط الثالث المحدثة بالكامل -->
         <div id="adminMapContainer" class="hidden-section space-y-6">
             <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border space-y-4">
                 <div class="flex flex-col sm:flex-row justify-between items-center border-b pb-4 gap-3">
@@ -464,11 +492,9 @@ body { font-family: 'Cairo', sans-serif; }
             </div>
         </div>
 
-        <!-- 3. قسم رفع مستندات الـ PDF (أعطال / SOP / تعليمات) -->
         <div id="adminDocsContainer" class="hidden-section space-y-6">
             <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border space-y-6">
                 <h3 class="text-lg font-black text-purple-600 dark:text-purple-400 border-b pb-3">📤 مركز رفع الكتالوجات والتعليمات المباشر</h3>
-
                 <div class="p-4 bg-amber-50 dark:bg-gray-700/50 rounded-xl border border-amber-200">
                     <label class="block font-bold text-amber-800 dark:text-amber-300 mb-1">🛠️ ملف: أعطال وحدات متحركة</label>
                     <div class="flex flex-col sm:flex-row gap-3 mt-2">
@@ -476,7 +502,6 @@ body { font-family: 'Cairo', sans-serif; }
                         <button onclick="uploadDocumentPdf('faults')" class="bg-amber-600 hover:bg-amber-700 text-white font-bold px-6 py-2 rounded-xl whitespace-nowrap shadow">رفع أعطال الوحدات</button>
                     </div>
                 </div>
-
                 <div class="p-4 bg-purple-50 dark:bg-gray-700/50 rounded-xl border border-purple-200">
                     <label class="block font-bold text-purple-800 dark:text-purple-300 mb-1">📖 ملف: إجراءات التشغيل القياسية (SOP)</label>
                     <div class="flex flex-col sm:flex-row gap-3 mt-2">
@@ -484,7 +509,6 @@ body { font-family: 'Cairo', sans-serif; }
                         <button onclick="uploadDocumentPdf('sop')" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-6 py-2 rounded-xl whitespace-nowrap shadow">رفع SOP</button>
                     </div>
                 </div>
-
                 <div class="p-4 bg-blue-50 dark:bg-gray-700/50 rounded-xl border border-blue-200">
                     <label class="block font-bold text-blue-800 dark:text-blue-300 mb-1">📜 ملف: تعليمات تشغيل</label>
                     <div class="flex flex-col sm:flex-row gap-3 mt-2">
@@ -521,12 +545,8 @@ setTimeout(function() {
 setTimeout(function() {
     var splash = document.getElementById('splash-screen');
     var authPage = document.getElementById('auth-page');
-    if (splash) {
-        splash.style.display = 'none';
-    }
-    if (authPage) {
-        authPage.classList.remove('hidden-section');
-    }
+    if (splash) { splash.style.display = 'none'; }
+    if (authPage) { authPage.classList.remove('hidden-section'); }
 }, 2500);
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -540,7 +560,7 @@ document.addEventListener('DOMContentLoaded', function() {
     renderLineMapStations();
     document.getElementById('swapDailyDate').value = getTodayYYYYMMDD();
     
-    // 🌟 تفعيل فحص موعد وصول القطارات في الخلفية كل 30 ثانية
+    // تفعيل فحص موعد وصول القطارات في الخلفية كل 30 ثانية
     setInterval(checkUpcomingTrainsAlarm, 30000);
 });
 
@@ -581,7 +601,6 @@ let schedulesByDay = {
 26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
 };
 
-// محطات الخط الثالث كاملة
 const line3Stations = [
     "عدلي منصور", "الهايكستب", "عمر بن الخطاب", "قباء", "هشام بركات", "النزهة", 
     "نادي الشمس", "ألف مسكن", "هليوبوليس", "هارون", "الأهرام", "كلية البنات", 
@@ -666,6 +685,7 @@ function dismissArrivalAlert() {
     document.getElementById('customArrivalModal').classList.add('hidden-section');
 }
 
+// 🌟 المنبه الذكي المُحدّث (يعمل مع سيوة ويحسب الوقت بالثواني بدقة)
 function checkUpcomingTrainsAlarm() {
     if (!currentDriver) return;
     
@@ -678,45 +698,50 @@ function checkUpcomingTrainsAlarm() {
 
     let scheduleRaw = schedulesByDay[dayNum] || "WD-447-[SIWA]";
     let upperSch = scheduleRaw.toUpperCase();
+    
     let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
+    let isSiwa = upperSch.includes("SIWA") || upperSch.includes("WD");
     let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST");
-    let myShiftData = isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : (isAlex ? alexDataMap[smartNormalize(shiftCode)] : null);
+
+    let myShiftData = null;
+    if (isLuxor) {
+        myShiftData = luxorDataMap[smartNormalize(shiftCode)];
+    } else if (isSiwa) {
+        myShiftData = aswanDataMap[smartNormalize(shiftCode)];
+    } else if (isAlex) {
+        myShiftData = alexDataMap[smartNormalize(shiftCode)];
+    }
 
     if (!myShiftData || !myShiftData.tripNumbers) return;
 
-    // جلب الوقت الحالي بالدقائق لتسهيل الحسابات
     const now = new Date();
     const currentHours = now.getHours();
     const currentMinutes = now.getMinutes();
-    const currentTimeInMinutes = (currentHours * 60) + currentMinutes;
+    const currentSeconds = now.getSeconds();
+    
+    // تحويل الوقت الحالي بالكامل إلى ثواني لدقة أعلى
+    const currentTimeInSeconds = (currentHours * 3600) + (currentMinutes * 60) + currentSeconds;
 
     myShiftData.tripNumbers.forEach(tNum => {
         let incomingCode = incomingTripsMap[tNum];
         if (incomingCode && /^\d{3,4}$/.test(incomingCode) && tripsScheduleMap[incomingCode]) {
-            
             let arrTimeStr = tripsScheduleMap[incomingCode].arrTime; 
             let timeParts = arrTimeStr.split(':');
             
             if (timeParts.length >= 2) {
                 let arrHours = parseInt(timeParts[0], 10);
                 let arrMinutes = parseInt(timeParts[1], 10);
-                let arrTimeInMinutes = (arrHours * 60) + arrMinutes;
-
-                // حساب الفارق الزمني بين وقت الوصول والوقت الحالي
-                let timeDifference = arrTimeInMinutes - currentTimeInMinutes;
+                let arrSeconds = timeParts.length === 3 ? parseInt(timeParts[2], 10) : 0; 
                 
-                // مفتاح فريد لعدم تكرار المنبه لنفس القطار في نفس اليوم
+                let arrTimeInSeconds = (arrHours * 3600) + (arrMinutes * 60) + arrSeconds;
+
+                let timeDifferenceInSeconds = arrTimeInSeconds - currentTimeInSeconds;
                 let tripUniqueKey = `${incomingCode}_${dayNum}`;
 
-                // التحديث الجديد: تشغيل المنبه إذا كان متبقياً 3 دقائق أو أقل
-                if (timeDifference >= 0 && timeDifference <= 3) {
+                // التنبيه يعمل إذا كان متبقي 180 ثانية (3 دقائق) أو أقل
+                if (timeDifferenceInSeconds >= 0 && timeDifferenceInSeconds <= 180) {
                     if (!alertedTripsToday.has(tripUniqueKey)) {
-                        
-                        // تسجيل الرحلة فوراً
                         alertedTripsToday.add(tripUniqueKey);
-                        
-                        // تشغيل المنبه
-                        console.log(`[المنبه] تم تشغيل المنبه للرحلة ${incomingCode}`);
                         triggerArrivalModal(`القطار قادم برحلة رقم (${incomingCode}) وسوف يصل رصيف الاستلام الساعة ${arrTimeStr}!`);
                     }
                 }
@@ -2017,7 +2042,6 @@ document.getElementById('admin-tab-text').classList.toggle('active', mode === 't
 
 function toggleScopeUI() { document.getElementById('parseResultBox').classList.add('hidden-section'); }
 
-// 🌟 النظام الفعّال والدقيق لاستخراج الـ PDF (نظام الإحداثيات وطابور الكلمات)
 function extractPdfWordsStream(file, callback) {
     const fileReader = new FileReader();
     
@@ -2044,7 +2068,6 @@ function extractPdfWordsStream(file, callback) {
                 });
             }
             
-            // ترتيب الكلمات بدقة باستخدام الإحداثيات والتسامح 8 بكسل
             allWords.sort((a, b) => {
                 if (a.page !== b.page) return a.page - b.page;
                 if (Math.abs(b.y - a.y) > 8) return b.y - a.y; 
@@ -2059,7 +2082,6 @@ function extractPdfWordsStream(file, callback) {
     fileReader.readAsArrayBuffer(file);
 }
 
-// 🌟 تشغيل الفلترة عند رفع ملف شهر 8
 function uploadAugustRosterPdf() {
     const fileInput = document.getElementById('augustPdfInput');
     const file = fileInput ? fileInput.files[0] : null;
@@ -2075,7 +2097,6 @@ function uploadAugustRosterPdf() {
     });
 }
 
-// 🌟 تشغيل الفلترة عند رفع الـ PDF المعتاد
 function processFullRosterPdf(event) {
     const file = event.target.files[0];
     if (!file || file.type !== "application/pdf") { alert("يرجى اختيار ملف PDF صحيح!"); return; }
@@ -2089,22 +2110,18 @@ function processFullRosterPdf(event) {
     });
 }
 
-// 🌟 معالجة النص المنسوخ يدوياً
 function processRawTextInput() {
     const rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { alert("يرجى كتابة أو لصق النص أولاً!"); return; }
     const scope = document.querySelector('input[name="updateScope"]:checked').value;
     
-    // تحويل النص لكائنات مشابهة للـ PDF
     const wordsObjArray = rawText.split(/\s+/).filter(w => w.trim() !== "").map(w => ({str: w}));
     parseWordStreamRoster(wordsObjArray, scope);
 }
 
-// 🌟 عقل الفلترة الذي نجح في التجربة (دمج كامل)
 function parseWordStreamRoster(wordsObjArray, scope) {
     extractedBatchRoster = [];
     
-    // الـ Regex المدمج والشامل الذي يصطاد جميع الورادي
     const shiftPattern = /\b(?:M-?\d{1,2}|E-?\d{1,2}|N-?\d{1,2}|M-RES-?\d{1,2}|E-RES-?\d{1,2}|N-RES-?\d{1,2}|M-TRG[A-Z]+|Rest|OFF|R|Absent|Sick\s*leave|Annual\s*leave[- A-Z]*)\b/i;
     const rdmcPattern = /\b(RDMC|ROMC)[-_]?[A-Z0-9]+\b/i;
 
@@ -2130,7 +2147,6 @@ function parseWordStreamRoster(wordsObjArray, scope) {
             processedIds.add(cleanId);
 
             if (scope === 'daily') {
-                // البحث في النطاق المحيط بـ 6 كلمات قبل وبعد كود السائق (كما في التجربة)
                 let foundShift = 'راحة'; 
                 let startIdx = Math.max(0, i - 6);
                 let endIdx = Math.min(words.length, i + 7);
@@ -2145,7 +2161,6 @@ function parseWordStreamRoster(wordsObjArray, scope) {
                 extractedMap.set(cleanId, { rdmcId: cleanId, shift: foundShift, mode: 'daily' });
 
             } else {
-                // في حالة الشهر الكامل: نبحث عن 31 وردية متتابعة في الـ 45 كلمة القادمة
                 let daysMap = {};
                 let dayCount = 1;
                 let searchLimit = Math.min(words.length - 1, i + 45);
@@ -2157,7 +2172,7 @@ function parseWordStreamRoster(wordsObjArray, scope) {
                         dayCount++;
                         if (dayCount > 31) break;
                     } else if (rdmcPattern.test(words[j])) {
-                        break; // التوقف فوراً عند رؤية سائق آخر
+                        break; 
                     }
                 }
 
@@ -2170,7 +2185,6 @@ function parseWordStreamRoster(wordsObjArray, scope) {
 
     extractedBatchRoster = Array.from(extractedMap.values());
 
-    // 🌟 طباعة النتائج بدقة في الجدول
     const tbody = document.getElementById('parsedRosterTable');
     tbody.innerHTML = '';
     
