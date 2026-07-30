@@ -49,7 +49,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
     <div class="w-full flex justify-between items-end text-[11px] font-mono tracking-widest text-gray-500 select-none">
         <span>Directed by Mohamed Raafat</span>
-        <span>v3.6 - Smart Month Selector</span>
+        <span>v3.8 - Dynamic Schedules Parser</span>
     </div>
 </div>
 
@@ -212,7 +212,14 @@ body { font-family: 'Cairo', sans-serif; }
 
 <!-- 2. المبادلة الأسبوعية الذكية -->
 <div id="sub-tab-weeklySwap" class="hidden-section space-y-4 text-right">
-    <p class="text-xs text-gray-500 dark:text-gray-400">اختر البلوك الأسبوعي (من ريست لريست) لاستعراض قائدي القطارات المطابقين لإجازتك وحلقاتهم بالعرض مع أزرار التواصل المباشرة:</p>
+    <p class="text-xs text-gray-500 dark:text-gray-400">اختر الشهر ثم حدد البلوك الأسبوعي (من ريست لريست) لاستعراض قائدي القطارات المطابقين لإجازتك وحلقاتهم بالعرض مع أزرار التواصل المباشرة:</p>
+    
+    <!-- 🌟 أداة اختيار الشهر الجديدة للمبادلة الأسبوعية -->
+    <div class="mb-4 bg-purple-50 dark:bg-purple-900/20 p-3 rounded-xl border border-purple-200 dark:border-purple-700">
+        <label class="block text-xs font-black text-purple-700 dark:text-purple-300 mb-2">📅 اختر شهر المبادلة الأسبوعية:</label>
+        <input type="month" id="swapMonthPicker" onchange="loadWeeklyBlockSwap()" class="w-full sm:w-1/2 px-4 py-2 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg text-sm font-bold text-purple-600 focus:outline-none focus:ring-2 focus:ring-purple-500 shadow-sm">
+    </div>
+
     <div id="weeklySwapResultBox" class="mt-2 space-y-3">
         <div class="text-center text-gray-400 py-6 text-sm">جاري تحليل بلوكات الإجازات...</div>
     </div>
@@ -406,7 +413,7 @@ body { font-family: 'Cairo', sans-serif; }
                 <!-- 🎯 أزرار التوجيه الذكية -->
                 <div>
                     <label class="block text-sm font-bold text-purple-600 dark:text-purple-400 mb-2">🎯 تحديد نطاق التحديث والتوجيه:</label>
-                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                         
                         <!-- الخيار الأول: اليومية -->
                         <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-purple-50 dark:hover:bg-gray-700 shadow-sm transition-all">
@@ -426,6 +433,12 @@ body { font-family: 'Cairo', sans-serif; }
                             <span class="font-bold text-sm">🏖️ روستر شهر 8 (أغسطس)</span>
                         </label>
                         
+                        <!-- 🌟 الخيار الرابع: جداول الورادي -->
+                        <label class="flex items-center gap-2 p-3 border rounded-xl cursor-pointer hover:bg-purple-50 dark:hover:bg-gray-700 shadow-sm transition-all">
+                            <input type="radio" name="updateScope" value="schedules8" onchange="toggleScopeUI()">
+                            <span class="font-bold text-sm">📝 جداول أسماء الورادي (شهر 8)</span>
+                        </label>
+
                     </div>
                 </div>
 
@@ -435,8 +448,8 @@ body { font-family: 'Cairo', sans-serif; }
                     </div>
 
                     <div id="admin-input-text" class="space-y-3">
-                        <p class="text-xs text-gray-500 dark:text-gray-400">انسخ الروستر من الإكسيل والصقه هنا مباشرة (حدد النطاق بالاستعانة بالأزرار أعلاه):</p>
-                        <textarea id="rawTextInput" rows="7" class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 text-sm font-mono" placeholder="الصق بيانات الروستر من الإكسيل هنا..."></textarea>
+                        <p class="text-xs text-gray-500 dark:text-gray-400">انسخ الروستر أو جداول الورادي من الإكسيل والصقه هنا مباشرة (حدد النطاق بالاستعانة بالأزرار أعلاه):</p>
+                        <textarea id="rawTextInput" rows="7" class="w-full p-3 border rounded-lg bg-gray-50 dark:bg-gray-700 text-sm font-mono" placeholder="الصق البيانات من الإكسيل هنا..."></textarea>
                         <button type="button" onclick="processRawTextInput()" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-lg shadow">🔍 قراءة وفلترة النص</button>
                     </div>
                 </div>
@@ -447,12 +460,12 @@ body { font-family: 'Cairo', sans-serif; }
                     <h4 class="text-lg font-bold text-green-600">🎯 نتائج الفلترة والاستخراج:</h4>
                     <span id="detectedDate" class="bg-purple-100 text-purple-800 font-bold px-3 py-1 rounded-full text-xs">تاريخ اليومية: --/--/----</span>
                 </div>
-                <p class="text-xs text-gray-400 mb-3">عدد السائقين المستخرجين: <span id="driverCount" class="font-bold text-purple-500 text-lg">0</span> سائق</p>
+                <p class="text-xs text-gray-400 mb-3">العدد المستخرج: <span id="driverCount" class="font-bold text-purple-500 text-lg">0</span> سجل</p>
                 <div class="max-h-80 overflow-y-auto border rounded-lg mb-4 bg-gray-50 dark:bg-gray-900">
                     <table class="w-full text-right text-sm">
                         <thead class="bg-gray-200 dark:bg-gray-700 sticky top-0 shadow-sm">
                             <tr>
-                                <th class="p-3 border-b">كود السائق (RDMC ID)</th>
+                                <th class="p-3 border-b">كود السائق / اليوم</th>
                                 <th class="p-3 border-b">البيانات / الورادي المستخرجة</th>
                             </tr>
                         </thead>
@@ -563,6 +576,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     renderLineMapStations();
     document.getElementById('swapDailyDate').value = getTodayYYYYMMDD();
+    
+    let todayD = new Date();
+    let currentMonthStr = `${todayD.getFullYear()}-${String(todayD.getMonth() + 1).padStart(2, '0')}`;
+    let swapMonthEl = document.getElementById('swapMonthPicker');
+    if(swapMonthEl) swapMonthEl.value = currentMonthStr;
+
     let searchDateEl = document.getElementById('tripSearchDateInput');
     if(searchDateEl) searchDateEl.value = getTodayYYYYMMDD();
     setInterval(checkUpcomingTrainsAlarm, 2000);
@@ -599,9 +618,10 @@ let luxorTripsMap = {}, luxorIncomingMap = {};
 let alexTripsMap = {}, alexIncomingMap = {};
 
 let driversData = [];
-// 🌟 المتغيرات الأساسية للروسترات المختلفة
-let rosterDataMap = {}; // الروستر الحالي
-let roster8DataMap = {}; // روستر شهر 8
+// المتغيرات الأساسية
+let rosterDataMap = {}; 
+let roster8DataMap = {}; 
+let schedules8DataMap = {}; // 🌟 متغير جديد لحفظ جداول شهر 8 من السيرفر
 
 let schedulesByDay = {
 1: "WD-447-[SIWA]", 2: "ST-416-[ALEX_WFH]", 3: "WE-341-[LUXOR]", 4: "ST-416-[ALEX_WFH]", 5: "ST-416-[ALEX_WFH]",
@@ -611,6 +631,15 @@ let schedulesByDay = {
 21: "WD-447-[SIWA]", 22: "WD-447-[SIWA]", 23: "ST-403-[ALEX]", 24: "WE-341-[LUXOR]", 25: "ST-416-[ALEX_WFH]",
 26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
 };
+
+// 🌟 الدالة الذكية لاختيار اسم الجدول المناسب بناءً على الشهر
+function getSmartScheduleName(dateVal, dayNum) {
+    let month = dateVal ? dateVal.split('-')[1] : getTodayYYYYMMDD().split('-')[1];
+    if (month === '08' && Object.keys(schedules8DataMap).length > 0) {
+        return schedules8DataMap[dayNum] || "WD-447-[SIWA]";
+    }
+    return schedulesByDay[dayNum] || "WD-447-[SIWA]";
+}
 
 const line3Stations = [
     "عدلي منصور", "الهايكستب", "عمر بن الخطاب", "قباء", "هشام بركات", "النزهة", 
@@ -653,19 +682,13 @@ else { cur += str[i]; }
 result.push(cur); return result;
 }
 
-// 🌟 الدالة الذكية لاختيار الروستر الصحيح بناءً على الشهر
 function getDriverRosterForDate(driverId, dateVal) {
     let normId = smartNormalize(driverId);
     if (!dateVal) dateVal = getTodayYYYYMMDD();
-    
-    let month = dateVal.split('-')[1]; // استخراج الشهر
-    
-    // إذا كان الشهر المختار هو شهر 8 (أغسطس)، اسحب من مجلد روستر 8
+    let month = dateVal.split('-')[1]; 
     if (month === '08') {
         return roster8DataMap[normId] || rosterDataMap[normId] || {}; 
     }
-    
-    // أي شهر آخر، اسحب من الروستر الأساسي
     return rosterDataMap[normId] || {};
 }
 
@@ -702,12 +725,12 @@ function checkUpcomingTrainsAlarm() {
     const selectedDateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
     const dayNum = parseInt(selectedDateVal.split('-')[2], 10);
     
-    // 🎯 استخدام الدالة الذكية
     let driverRoster = getDriverRosterForDate(currentDriver.serviceId, selectedDateVal);
     let shiftCode = driverRoster[dayNum] || 'راحة';
     if (shiftCode === 'راحة' || shiftCode === 'R' || shiftCode.includes('OFF')) return;
 
-    let scheduleRaw = schedulesByDay[dayNum] || "WD-447-[SIWA]";
+    // 🌟 استخدام الدالة الذكية لاختيار الجدول
+    let scheduleRaw = getSmartScheduleName(selectedDateVal, dayNum);
     let upperSch = scheduleRaw.toUpperCase();
     
     let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
@@ -800,11 +823,19 @@ if (currentDriver) { buildDashboardData(currentDriver); }
 }
 });
 
-// 🌟 جلب روستر شهر 8 من السيرفر فور تحميل الصفحة
 db.ref('roster8').on('value', (snapshot) => {
     const cloudData = snapshot.val();
     if (cloudData) {
         roster8DataMap = cloudData;
+        if (currentDriver) { buildDashboardData(currentDriver); }
+    }
+});
+
+// 🌟 جلب أسماء جداول شهر 8 من السيرفر
+db.ref('schedules8').on('value', (snapshot) => {
+    const cloudData = snapshot.val();
+    if (cloudData) {
+        schedules8DataMap = cloudData;
         if (currentDriver) { buildDashboardData(currentDriver); }
     }
 });
@@ -1322,7 +1353,6 @@ function compareDailySwaps() {
         return;
     }
 
-    // 🎯 استخدام الدالة الذكية
     let myRoster = getDriverRosterForDate(currentDriver.serviceId, dateVal);
     let targetRoster = getDriverRosterForDate(targetDriver.serviceId, dateVal);
 
@@ -1376,9 +1406,11 @@ function loadWeeklyBlockSwap() {
     const resultBox = document.getElementById('weeklySwapResultBox');
     if (!currentDriver) return;
 
-    const dateVal = document.getElementById('swapDailyDate').value || getTodayYYYYMMDD();
-    // 🎯 استخدام الدالة الذكية
-    let myRoster = getDriverRosterForDate(currentDriver.serviceId, dateVal);
+    const monthPickerVal = document.getElementById('swapMonthPicker').value;
+    if (!monthPickerVal) return;
+    const simulatedDateVal = `${monthPickerVal}-01`; 
+
+    let myRoster = getDriverRosterForDate(currentDriver.serviceId, simulatedDateVal);
 
     let restDays = [0];
     for (let d = 1; d <= 31; d++) {
@@ -1406,7 +1438,7 @@ function loadWeeklyBlockSwap() {
         blocks.push({ blockIndex: 4, start: 22, end: 31, startRestDay: 21, endRestDay: 32 });
     }
 
-    const currentMonthName = getMonthNameAr(dateVal);
+    const currentMonthName = getMonthNameAr(simulatedDateVal);
 
     let html = `
         <div class="mb-4">
@@ -1436,11 +1468,11 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
     }
 
     const contentBox = document.getElementById('blockDriversContent');
-    const dateVal = document.getElementById('swapDailyDate').value || getTodayYYYYMMDD();
+    const monthPickerVal = document.getElementById('swapMonthPicker').value;
+    const simulatedDateVal = `${monthPickerVal}-01`; 
     
-    // 🎯 استخدام الدالة الذكية
-    let myRoster = getDriverRosterForDate(currentDriver.serviceId, dateVal);
-    const currentMonthName = getMonthNameAr(dateVal);
+    let myRoster = getDriverRosterForDate(currentDriver.serviceId, simulatedDateVal);
+    const currentMonthName = getMonthNameAr(simulatedDateVal);
 
     let matchingHTML = `
         <div class="p-3 bg-purple-50 dark:bg-purple-900/20 rounded-xl border border-purple-200 text-xs font-bold text-purple-800 dark:text-purple-300 mb-3 flex justify-between items-center">
@@ -1454,8 +1486,7 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
     driversData.forEach(d => {
         if (smartNormalize(d.serviceId) === smartNormalize(currentDriver.serviceId)) return;
         
-        // 🎯 استخدام الدالة الذكية للسائق الآخر
-        let dRoster = getDriverRosterForDate(d.serviceId, dateVal);
+        let dRoster = getDriverRosterForDate(d.serviceId, simulatedDateVal);
         if (!dRoster || Object.keys(dRoster).length === 0) return;
 
         let hasStartRest = (startRestDay <= 0) || isRestDay(dRoster[startRestDay]);
@@ -1592,7 +1623,8 @@ function searchByTripCode() {
     const dayNum = parseInt(dateVal.split('-')[2], 10); 
     const currentMonthName = getMonthNameAr(dateVal);
 
-    let scheduleRaw = schedulesByDay[dayNum] || "WD-447-[SIWA]";
+    // 🌟 استخدام الدالة الذكية لاختيار الجدول
+    let scheduleRaw = getSmartScheduleName(dateVal, dayNum);
     let scheduleName = scheduleNameDisplay(scheduleRaw);
     let upperSch = scheduleRaw.toUpperCase();
     
@@ -1606,7 +1638,6 @@ function searchByTripCode() {
     let assignedDriver = null;
     for (let i = 0; i < driversData.length; i++) {
         let d = driversData[i];
-        // 🎯 استخدام الدالة الذكية
         let dRoster = getDriverRosterForDate(d.serviceId, dateVal);
         if (dRoster && smartNormalize(dRoster[dayNum]) === normQuery) { assignedDriver = d; break; }
     }
@@ -1708,7 +1739,6 @@ function buildDashboardData(driver) {
 renderDailyDetails();
 renderFullMonth(driver);
 let dateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
-// 🎯 استخدام الدالة الذكية للقسم الأسبوعي الصغير
 let driverRoster = getDriverRosterForDate(driver.serviceId, dateVal);
 
 const todayNum = new Date().getDate();
@@ -1731,7 +1761,6 @@ function renderDailyDetails() {
 if (!currentDriver) return;
 const selectedDateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
 const dayNum = parseInt(selectedDateVal.split('-')[2], 10);
-// 🎯 استخدام الدالة الذكية لليومي
 let driverRoster = getDriverRosterForDate(currentDriver.serviceId, selectedDateVal);
 let shiftCode = driverRoster[dayNum] || 'راحة';
 
@@ -1739,7 +1768,8 @@ const todayEl = document.getElementById('todayShiftCode');
 todayEl.textContent = shiftCode;
 todayEl.className = (shiftCode === 'راحة' || shiftCode === 'R' || shiftCode.includes('OFF')) ? "text-5xl font-black text-red-500" : "text-5xl font-black text-blue-600";
 
-let scheduleRaw = schedulesByDay[dayNum] || "WD-447-[SIWA]";
+// 🌟 استخدام الدالة الذكية لاختيار الجدول
+let scheduleRaw = getSmartScheduleName(selectedDateVal, dayNum);
 document.getElementById('todayScheduleName').textContent = scheduleRaw;
 const normShift = smartNormalize(shiftCode);
 document.getElementById('tripsContainer').innerHTML = generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverRoster);
@@ -1818,7 +1848,6 @@ let handoverCode = myShiftData.handoverCode, handoverDriverName = null;
 if (handoverCode) {
 for (let i = 0; i < driversData.length; i++) {
 let d = driversData[i];
-// 🎯 التغيير هنا أيضاً للسائق البديل
 let dRoster = getDriverRosterForDate(d.serviceId, document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD());
 if (dRoster && smartNormalize(dRoster[dayNum]) === handoverCode) { handoverDriverName = d.name; break; }
 }
@@ -1839,7 +1868,6 @@ return raw;
 
 function renderFullMonth(driver) {
 let dateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
-// 🎯 استخدام الدالة الذكية لجدول الشهر
 let driverRoster = getDriverRosterForDate(driver.serviceId, dateVal);
 
 let container = document.getElementById('fullMonthContainer');
@@ -1847,7 +1875,10 @@ if(!container) return;
 let html = '', currentMonthName = getMonthNameAr(dateVal);
 
 for (let d = 1; d <= 31; d++) {
-let shiftCode = driverRoster[d] || 'راحة', scheduleRaw = schedulesByDay[d] || "WD-447-[SIWA]", scheduleName = scheduleNameDisplay(scheduleRaw), normShift = smartNormalize(shiftCode);
+let shiftCode = driverRoster[d] || 'راحة';
+// 🌟 استخدام الدالة الذكية لاختيار الجدول لكل يوم في الشهر
+let scheduleRaw = getSmartScheduleName(dateVal, d); 
+let scheduleName = scheduleNameDisplay(scheduleRaw), normShift = smartNormalize(shiftCode);
 let dayContent = generateDayTripsHTML(d, shiftCode, normShift, scheduleRaw, driverRoster);
 let isRest = (shiftCode === 'راحة' || shiftCode === 'R' || shiftCode.includes('OFF'));
 html += `<div class="p-5 rounded-2xl border bg-white dark:bg-gray-800 shadow-sm border-gray-200 dark:border-gray-700"><div class="flex justify-between items-center border-b pb-3 mb-3"><span class="text-lg font-black text-green-600">📅 يوم ${d} ${currentMonthName}</span><div class="flex gap-2"><span class="px-3 py-1 rounded-lg text-sm font-bold ${isRest ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'}">وردية: ${shiftCode}</span><span class="px-3 py-1 rounded-lg text-sm font-bold bg-purple-100 text-purple-700">الجدول: ${scheduleName}</span></div></div><div>${dayContent}</div></div>`;
@@ -1992,28 +2023,52 @@ function processFullRosterPdf(event) {
     });
 }
 
-// 🌟 1. دالة قراءة النص لتتناسب مع الخيارات الثلاثة
 function processRawTextInput() {
     const rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
     
-    // سحب قيمة الاختيار الحالي (daily أو currentRoster أو roster8)
     const scope = document.querySelector('input[name="updateScope"]:checked').value;
-    // تحديد هل نحن في وضع اليومية أم وضع الروستر الكامل
     const isDailyMode = (scope === 'daily'); 
-
     extractedBatchRoster = [];
+
+    // 🌟 برمجة الاستخراج الخاص بجداول الورادي (محدثة لحل مشكلة السطور المقطوعة)
+    if (scope === 'schedules8') {
+        // 1. مسح كل المسافات والأسطر الجديدة لدمج النص المقطوع
+        let cleanedText = rawText.replace(/\s+/g, ''); 
+        
+        // 2. تقسيم النص لكتل بناءً على القوس المقفول وإعادته مرة أخرى
+        let tokens = cleanedText.split(']')
+                                .filter(t => t.length > 2)
+                                .map(t => t + ']');
+                                
+        let newSchedules = {};
+        
+        // أخذ أول 31 قيمة وربطها بالأيام
+        for(let i = 0; i < 31; i++) {
+            if(tokens[i]) { newSchedules[i+1] = tokens[i].toUpperCase(); }
+        }
+
+        const tbody = document.getElementById('parsedRosterTable');
+        tbody.innerHTML = '';
+        for(let day in newSchedules) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td class="p-3 border-b font-bold text-blue-600">يوم ${day}</td><td class="p-3 border-b font-bold text-green-600">${newSchedules[day]}</td>`;
+            tbody.appendChild(tr);
+        }
+        
+        document.getElementById('driverCount').textContent = Object.keys(newSchedules).length;
+        extractedBatchRoster = [{ type: 'schedules8', data: newSchedules }]; 
+        document.getElementById('detectedDate').textContent = 'النطاق: جداول أسماء الورادي (شهر 8) 📝';
+        document.getElementById('parseResultBox').classList.remove('hidden-section');
+        return; // إنهاء الدالة هنا
+    }
+
+    // --- باقي الكود القديم الخاص بقراءة بيانات السائقين (الروستر) ---
     const tokens = rawText.trim().split(/\s+/);
     const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
 
     let processedIDs = new Set();
-    let currentId = null;
-    let daysMap = {};
-    let dayCount = 1;
-    let foundAnyId = false;
-    let dailyShiftFound = false; 
-
-    // جلب رقم اليوم المختار من التقويم في حالة اليومية
+    let currentId = null, daysMap = {}, dayCount = 1, foundAnyId = false, dailyShiftFound = false; 
     let targetDate = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
     let targetDayNum = parseInt(targetDate.split('-')[2], 10);
 
@@ -2021,64 +2076,41 @@ function processRawTextInput() {
         if (currentId && !processedIDs.has(currentId)) {
             processedIDs.add(currentId);
             if (isDailyMode) {
-                let todayShift = daysMap[1] || 'راحة';
-                // حفظ رقم اليوم لسهولة رفعه لقاعدة البيانات لاحقاً
-                extractedBatchRoster.push({ rdmcId: currentId, shift: todayShift, mode: 'daily', dayNum: targetDayNum });
+                extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1] || 'راحة', mode: 'daily', dayNum: targetDayNum });
             } else {
-                if (Object.keys(daysMap).length > 0) {
-                    extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
-                }
+                if (Object.keys(daysMap).length > 0) { extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); }
             }
         }
     }
 
-    // تحديث واجهة المستخدم برسالة توضح الوضع الحالي
-    if (scope === 'daily') {
-        document.getElementById('detectedDate').textContent = 'تاريخ اليومية: ' + targetDate;
-    } else if (scope === 'roster8') {
-        document.getElementById('detectedDate').textContent = 'النطاق: تجهيز روستر شهر 8 🏖️';
-    } else {
-        document.getElementById('detectedDate').textContent = 'النطاق: الروستر الحالي 🗓️';
-    }
+    if (scope === 'daily') { document.getElementById('detectedDate').textContent = 'تاريخ اليومية: ' + targetDate; } 
+    else if (scope === 'roster8') { document.getElementById('detectedDate').textContent = 'النطاق: تجهيز روستر شهر 8 🏖️'; } 
+    else { document.getElementById('detectedDate').textContent = 'النطاق: الروستر الحالي 🗓️'; }
 
     for (let i = 0; i < tokens.length; i++) {
         let token = tokens[i].toUpperCase();
-
         if (rdmcPattern.test(token)) {
             saveCurrentDriver(); 
             currentId = token.replace('ROMC', 'RDMC').replace('-', '');
-            foundAnyId = true;
-            daysMap = {};
-            dayCount = 1;
-            dailyShiftFound = false; 
+            foundAnyId = true; daysMap = {}; dayCount = 1; dailyShiftFound = false; 
             continue; 
         }
-
         if (currentId) {
             if (isDailyMode && dailyShiftFound) continue;
             if (!isDailyMode && dayCount > 31) continue;
-
             let cleanTxt = token.replace(/-/g, '');
-
             if (token === 'R' || token === 'REST' || token === 'OFF' || token === '_' || token === '-') {
-                daysMap[dayCount] = 'راحة'; dayCount++;
-                if(isDailyMode) dailyShiftFound = true; 
+                daysMap[dayCount] = 'راحة'; dayCount++; if(isDailyMode) dailyShiftFound = true; 
             } else if (token.includes('AL') || token.includes('SL') || token.includes('TRG') || token.includes('CL') || token.includes('PH') || token === 'N/A') {
-                daysMap[dayCount] = token; dayCount++;
-                if(isDailyMode) dailyShiftFound = true; 
+                daysMap[dayCount] = token; dayCount++; if(isDailyMode) dailyShiftFound = true; 
             } else if (/^[MEN]\d{1,2}/i.test(cleanTxt) || /^[MEN]RES/i.test(cleanTxt)) {
-                daysMap[dayCount] = token; dayCount++;
-                if(isDailyMode) dailyShiftFound = true; 
+                daysMap[dayCount] = token; dayCount++; if(isDailyMode) dailyShiftFound = true; 
             }
         }
     }
-
     saveCurrentDriver(); 
 
-    if (!foundAnyId && rawText.trim().length > 0) {
-        alert("⚠️ عذراً، لم أتمكن من العثور على أي أكواد للسائقين في النص المنسوخ.");
-    }
-
+    if (!foundAnyId && rawText.trim().length > 0) { alert("⚠️ عذراً، لم أتمكن من العثور على أي أكواد للسائقين في النص المنسوخ."); }
     const tbody = document.getElementById('parsedRosterTable');
     tbody.innerHTML = '';
     if(extractedBatchRoster.length === 0) {
@@ -2095,37 +2127,37 @@ function processRawTextInput() {
     document.getElementById('parseResultBox').classList.remove('hidden-section');
 }
 
-// 🌟 2. دالة الحفظ السحابي الذكية (توجيه البيانات للمسار الصحيح)
 function saveAllRosterToFirebase() {
     if (!extractedBatchRoster || extractedBatchRoster.length === 0) { alert("لا توجد بيانات لتحديثها!"); return; }
     
-    // معرفة النطاق المطلوب للحفظ
-    const scope = document.querySelector('input[name="updateScope"]:checked').value;
-    
-    // تحديد مسار العقدة (Node) في Firebase بناءً على اختيارك
-    let targetFirebaseNode = 'rosterDataMap'; // المسار الافتراضي للروستر الحالي واليومية
-    if (scope === 'roster8') {
-        targetFirebaseNode = 'roster8'; // تحويل المسار إلى روستر 8
+    // 🌟 فحص إذا كانت البيانات هي أسماء جداول الورادي لشهر 8
+    if (extractedBatchRoster[0] && extractedBatchRoster[0].type === 'schedules8') {
+        db.ref('schedules8').set(extractedBatchRoster[0].data).then(() => {
+            alert("🌐✅ تم حفظ جدول أسماء الورادي لشهر 8 بنجاح!");
+        }).catch(err => { alert("⚠️ خطأ في حفظ الجداول: " + err.message); });
+        return; 
     }
 
-    // سنستخدم طريقة update بدلاً من set لضمان عدم مسح بيانات السائقين الآخرين
+    const scope = document.querySelector('input[name="updateScope"]:checked').value;
+    let targetFirebaseNode = 'rosterDataMap'; 
+    if (scope === 'roster8') {
+        targetFirebaseNode = 'roster8'; 
+    }
+
     let updates = {};
 
     extractedBatchRoster.forEach(item => {
         let normId = item.rdmcId;
         
         if (scope === 'daily') {
-            // تحديث خلية يوم واحد فقط للسائق في الروستر الحالي
             updates[`${targetFirebaseNode}/${normId}/${item.dayNum}`] = item.shift;
         } else {
-            // تحديث الـ 31 يوم بالكامل للسائق
             for (let dayKey in item.shiftsMap) {
                 updates[`${targetFirebaseNode}/${normId}/${dayKey}`] = item.shiftsMap[dayKey];
             }
         }
     });
 
-    // إرسال حزمة التحديثات إلى Firebase دفعة واحدة
     db.ref().update(updates).then(() => {
         let successMsg = scope === 'roster8' ? "تم حفظ الروستر في عقدة شهر 8 بنجاح!" : "تم تحديث بيانات الروستر الحالي بنجاح!";
         alert(`🌐✅ ${successMsg}`);
