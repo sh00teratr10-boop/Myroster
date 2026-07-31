@@ -57,7 +57,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
     <div class="w-full flex justify-between items-end text-[11px] font-mono tracking-widest text-gray-500 select-none">
         <span>Directed by Mohamed Raafat</span>
-        <span>v4.3 - Stable Fix & Corrections</span>
+        <span>v5.0 - Verified Excel Transition Matrix</span>
     </div>
 </div>
 
@@ -534,6 +534,100 @@ const luxorTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1eINA-xLID
 const luxorCercrlURL = 'https://docs.google.com/spreadsheets/d/1FAR2CV6mDM5Iq7gQSPIPNzRaLM4NPI-LIGJ8EB0kyUY/export?format=csv';
 const alexTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1vs7X7cyBP2jJMJbl2Lan8CHgICno36N8bD3EL7FZZDM/export?format=csv';
 const alexCercrlURL = 'https://docs.google.com/spreadsheets/d/1pnK_P08R3vBY-R0cjCdrfjAaQ2hIBlc-BACbrvXr_kU/export?format=csv';
+
+// =========================================================================
+// 1. مصفوفة التحويلات الشاملة المعتمدة المأخوذة من ملفات الإكسيل الثلاثة
+// =========================================================================
+const transitionMatrix = {
+    "WD-447_WE-341": {
+        "N01": { trips: ["508", "541", "102", "121"], storageLoc: "العباسية سكة7", sweep: true, sweepCode: "SWP 05", handover: "M-21" },
+        "N02": { trips: ["514", "547", "101", "114"], storageLoc: "العباسية سكة7", handover: "M-01" },
+        "N03": { trips: ["506", "539", "104", "127"], storageLoc: "ورشة العباسية", sweep: true, sweepCode: "SWP 02", handover: "M-23" },
+        "N04": { trips: ["510", "543", "106", "129"], storageLoc: "ورشة العباسية", sweep: true, sweepCode: "SWP 01", handover: "M-10" },
+        "N05": { trips: ["512", "545", "108", "131"], storageLoc: "ورشة العباسية", sweep: true, sweepCode: "SWP 04", handover: "M-24" },
+        "N06": { trips: ["516", "549", "110", "133"], storageLoc: "ورشة العباسية", handover: "M-11" },
+        "N07": { trips: ["537", "112"], storageLoc: "ورشة العباسية", handover: "M-14" },
+        "N08": { trips: ["518", "103", "116"], storageLoc: "ورشة السلام", sweep: true, sweepCode: "SWP 03", handover: "M-15" },
+        "N09": { trips: ["520", "105", "118"], storageLoc: "ورشة السلام", handover: "M-02" },
+        "N10": { trips: ["522", "107", "120"], storageLoc: "ورشة السلام", handover: "M-16" },
+        "N11": { trips: ["524", "109", "122"], storageLoc: "ورشة السلام", handover: "M-03" },
+        "N12": { trips: ["526", "111", "124"], storageLoc: "ورشة السلام", handover: "M-17" },
+        "N13": { trips: ["519", "528", "113", "126"], storageLoc: "ورشة السلام", handover: "M-04" },
+        "N14": { trips: ["521", "530", "115"], storageLoc: "ورشة السلام", handover: "M-06" },
+        "N15": { trips: ["523", "532", "117"], storageLoc: "ورشة السلام", handover: "M-20" },
+        "N16": { trips: ["525", "534", "119"], storageLoc: "ورشة السلام", handover: "M-07" },
+        "N17": { trips: ["527", "536", "123"], storageLoc: "ورشة السلام", handover: "M-08" },
+        "N18": { trips: ["529", "538", "125"], storageLoc: "ورشة السلام", handover: "M-22" },
+        "N19": { trips: ["531", "540"], storageLoc: "ورشة السلام", handover: "M-26" },
+        "N20": { trips: ["533", "542"], storageLoc: "ورشة السلام", notes: "تدويرات عد يل منصور N-RES‏02", handover: "N-RES02" },
+        "N21": { trips: ["535", "544"], storageLoc: "ورشة السلام", notes: "تدويرات عد يل منصور N-RES‏02", handover: "N-RES02" }
+    },
+
+    "WE-341_ST-416": {
+        "N01": { trips: ["417", "430", "123"], storageLoc: "ورشة السلام", handover: "M-32" },
+        "N02": { trips: ["421", "434", "127"], storageLoc: "ورشة السلام", handover: "M-17" },
+        "N03": { trips: ["425", "438", "131"], storageLoc: "ورشة السلام", handover: "M-03" },
+        "N04": { trips: ["429", "106", "139"], storageLoc: "ورشة العباسية", sweep: true, sweepCode: "SWP 03", handover: "M-08" },
+        "N05": { trips: ["408", "435", "104", "137"], storageLoc: "ورشة العباسية", sweep: true, sweepCode: "SWP 05", handover: "M-24" },
+        "N06": { trips: ["412", "439", "107", "114"], storageLoc: "العباسية سكة 7", handover: "M-11" },
+        "N07": { trips: ["416", "109", "116"], storageLoc: "ورشة السلام", sweep: true, sweepCode: "SWP 01 ADM-ABA", handover: "M-23" },
+        "N08": { trips: ["420", "113", "120"], storageLoc: "ورشة السلام", handover: "M-27" },
+        "N09": { trips: ["424", "117", "124"], storageLoc: "ورشة السلام", handover: "M-30" },
+        "N10": { trips: ["428", "121"], storageLoc: "ورشة السلام", handover: "M-28" },
+        "N11": { trips: ["419", "432"], storageLoc: "إخراج قطار من ورشة السلام وتسليمه إل (145)19-M", handover: "N-RES02" },
+        "N12": { trips: ["423", "436", "129"], storageLoc: "ورشة السلام", handover: "M-20" },
+        "N13": { trips: ["427", "440", "133"], storageLoc: "ورشة السلام", handover: "M-21" },
+        "N14": { trips: ["431", "101", "108", "143"], storageLoc: "ورشة العباسية", handover: "M-05" },
+        "N15": { trips: ["433", "105", "112"], storageLoc: "العباسية سكة 7", handover: "M-09" },
+        "N16": { trips: ["410", "437", "102", "135"], storageLoc: "ورشة العباسية", sweep: true, sweepCode: "SWP 02 KIT-ADM", handover: "M-02" },
+        "N17": { trips: ["414", "441", "103", "110"], storageLoc: "ورشة العباسية", handover: "M-06" },
+        "N18": { trips: ["418", "111", "118"], storageLoc: "ورشة السلام", handover: "M-12" },
+        "N19": { trips: ["422", "115", "122"], storageLoc: "ورشة السلام", handover: "M-15" },
+        "N20": { trips: ["426", "119"], storageLoc: "ورشة السلام", handover: "M-14" },
+        "N21": { trips: ["141"], storageLoc: "ورشة السلام", handover: "M-26" },
+        "N22": { trips: ["125"], storageLoc: "ورشة السلام", handover: "M-18" }
+    },
+
+    "ST-416_WD-447": {
+        "N01": { trips: ["474", "511", "103", "112"], storageLoc: "العباسية سكة7", handover: "M-15" },
+        "N02": { trips: ["484", "519", "105", "114"], storageLoc: "العباسية سكة7", handover: "M-01" },
+        "N03": { trips: ["507", "106", "133"], storageLoc: "العباسية", sweep: true, sweepCode: "SWP 01 ABA-ROD & ROD-KIT", handover: "M-12" },
+        "N04": { trips: ["509", "104", "131"], storageLoc: "العباسية", sweep: true, sweepCode: "SWP 05 KIT-UNI & UNI-KIT", handover: "M-28" },
+        "N05": { trips: ["478", "513", "102", "127"], storageLoc: "العباسية", sweep: true, sweepCode: "SWP 02 KIT-ADM", handover: "M-11" },
+        "N06": { trips: ["480", "515", "101", "110"], storageLoc: "العباسية", handover: "M-21" },
+        "N07": { trips: ["482", "517", "108", "137"], storageLoc: "العباسية", handover: "M-14" },
+        "N08": { trips: ["476", "107", "116"], storageLoc: "السلام", sweep: true, sweepCode: "SWP 03 ADM-ABA", handover: "M-02" },
+        "N09": { trips: ["486", "109", "118"], storageLoc: "السلام", handover: "M-03" },
+        "N10": { trips: ["488", "111", "120"], storageLoc: "السلام", handover: "M-04" },
+        "N11": { trips: ["490", "113", "122"], storageLoc: "السلام", handover: "M-24" },
+        "N12": { trips: ["492", "115"], storageLoc: "السلام", handover: "M-09" },
+        "N13": { trips: ["494", "117"], storageLoc: "السلام", handover: "M-08" },
+        "N14": { trips: ["497", "504", "119"], storageLoc: "السلام", handover: "M-13" },
+        "N15": { trips: ["499", "506", "121"], storageLoc: "السلام", handover: "M-26" },
+        "N16": { trips: ["505", "512", "123"], storageLoc: "السلام", handover: "M-05" },
+        "N17": { trips: ["503", "510", "125"], storageLoc: "السلام", handover: "M-17" },
+        "N18": { trips: ["501", "508", "129"], storageLoc: "السلام", handover: "M-27" },
+        "N19": { trips: ["489", "496", "135"], storageLoc: "السلام", handover: "M-30" },
+        "N20": { trips: ["491", "498"], storageLoc: "السلام", handover: "M-31" },
+        "N21": { trips: ["493", "500"], storageLoc: "السلام", handover: "M-16" },
+        "N22": { trips: ["495", "502"], storageLoc: "السلام", notes: "تدويرات N-RES‏02 عد يل منصور", handover: "N-RES02" }
+    }
+};
+
+// =========================================================================
+// 2. دالة استخراج بيانات الوردية الليلية حسب التحويلة
+// =========================================================================
+function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
+    if (!todayScheduleStr || !tomorrowScheduleStr || !shiftCode) return null;
+    const cleanToday = todayScheduleStr.split('-')[0] + "-" + (todayScheduleStr.split('-')[1] || "").replace(/\[.*/, '').split('[')[0];
+    const cleanTomorrow = tomorrowScheduleStr.split('-')[0] + "-" + (tomorrowScheduleStr.split('-')[1] || "").replace(/\[.*/, '').split('[')[0];
+    const transitionKey = `${cleanToday}_${cleanTomorrow}`;
+    const cleanShiftCode = shiftCode.replace("-", "").toUpperCase();
+    if (transitionMatrix[transitionKey] && transitionMatrix[transitionKey][cleanShiftCode]) {
+        return transitionMatrix[transitionKey][cleanShiftCode];
+    }
+    return null;
+}
 
 let driversData = [], rosterDataMap = {}, roster8DataMap = {}, schedules8DataMap = {};
 let aswanDataMap = {}, luxorDataMap = {}, alexDataMap = {};
@@ -1380,6 +1474,57 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
     else if (isAlex) { myShiftData = alexDataMap[normShift]; scheduleTypeName = "الإسكندرية (أليكس)"; activeTripsMap = alexTripsMap; activeIncomingMap = alexIncomingMap; activeDataMap = alexDataMap; }
     else { return `<div class="text-center py-6 font-bold bg-amber-50 dark:bg-amber-900/20 rounded-xl border border-amber-200 text-amber-700"><p class="text-sm">عذراً، الجدول غير متوفر.</p></div>`; }
 
+    // ==========================================================
+    // === 🚀 بداية تطبيق نظام التحويلات من ملفات الإكسيل المعتمدة ===
+    // ==========================================================
+    let isTransition = false;
+    let transitionNotes = "";
+    let transitionSweep = "";
+    let transitionStorage = "";
+    let tomorrowTripsMap = {};
+    let tomorrowIncomingMap = {};
+    
+    const selectedDateVal = dateValOverride || document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
+
+    if (normShift.startsWith('N')) {
+        let currentDayNum = dayNum;
+        let tomorrowDayNum = currentDayNum + 1;
+        let tomorrowScheduleRaw = "";
+
+        if (tomorrowDayNum <= 31) {
+            tomorrowScheduleRaw = getSmartScheduleName(selectedDateVal, tomorrowDayNum);
+        } else {
+            tomorrowScheduleRaw = scheduleRaw;
+        }
+
+        let nightTransitionData = getNightShiftData(scheduleRaw, tomorrowScheduleRaw, normShift);
+
+        if (nightTransitionData) {
+            isTransition = true;
+            // استبدال بيانات الوردية القديمة بالكامل ببيانات التحويلة من الإكسيل
+            myShiftData = {
+                tripNumbers: nightTransitionData.trips,
+                handoverCode: nightTransitionData.handover ? smartNormalize(nightTransitionData.handover) : null
+            };
+            transitionNotes = nightTransitionData.notes || "";
+            transitionSweep = nightTransitionData.sweepCode || "";
+            transitionStorage = nightTransitionData.storageLoc || "";
+            
+            // تحديد جدول بكرة للبحث عن مواعيد الرحلات النهارية المتبقية
+            let tomorrowUpper = tomorrowScheduleRaw.toUpperCase();
+            if (tomorrowUpper.includes("LUXOR") || tomorrowUpper.includes("WE")) {
+                tomorrowTripsMap = luxorTripsMap; tomorrowIncomingMap = luxorIncomingMap;
+            } else if (tomorrowUpper.includes("SIWA") || tomorrowUpper.includes("WD")) {
+                tomorrowTripsMap = siwaTripsMap; tomorrowIncomingMap = siwaIncomingMap;
+            } else if (tomorrowUpper.includes("ALEX") || tomorrowUpper.includes("ST")) {
+                tomorrowTripsMap = alexTripsMap; tomorrowIncomingMap = alexIncomingMap;
+            }
+        }
+    }
+    // ==========================================================
+    // === نهاية تطبيق نظام التحويلات ===
+    // ==========================================================
+
     if (myShiftData && myShiftData.tripNumbers && myShiftData.tripNumbers.length > 0) {
         
         let receiveFromCode = null;
@@ -1391,7 +1536,6 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
 
         let handoverCode = myShiftData.handoverCode;
         let handoverDriverName = null;
-        const selectedDateVal = dateValOverride || document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
 
         for (let i = 0; i < driversData.length; i++) {
             let d = driversData[i];
@@ -1426,15 +1570,55 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
         }
 
         let tripsHTML = '';
+        
+        if (isTransition) {
+            tripsHTML += `
+                <div class="mb-4 bg-purple-50 dark:bg-purple-900/30 p-4 rounded-xl border-2 border-purple-400 dark:border-purple-600 flex items-center shadow-md text-right">
+                    <span class="text-2xl ml-3">🔄</span>
+                    <div>
+                        <span class="font-black text-purple-800 dark:text-purple-300 text-sm block">نظام التحويلات مُفعل!</span>
+                        <p class="text-xs text-purple-600 dark:text-purple-400 font-bold mt-1">تم إحلال الوردية وتطبيق بيانات ملف الإكسيل المعتمد بنجاح.</p>
+                    </div>
+                </div>
+            `;
+        }
+
         myShiftData.tripNumbers.forEach((tNum, index) => {
-            let scheduleMatch = activeTripsMap[tNum];
+            // == 🔍 بحث ذكي وشامل عن تفاصيل الرحلة في جميع الجداول ==
+            let scheduleMatch = null;
+            let usedIncMap = activeIncomingMap;
+
+            if (activeTripsMap[tNum]) { 
+                scheduleMatch = activeTripsMap[tNum]; 
+                usedIncMap = activeIncomingMap; 
+            } 
+            else if (isTransition && tomorrowTripsMap[tNum]) { 
+                scheduleMatch = tomorrowTripsMap[tNum]; 
+                usedIncMap = tomorrowIncomingMap; 
+            } 
+            else {
+                if (siwaTripsMap[tNum]) { scheduleMatch = siwaTripsMap[tNum]; usedIncMap = siwaIncomingMap; }
+                else if (luxorTripsMap[tNum]) { scheduleMatch = luxorTripsMap[tNum]; usedIncMap = luxorIncomingMap; }
+                else if (alexTripsMap[tNum]) { scheduleMatch = alexTripsMap[tNum]; usedIncMap = alexIncomingMap; }
+            }
+
             let dep = scheduleMatch ? scheduleMatch.depTime : '---';
             let arr = scheduleMatch ? scheduleMatch.arrTime : '---';
             let route = scheduleMatch ? scheduleMatch.route : 'مسار تشغيل الخط الثالث';
-            let incomingCode = activeIncomingMap[tNum] || 'غير محدد';
+            let incomingCode = usedIncMap[tNum] || 'غير محدد';
             let incomingTime = '---';
-            if (/^\d{3,4}$/.test(incomingCode) && activeTripsMap[incomingCode]) { incomingTime = activeTripsMap[incomingCode].arrTime; } 
-            else if (incomingCode !== 'غير محدد') { incomingTime = 'تخزين / سكة'; }
+            
+            if (/^\d{3,4}$/.test(incomingCode)) {
+                let incMatch = activeTripsMap[incomingCode] || (isTransition && tomorrowTripsMap[incomingCode] ? tomorrowTripsMap[incomingCode] : null);
+                if (!incMatch) {
+                    if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode];
+                    else if (luxorTripsMap[incomingCode]) incMatch = luxorTripsMap[incomingCode];
+                    else if (alexTripsMap[incomingCode]) incMatch = alexTripsMap[incomingCode];
+                }
+                if (incMatch) incomingTime = incMatch.arrTime;
+            } else if (incomingCode !== 'غير محدد') {
+                incomingTime = 'تخزين / سكة';
+            }
 
             let savedUnit = localStorage.getItem('unit_' + tNum) || '';
 
@@ -1467,34 +1651,46 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
                 let nextTrip = myShiftData.tripNumbers[index + 1];
                 if (nextTrip && parseInt(tNum) > parseInt(nextTrip)) {
                     
-                    let nextIncoming = activeIncomingMap[nextTrip] || '';
-                    let stableName = "تخزين بالورشة";
+                    let stableName = transitionStorage || "تخزين بالورشة";
                     let stableColor = "bg-gray-600";
                     
-                    if (nextIncoming.includes("عباس")) { stableName = "ورشة العباسية"; stableColor = "bg-emerald-600"; }
-                    else if (nextIncoming.includes("سلام") || nextIncoming.includes("السلام")) { stableName = "ورشة السلام"; stableColor = "bg-red-600"; }
-                    else if (nextIncoming.includes("سكة") || nextIncoming.includes("تخزين")) { stableName = nextIncoming; stableColor = "bg-blue-800"; }
-                    else if (nextIncoming) { stableName = nextIncoming; } 
+                    if (!isTransition) {
+                        let nextIncoming = activeIncomingMap[nextTrip] || '';
+                        if (nextIncoming.includes("عباس")) { stableName = "ورشة العباسية"; stableColor = "bg-emerald-600"; }
+                        else if (nextIncoming.includes("سلام") || nextIncoming.includes("السلام")) { stableName = "ورشة السلام"; stableColor = "bg-red-600"; }
+                        else if (nextIncoming.includes("سكة") || nextIncoming.includes("تخزين")) { stableName = nextIncoming; stableColor = "bg-blue-800"; }
+                        else if (nextIncoming) { stableName = nextIncoming; } 
+                    } else {
+                        if (stableName.includes("عباس")) { stableColor = "bg-emerald-600"; }
+                        else if (stableName.includes("سلام") || stableName.includes("السلام")) { stableColor = "bg-red-600"; }
+                        else if (stableName.includes("سكة") || stableName.includes("تخزين")) { stableColor = "bg-blue-800"; }
+                    }
 
-                    let shiftSWP = "";
-                    if (normShift === "N03") shiftSWP = "استكمال تدويرات";
-                    else if (normShift === "N04") shiftSWP = "SWP 02";
-                    else if (normShift === "N05") shiftSWP = "SWP 04";
-                    else if (normShift === "N07") shiftSWP = "SWP 03";
-                    else if (normShift === "N13") shiftSWP = "تدويرات N-RES02";
-                    else if (normShift === "N14") shiftSWP = "SWP 01";
-                    else if (normShift === "N15") shiftSWP = "SWP 05";
+                    let shiftSWP = transitionSweep;
+                    if (!isTransition) {
+                        if (normShift === "N03") shiftSWP = "استكمال تدويرات";
+                        else if (normShift === "N04") shiftSWP = "SWP 02";
+                        else if (normShift === "N05") shiftSWP = "SWP 04";
+                        else if (normShift === "N07") shiftSWP = "SWP 03";
+                        else if (normShift === "N13") shiftSWP = "تدويرات N-RES02";
+                        else if (normShift === "N14") shiftSWP = "SWP 01";
+                        else if (normShift === "N15") shiftSWP = "SWP 05";
+                    }
                     
                     let swpHTML = shiftSWP ? `<div class="bg-amber-500 text-white text-xs font-black px-3 py-1.5 rounded-lg shadow-sm border border-amber-600 flex items-center justify-center">🧹 ${shiftSWP}</div>` : '';
+                    let notesHTML = transitionNotes ? `<div class="w-full text-center mt-2 text-red-600 font-bold text-xs bg-red-50 p-2 rounded border border-red-200">⚠️ ${transitionNotes}</div>` : '';
 
                     tripsHTML += `
                         <div class="my-4 flex flex-col items-center justify-center relative">
                             <div class="absolute inset-0 flex items-center"><div class="w-full border-t border-dashed border-gray-300 dark:border-gray-600"></div></div>
-                            <div class="relative z-10 flex gap-2">
-                                <div class="${stableColor} text-white text-xs font-black px-3 py-1.5 rounded-lg shadow-sm border border-white/20 flex items-center justify-center">
-                                    🌙 ${stableName}
+                            <div class="relative z-10 flex flex-col gap-2 items-center">
+                                <div class="flex gap-2">
+                                    <div class="${stableColor} text-white text-xs font-black px-3 py-1.5 rounded-lg shadow-sm border border-white/20 flex items-center justify-center">
+                                        🌙 ${stableName}
+                                    </div>
+                                    ${swpHTML}
                                 </div>
-                                ${swpHTML}
+                                ${notesHTML}
                             </div>
                         </div>
                     `;
