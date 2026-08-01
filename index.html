@@ -8,6 +8,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<!-- تم إضافة سطر مكتبة التخزين هنا لرفع المستندات -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 <script>
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
 tailwind.config = { darkMode: 'class', }
@@ -272,7 +274,6 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- زرار الـ X شغال في الديتيلز -->
 <div id="shiftDetailsModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[9999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl premium-shadow border border-gray-200 dark:border-gray-700 relative text-right flex flex-col overflow-hidden">
         <div class="bg-gradient-to-r from-green-500 to-emerald-600 p-4 relative text-center">
@@ -280,7 +281,6 @@ body { font-family: 'Cairo', sans-serif; }
             <h2 class="text-lg font-black text-white drop-shadow-sm" id="modalShiftTitle">تفاصيل الوردية</h2>
         </div>
         <div class="p-4 max-h-[60vh] overflow-y-auto bg-slate-50 dark:bg-gray-800 hide-scrollbar" id="modalShiftContent">
-            <!-- سيتم حقن الرحلات هنا -->
         </div>
     </div>
 </div>
@@ -545,7 +545,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- شاشة الأدمن -->
+    <!-- شاشة الأدمن -->
 <div id="admin-page" class="hidden-section min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
     <nav class="bg-gradient-to-r from-purple-800 to-indigo-900 text-white p-4 shadow-lg flex justify-between items-center relative overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
@@ -1046,7 +1046,11 @@ async function loadAllData() {
                             if (window.AppInventor) {
                                 window.AppInventor.setWebViewString("ALARM:NOTIF|" + n.text);
                             } else {
-                                try { document.getElementById('notifSound').play(); } catch(e){}
+                                try {
+                                    const audio = document.getElementById('notifSound');
+                                    audio.loop = false; // الإشعار العادي يرن مرة واحدة فقط
+                                    audio.play();
+                                } catch(e){}
                             }
                         } else if (isInitialBroadcastLoad) {
                             lastBroadcastText = n.text;
@@ -1257,7 +1261,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
-// 🎯 توليد تفاصيل اليوم والرحلات (مع إعادة ضبط خانة وقت الوصول للقطار القادم "التدوير")
+// 🎯 توليد تفاصيل اليوم والرحلات
 function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCode)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ يوم إجازة / ${shiftCode}</p></div>`;
@@ -1321,12 +1325,36 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
         let handoverCode = myShiftData.handoverCode;
         let handoverDriverName = null;
 
-        for (let i = 0; i < driversData.length; i++) {
-            let d = driversData[i];
-            let dRoster = getDriverRosterForDate(d.serviceId, selectedDateVal);
-            let currentDriverShift = smartNormalize(dRoster[dayNum]);
-            if (receiveFromCode && currentDriverShift === receiveFromCode) { receiveFromDriverName = d.name; }
-            if (handoverCode && currentDriverShift === handoverCode) { handoverDriverName = d.name; }
+        if (receiveFromCode) {
+            for (let i = 0; i < driversData.length; i++) {
+                let d = driversData[i];
+                let dRoster = getDriverRosterForDate(d.serviceId, selectedDateVal);
+                if (dRoster && smartNormalize(dRoster[dayNum]) === receiveFromCode) { 
+                    receiveFromDriverName = d.name; 
+                    break; 
+                }
+            }
+        }
+
+        if (handoverCode) {
+            let handoverDateVal = selectedDateVal;
+            let handoverDayNum = dayNum;
+            
+            if (isTransition) {
+                let dObj = new Date(selectedDateVal);
+                dObj.setDate(dObj.getDate() + 1);
+                handoverDateVal = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
+                handoverDayNum = dObj.getDate();
+            }
+            
+            for (let i = 0; i < driversData.length; i++) {
+                let d = driversData[i];
+                let dRoster = getDriverRosterForDate(d.serviceId, handoverDateVal);
+                if (dRoster && smartNormalize(dRoster[handoverDayNum]) === handoverCode) { 
+                    handoverDriverName = d.name; 
+                    break; 
+                }
+            }
         }
 
         let receiveHTML = '';
@@ -1371,7 +1399,6 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
             let incomingCode = usedIncMap[tNum] || 'غير محدد';
             let incomingTime = '---';
             
-            // استخراج وقت وصول الرحلة القادمة (التدوير) بدقة
             if (/^\d{3,4}$/.test(incomingCode)) {
                 let incMatch = null;
                 let incNumInt = parseInt(incomingCode, 10);
@@ -1976,39 +2003,74 @@ function parseWordStreamRoster(wordsList, scope) {
     const isDailyMode = (scope === 'daily');
 
     let processedIDs = new Set();
-    let currentId = null, daysMap = {}, dayCount = 1, readingShifts = false;
+    let currentId = null, daysMap = {}, dayCount = 1;
+
+    function isShiftToken(t) {
+        t = t.replace(/ANNUAL\s+LEAVE\s*-\s*SV/g, 'AL-SV')
+             .replace(/ANNUAL\s+LEAVE/g, 'AL')
+             .replace(/SICK\s+LEAVE/g, 'SL')
+             .replace(/CASUAL\s+LEAVE/g, 'CL')
+             .replace(/OUT\s+OF\s+OPERATION/g, 'OOO');
+
+        const exact = ['R','REST','OFF','ABSENT','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV'];
+        if (exact.includes(t)) return true;
+        if (t === '-') return true;
+        if (t.includes('ورشة') || t.includes('سكة')) return true;
+        
+        if (/^[MEN][-_]?\d{1,2}$/i.test(t)) return true;
+        if (/^[MEN][-_]?DT(ABA|SLM)$/i.test(t)) return true;
+        if (/^[MEN][-_]?RES\d{1,2}$/i.test(t)) return true;
+        if (/^TRG[-_]?DRI[-_]?REF$/i.test(t)) return true;
+        
+        return false;
+    }
 
     function saveCurrentDriver() {
-        if (currentId && Object.keys(daysMap).length > 0) {
+        if (currentId && !processedIDs.has(currentId)) {
             processedIDs.add(currentId);
-            if (isDailyMode) { extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1] || 'راحة', mode: 'daily', dayNum: targetDayNum }); } 
-            else { extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); }
+            if (isDailyMode) {
+                let finalShift = daysMap[1] || 'راحة';
+                extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
+            } else {
+                if (Object.keys(daysMap).length > 0) {
+                    extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
+                }
+            }
         }
     }
 
     wordsList.forEach(w => {
         let rawToken = w.str;
+        rawToken = rawToken.replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
+                         .replace(/Annual\s+leave/gi, 'AL')
+                         .replace(/Sick\s+Leave/gi, 'SL')
+                         .replace(/Casual\s+Leave/gi, 'CL')
+                         .replace(/Out\s+of\s+Operation/gi, 'OOO');
+                         
         let token = rawToken.toUpperCase();
+        
         if (/^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i.test(token)) {
-            saveCurrentDriver();
+            if (currentId) saveCurrentDriver();
             currentId = token.replace('ROMC', 'RDMC').replace('-', '');
-            daysMap = {}; dayCount = 1; readingShifts = false;
-        } else if (currentId) {
-            if (!readingShifts) {
-                const shiftTriggers = ['R','REST','OFF','ABSENT','CL','AL','SL','PH','TRG','SV','N/A','-'];
-                if (shiftTriggers.includes(token) || /[-_]/.test(token) || token.includes('ورشة') || token.includes('سكة') || /^[MEN]\d/.test(token)) {
-                    readingShifts = true;
+            daysMap = {}; 
+            dayCount = 1;
+            return;
+        } 
+        
+        if (currentId) {
+            if (isShiftToken(token)) {
+                if (isDailyMode) {
+                    daysMap[1] = token; 
+                } else {
+                    if (dayCount <= 31) {
+                        daysMap[dayCount] = token;
+                        dayCount++;
+                    }
                 }
-            }
-            if (readingShifts) {
-                if (isDailyMode && dayCount > 1) return;
-                if (!isDailyMode && dayCount > 31) return;
-                daysMap[dayCount] = rawToken; 
-                dayCount++;
             }
         }
     });
-    saveCurrentDriver();
+    if (currentId) saveCurrentDriver();
 
     if(extractedBatchRoster.length === 0) {
         tbody.innerHTML = `<tr><td colspan="2" class="text-center p-4 text-red-500 font-bold">لم يتم العثور على بيانات.</td></tr>`;
@@ -2025,8 +2087,15 @@ function parseWordStreamRoster(wordsList, scope) {
 }
 
 function processRawTextInput() {
-    const rawText = document.getElementById('rawTextInput').value;
+    let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
+
+    rawText = rawText.replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
+                     .replace(/Annual\s+leave/gi, 'AL')
+                     .replace(/Sick\s+Leave/gi, 'SL')
+                     .replace(/Casual\s+Leave/gi, 'CL')
+                     .replace(/Out\s+of\s+Operation/gi, 'OOO');
+
     const scope = document.querySelector('input[name="updateScope"]:checked').value;
     const isDailyMode = (scope === 'daily'); 
     extractedBatchRoster = [];
@@ -2055,15 +2124,35 @@ function processRawTextInput() {
     const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
 
     let processedIDs = new Set();
-    let currentId = null, daysMap = {}, dayCount = 1, readingShifts = false; 
+    let currentId = null, daysMap = {}, dayCount = 1; 
     let adminDateVal = document.getElementById('adminDailyDateInput').value || getTodayYYYYMMDD();
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
+
+    function isShiftToken(t) {
+        const exact = ['R','REST','OFF','ABSENT','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV'];
+        if (exact.includes(t)) return true;
+        if (t === '-') return true;
+        if (t.includes('ورشة') || t.includes('سكة')) return true;
+        
+        if (/^[MEN][-_]?\d{1,2}$/i.test(t)) return true; 
+        if (/^[MEN][-_]?DT(ABA|SLM)$/i.test(t)) return true;
+        if (/^[MEN][-_]?RES\d{1,2}$/i.test(t)) return true;
+        if (/^TRG[-_]?DRI[-_]?REF$/i.test(t)) return true;
+        
+        return false;
+    }
 
     function saveCurrentDriver() {
         if (currentId && !processedIDs.has(currentId)) {
             processedIDs.add(currentId);
-            if (isDailyMode) { extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1] || 'راحة', mode: 'daily', dayNum: targetDayNum }); } 
-            else { if (Object.keys(daysMap).length > 0) { extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); } }
+            if (isDailyMode) {
+                let finalShift = daysMap[1] || 'راحة';
+                extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
+            } else {
+                if (Object.keys(daysMap).length > 0) {
+                    extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
+                }
+            }
         }
     }
 
@@ -2076,29 +2165,27 @@ function processRawTextInput() {
         let token = rawToken.toUpperCase();
         
         if (rdmcPattern.test(token)) {
-            saveCurrentDriver(); 
+            if (currentId) saveCurrentDriver(); 
             currentId = token.replace('ROMC', 'RDMC').replace('-', '');
-            daysMap = {}; dayCount = 1; readingShifts = false; 
+            daysMap = {}; 
+            dayCount = 1; 
             continue; 
         }
         
         if (currentId) {
-            if (!readingShifts) {
-                const shiftTriggers = ['R','REST','OFF','ABSENT','CL','AL','SL','PH','TRG','SV','N/A','-'];
-                if (shiftTriggers.includes(token) || /[-_]/.test(token) || token.includes('ورشة') || token.includes('سكة') || /^[MEN]\d/.test(token)) {
-                    readingShifts = true;
+            if (isShiftToken(token)) {
+                if (isDailyMode) {
+                    daysMap[1] = token; 
+                } else {
+                    if (dayCount <= 31) {
+                        daysMap[dayCount] = token;
+                        dayCount++;
+                    }
                 }
-            }
-            if (readingShifts) {
-                if (isDailyMode && dayCount > 1) continue;
-                if (!isDailyMode && dayCount > 31) continue;
-                
-                daysMap[dayCount] = rawToken; 
-                dayCount++;
             }
         }
     }
-    saveCurrentDriver(); 
+    if (currentId) saveCurrentDriver(); 
 
     const tbody = document.getElementById('parsedRosterTable');
     tbody.innerHTML = '';
@@ -2275,6 +2362,7 @@ function checkUpcomingTrainsAlarm() {
     });
 }
 
+// تعديل برمجة المنبه هنا (الصوت هيستمر لحد ما تضغط على زرار فهمت)
 function triggerArrivalAlarm(tripId) {
     const modal = document.getElementById('customArrivalModal');
     modal.classList.remove('hidden-section');
@@ -2283,12 +2371,24 @@ function triggerArrivalAlarm(tripId) {
     if (window.AppInventor) {
         window.AppInventor.setWebViewString("ALARM:TRIP|" + (tripId || "Unknown"));
     } else {
-        try { document.getElementById('notifSound').play(); } catch(e){}
+        try { 
+            const audio = document.getElementById('notifSound');
+            audio.loop = true; // تفعيل التكرار المستمر للصوت
+            audio.play(); 
+        } catch(e){}
     }
 }
 
 function dismissArrivalAlert() {
     document.getElementById('customArrivalModal').classList.add('hidden-section');
+    if (!window.AppInventor) {
+        try {
+            const audio = document.getElementById('notifSound');
+            audio.pause(); // إيقاف الصوت
+            audio.currentTime = 0; // إرجاع الصوت للبداية
+            audio.loop = false; // إلغاء التكرار عشان ميأثرش على إشعارات الأدمن
+        } catch(e){}
+    }
 }
 </script>
 </body>
