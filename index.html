@@ -133,6 +133,7 @@ body { font-family: 'Cairo', sans-serif; }
 </div>
 </div>
 </nav>
+
 <main class="max-w-6xl mx-auto p-4 mt-4 flex-1 w-full">
 <div class="flex p-1.5 mb-6 glass-panel rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/50 overflow-x-auto hide-scrollbar gap-1">
 <button onclick="switchTab('daily')" id="btn-daily" class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black shadow-md text-xs whitespace-nowrap transition-all">اليومي</button>
@@ -382,7 +383,6 @@ body { font-family: 'Cairo', sans-serif; }
                 </div>
             </div>
 
-            <!-- تم دمج ورشة السلام والعباسية تحت قسم CCP والورش وترتيب الأرقام -->
             <div>
                 <h4 class="font-black text-sm text-red-600 dark:text-red-400 mb-3 border-r-4 border-red-600 pr-2">🚨 2. قسم CCP والورش</h4>
                 <div class="space-y-3">
@@ -1023,7 +1023,6 @@ async function loadAllData() {
             if (cloudData) { schedules8DataMap = cloudData; if (currentDriver) buildDashboardData(currentDriver, false); }
         });
 
-        // مراقبة الإشعارات مع تفادي التضارب بين الويب وكوديولر
         db.ref('broadcasts').limitToLast(50).on('value', (snapshot) => {
             const data = snapshot.val();
             const container = document.getElementById('notifHistoryContainer');
@@ -1044,8 +1043,6 @@ async function loadAllData() {
                         
                         if (!isInitialBroadcastLoad && n.text !== lastBroadcastText) {
                             lastBroadcastText = n.text;
-                            
-                            // إرسال الإشارة لكوديولر أو تشغيل صوت الويب حسب البيئة
                             if (window.AppInventor) {
                                 window.AppInventor.setWebViewString("ALARM:NOTIF|" + n.text);
                             } else {
@@ -1239,7 +1236,6 @@ function logout() {
     document.getElementById('auth-page').classList.remove('hidden-section');
     document.getElementById('loginPassword').value = '';
     
-    // إغلاق قائمة الإعدادات تلقائياً عند تسجيل الخروج
     const settingsMenu = document.getElementById('settingsMenu');
     if (settingsMenu) { settingsMenu.classList.add('hidden'); }
 }
@@ -1261,6 +1257,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
+// 🎯 توليد تفاصيل اليوم والرحلات (مع إعادة ضبط خانة وقت الوصول للقطار القادم "التدوير")
 function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCode)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ يوم إجازة / ${shiftCode}</p></div>`;
@@ -1373,6 +1370,26 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
             let route = scheduleMatch ? scheduleMatch.route : 'مسار تشغيل الخط الثالث';
             let incomingCode = usedIncMap[tNum] || 'غير محدد';
             let incomingTime = '---';
+            
+            // استخراج وقت وصول الرحلة القادمة (التدوير) بدقة
+            if (/^\d{3,4}$/.test(incomingCode)) {
+                let incMatch = null;
+                let incNumInt = parseInt(incomingCode, 10);
+                if (isTransition) {
+                    if (incNumInt < 300) { incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incomingCode]; } 
+                    else { incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incomingCode]; }
+                } else {
+                    incMatch = activeTripsMap[incomingCode];
+                }
+                if (!incMatch) {
+                    if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode];
+                    else if (luxorTripsMap[incomingCode]) incMatch = luxorTripsMap[incomingCode];
+                    else if (alexTripsMap[incomingCode]) incMatch = alexTripsMap[incomingCode];
+                }
+                if (incMatch) incomingTime = incMatch.arrTime;
+            } else if (incomingCode !== 'غير محدد') {
+                incomingTime = 'تخزين / سكة';
+            }
 
             let savedUnit = localStorage.getItem('unit_' + tNum) || '';
 
@@ -1394,6 +1411,7 @@ function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverR
                 </div>
                 <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-3 rounded-2xl border border-amber-200 dark:border-amber-800/50 mb-4 flex justify-between items-center text-xs shadow-sm">
                     <span class="font-black text-amber-800 dark:text-amber-400 flex items-center gap-1.5"><span>⬅️ قادم بـ:</span> <span class="text-lg font-mono text-amber-600 dark:text-amber-300 bg-white dark:bg-gray-800 px-2 py-0.5 rounded shadow-sm border border-amber-100 dark:border-gray-700">${incomingCode}</span></span>
+                    <span class="font-black text-amber-700 dark:text-amber-500 bg-white dark:bg-gray-800 px-3 py-1.5 rounded-xl border border-amber-100 dark:border-gray-700 shadow-sm">وصول: ${incomingTime}</span>
                 </div>
                 <div class="text-[13px] font-black text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700/80 p-2.5 rounded-xl mb-3 text-center shadow-inner">
                     🛤️ الاتجاه: <span class="text-purple-600 dark:text-purple-400">${route}</span>
@@ -2262,7 +2280,6 @@ function triggerArrivalAlarm(tripId) {
     modal.classList.remove('hidden-section');
     if ('vibrate' in navigator) navigator.vibrate([500, 200, 500]);
     
-    // منع تداخل الصوت: لو شغال على كوديولر يبعت إشارة للتطبيق، ولو متصفح عادي يشغل صوت الويب
     if (window.AppInventor) {
         window.AppInventor.setWebViewString("ALARM:TRIP|" + (tripId || "Unknown"));
     } else {
