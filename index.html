@@ -619,11 +619,11 @@ body { font-family: 'Cairo', sans-serif; }
                     </div>
                     <div class="bg-green-50 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-4 py-2 rounded-xl border border-green-200 dark:border-green-800 flex items-center gap-2 shadow-inner">
                         <span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span></span>
-                        <span class="text-sm font-black font-mono" id="liveMapClock">--:--</span>
+                        <span class="text-sm font-black font-mono" id="liveMapClock">--:--:--</span>
                     </div>
                 </div>
                 
-                <div id="lineMapStationsContainer" class="space-y-4 max-h-[65vh] overflow-y-auto hide-scrollbar pr-1 pb-4">
+                <div id="lineMapStationsContainer" class="max-h-[70vh] overflow-y-auto hide-scrollbar pb-2">
                     <div class="text-center py-10 text-gray-400 font-bold text-sm">⏳ جاري تحميل الخريطة الحية...</div>
                 </div>
             </div>
@@ -701,16 +701,41 @@ let alarmInterval = null, alertedTripsToday = new Set();
 
 const liveMapStations = [
     { uiName: "عدلي منصور", keys: ["عدلي", "Adly"] },
+    { uiName: "الهايكستب", keys: ["الهايكستب", "Haikestep", "Haikstep"] },
+    { uiName: "عمر بن الخطاب", keys: ["عمر", "Omar"] },
+    { uiName: "قباء", keys: ["قباء", "Qobaa"] },
     { uiName: "هشام بركات", keys: ["هشام", "Barakat"] },
+    { uiName: "النزهة", keys: ["النزهة", "Nozha"] },
+    { uiName: "نادي الشمس", keys: ["الشمس", "Shams"] },
     { uiName: "ألف مسكن", keys: ["مسكن", "Maskan"] },
+    { uiName: "هيليوبوليس", keys: ["هيليوبليس", "هيليوبوليس", "Heliopolis"] },
+    { uiName: "هارون", keys: ["هارون", "Haroun"] },
     { uiName: "الأهرام", keys: ["الأهرام", "Ahram"] },
-    { uiName: "أرض المعارض", keys: ["معرض", "Fair"] },
+    { uiName: "كلية البنات", keys: ["البنات", "Banat"] },
+    { uiName: "الاستاد", keys: ["الاستاد", "Stadium"] },
+    { uiName: "أرض المعارض", keys: ["المعارض", "Fair"] },
     { uiName: "العباسية", keys: ["العباسية", "Abbassia"] },
+    { uiName: "عبده باشا", keys: ["عبده", "Abdou"] },
+    { uiName: "الجيش", keys: ["الجيش", "Geish"] },
+    { uiName: "باب الشعرية", keys: ["الشعرية", "Shaaria"] },
     { uiName: "العتبة", keys: ["العتبة", "Attaba"] },
-    { uiName: "كيت كات", keys: ["كيت", "Kit"] },
-    { uiName: "جامعة القاهرة", keys: ["جامعة", "Cairo"] },
-    { uiName: "محور روض الفرج", keys: ["روض", "Rod"] }
+    { uiName: "جمال عبد الناصر", keys: ["جمال", "Nasser"] },
+    { uiName: "ماسبيرو", keys: ["ماسبيرو", "Maspero"] },
+    { uiName: "صفاء حجازي", keys: ["صفاء", "Safaa"] },
+    { uiName: "الكيت كات", keys: ["الكيت", "Kit"] },
+    { uiName: "السودان", keys: ["السودان", "Sudan"] },
+    { uiName: "إمبابة", keys: ["إمبابة", "امبابه", "Imbaba"] },
+    { uiName: "البوهي", keys: ["البوهي", "Bohy"] },
+    { uiName: "القومية", keys: ["القومية", "Qawmia"] },
+    { uiName: "الطريق الدائري", keys: ["الدائري", "Ring"] },
+    { uiName: "محور روض الفرج", keys: ["روض", "Rod"] },
+    { uiName: "التوفيقية", keys: ["التوفيقية", "Tawfikia"] },
+    { uiName: "وادي النيل", keys: ["وادي", "Nile"] },
+    { uiName: "جامعة الدول", keys: ["جامعة الدول", "جامعه الدول", "Dowal"] },
+    { uiName: "بولاق الدكرور", keys: ["بولاق", "Bulaq"] },
+    { uiName: "جامعة القاهرة", keys: ["جامعه القاهره", "جامعة القاهرة", "Cairo"] }
 ];
+
 let liveMapInterval = null;
 let dailyShiftToDriver = {};
 
@@ -723,7 +748,33 @@ let schedulesByDay = {
 26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
 };
 
-const cleanTxt = (txt) => (txt ? txt.trim().replace(/^"|"$/g, '') : '');
+// 🛠️ دالة معالجة CSV الذكية لتجميع السطور المكسورة واستكمال استخراج الرحلات
+function parseCSVText(csvText) {
+    let lines = [];
+    let curLine = '';
+    let inQuotes = false;
+    for (let i = 0; i < csvText.length; i++) {
+        let ch = csvText[i];
+        if (ch === '"') {
+            inQuotes = !inQuotes;
+            curLine += ch;
+        } else if ((ch === '\n' || ch === '\r') && !inQuotes) {
+            if (ch === '\r' && csvText[i+1] === '\n') { i++; }
+            if (curLine.trim().length > 0) {
+                lines.push(curLine);
+            }
+            curLine = '';
+        } else {
+            curLine += ch;
+        }
+    }
+    if (curLine.trim().length > 0) {
+        lines.push(curLine);
+    }
+    return lines;
+}
+
+const cleanTxt = (txt) => (txt ? txt.trim().replace(/^"|"$/g, '').replace(/\r?\n|\r/g, ' ') : '');
 const smartNormalize = (txt) => {
 if (!txt) return '';
 let v = txt.trim().toUpperCase().replace(/[\s-_]/g, '');
@@ -809,7 +860,7 @@ async function fetchAndParseShifts(url, targetMap) {
     try {
         const res = await fetch(url);
         const text = await res.text();
-        const lines = text.split('\n');
+        const lines = parseCSVText(text);
         for (let i = 0; i < lines.length; i++) {
             let cols = parseCSVRow(lines[i]);
             if (cols.join('').trim() === '') continue;
@@ -862,7 +913,7 @@ async function loadAllTransitionSheets() {
         try {
             let res = await fetch(transitionSheetsURLs[key]);
             let text = await res.text();
-            let lines = text.split('\n');
+            let lines = parseCSVText(text);
             let matrixForPair = {};
             let currentShift = null, currentSequence = [], storageLoc = "", sweepCode = "", handover = "", notes = "";
 
@@ -919,7 +970,7 @@ async function fetchAndParseFullSchedule(url, tripsMapTarget, isAlex = false) {
     try {
         const res = await fetch(url);
         const text = await res.text();
-        const lines = text.split('\n');
+        const lines = parseCSVText(text);
         let headers = parseCSVRow(lines[0]).map(h => cleanTxt(h));
         
         for(let i = 1; i < lines.length; i++) {
@@ -969,7 +1020,7 @@ async function loadAllData() {
         await fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
 
         fetch(dbURL).then(res => res.text()).then(text => {
-            const dbLines = text.split('\n');
+            const dbLines = parseCSVText(text);
             for(let i = 1; i < dbLines.length; i++) {
                 const row = parseCSVRow(dbLines[i]);
                 if(row.length > 5) {
@@ -986,7 +1037,7 @@ async function loadAllData() {
         });
 
         fetch(rosterURL).then(res => res.text()).then(text => {
-            let rawRosterLines = text.split('\n');
+            let rawRosterLines = parseCSVText(text);
             for(let i = 0; i < rawRosterLines.length; i++) {
                 let cols = parseCSVRow(rawRosterLines[i]);
                 if(cols.length < 3) continue;
@@ -1073,7 +1124,7 @@ async function loadAllData() {
         try {
             const cercrlRes = await fetch(siwaCercrlURL);
             const cercrlText = await cercrlRes.text();
-            const cercrlRows = cercrlText.split('\n').map(row => parseCSVRow(row));
+            const cercrlRows = parseCSVText(cercrlText).map(row => parseCSVRow(row));
             for (let col = 0; col < (cercrlRows[0] ? cercrlRows[0].length : 0); col++) {
                 let prevCell = null;
                 for (let row = 0; row < cercrlRows.length; row++) {
@@ -1089,7 +1140,7 @@ async function loadAllData() {
         try {
             const luxCercrlRes = await fetch(luxorCercrlURL);
             const luxCercrlText = await luxCercrlRes.text();
-            const luxCercrlRows = luxCercrlText.split('\n').map(row => parseCSVRow(row));
+            const luxCercrlRows = parseCSVText(luxCercrlText).map(row => parseCSVRow(row));
             for (let col = 0; col < (luxCercrlRows[0] ? luxCercrlRows[0].length : 0); col++) {
                 let prevCell = null;
                 for (let row = 0; row < luxCercrlRows.length; row++) {
@@ -1105,7 +1156,7 @@ async function loadAllData() {
         try {
             const alexCercrlRes = await fetch(alexCercrlURL);
             const alexCercrlText = await alexCercrlRes.text();
-            const alexCercrlRows = alexCercrlText.split('\n').map(row => parseCSVRow(row));
+            const alexCercrlRows = parseCSVText(alexCercrlText).map(row => parseCSVRow(row));
             for (let col = 0; col < (alexCercrlRows[0] ? alexCercrlRows[0].length : 0); col++) {
                 let prevCell = null;
                 for (let row = 0; row < alexCercrlRows.length; row++) {
@@ -1261,7 +1312,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
-// 🎯 توليد تفاصيل اليوم والرحلات
+// 🎯 توليد تفاصيل اليوم والرحلات بالكامل بالطريقة العادية
 function generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCode)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ يوم إجازة / ${shiftCode}</p></div>`;
@@ -1837,6 +1888,7 @@ function searchByTripCode() {
     }
 }
 
+// 🗺️ دالة الخريطة الحية (نطاق 50 ثانية أو أقل + تصميم منظم وأصغر Grid)
 function updateLiveAdminMap() {
     if (document.getElementById('admin-page').classList.contains('hidden-section') || 
         document.getElementById('adminMapContainer').classList.contains('hidden-section')) return;
@@ -1847,13 +1899,14 @@ function updateLiveAdminMap() {
     const now = new Date();
     let currentH = now.getHours();
     let currentM = now.getMinutes();
+    let currentS = now.getSeconds();
     
     if (clockEl) {
-        clockEl.textContent = `${String(currentH).padStart(2, '0')}:${String(currentM).padStart(2, '0')}`;
+        clockEl.textContent = `${String(currentH).padStart(2, '0')}:${String(currentM).padStart(2, '0')}:${String(currentS).padStart(2, '0')}`;
     }
 
-    let currentMins = currentH * 60 + currentM;
-    if (currentH < 4) currentMins += 24 * 60; 
+    let currentSecs = currentH * 3600 + currentM * 60 + currentS;
+    if (currentH < 4) currentSecs += 24 * 3600; 
 
     const dateVal = getTodayYYYYMMDD();
     const dayNum = parseInt(dateVal.split('-')[2], 10);
@@ -1890,8 +1943,10 @@ function updateLiveAdminMap() {
         for (let rawStation in tripData.fullTimes) {
             let timeStr = tripData.fullTimes[rawStation];
             let tMins = timeToMins(timeStr);
+            let tSecs = tMins * 60;
             
-            if (Math.abs(tMins - currentMins) <= 2) {
+            // النطاق الزمني الجديد: 50 ثانية أو أقل
+            if (Math.abs(tSecs - currentSecs) <= 50) {
                 let matchedUIStation = liveMapStations.find(s => s.keys.some(k => rawStation.includes(k)));
                 if (matchedUIStation) {
                     let isTrack1 = parseInt(tripNum, 10) % 2 !== 0;
@@ -1916,37 +1971,43 @@ function updateLiveAdminMap() {
         }
     }
 
-    let html = '';
+    // عرض الخريطة بتصميم منظم ومكثف (Grid)
+    let html = '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-right">';
     liveMapStations.forEach((s, idx) => {
         let state = stationState[s.uiName];
+        let hasTrain = state.t1 || state.t2;
         
         let t1Html = state.t1 
-            ? `<b>القائد:</b> <span class="text-green-600 dark:text-green-400 font-bold">${state.t1.driver}</span><br><b>رحلة:</b> <span class="font-mono text-blue-600 font-bold">${state.t1.trip}</span> <span class="text-[10px] text-gray-400">(${state.t1.time})</span>` 
-            : `<span class="text-gray-400 dark:text-gray-500 font-bold">لا توجد رحلة حالياً</span>`;
+            ? `<span class="text-green-600 dark:text-green-400 font-bold">${state.t1.driver}</span> <span class="font-mono text-blue-600 font-bold">(${state.t1.trip})</span>` 
+            : `<span class="text-gray-400 dark:text-gray-500 font-normal">لا توجد رحلة</span>`;
             
         let t2Html = state.t2 
-            ? `<b>القائد:</b> <span class="text-green-600 dark:text-green-400 font-bold">${state.t2.driver}</span><br><b>رحلة:</b> <span class="font-mono text-purple-600 font-bold">${state.t2.trip}</span> <span class="text-[10px] text-gray-400">(${state.t2.time})</span>` 
-            : `<span class="text-gray-400 dark:text-gray-500 font-bold">لا توجد رحلة حالياً</span>`;
+            ? `<span class="text-green-600 dark:text-green-400 font-bold">${state.t2.driver}</span> <span class="font-mono text-purple-600 font-bold">(${state.t2.trip})</span>` 
+            : `<span class="text-gray-400 dark:text-gray-500 font-normal">لا توجد رحلة</span>`;
 
         html += `
-            <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 hover:border-purple-300 transition-colors">
-                <div class="flex items-center gap-3">
-                    <span class="bg-gradient-to-br ${state.t1 || state.t2 ? 'from-green-500 to-emerald-600 animate-pulse' : 'from-gray-400 to-gray-500'} text-white w-10 h-10 rounded-full flex items-center justify-center font-black text-sm shadow-md">${idx + 1}</span>
-                    <h4 class="font-black text-gray-900 dark:text-white text-base">${s.uiName}</h4>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full md:w-auto">
-                    <div class="bg-blue-50/80 dark:bg-blue-900/20 p-3 rounded-2xl border ${state.t1 ? 'border-blue-400' : 'border-blue-100 dark:border-blue-800/50'} text-right min-w-[210px] shadow-sm transition-colors">
-                        <span class="text-[11px] font-black text-blue-700 dark:text-blue-400 block mb-1.5">🛤️ سكة واحد (Track 1)</span>
-                        <div class="text-xs text-gray-800 dark:text-gray-200 leading-relaxed">${t1Html}</div>
+            <div class="bg-white dark:bg-gray-800 p-2.5 rounded-2xl border ${hasTrain ? 'border-green-500 ring-2 ring-green-500/20 shadow-md' : 'border-gray-200 dark:border-gray-700'} transition-all hover:border-purple-300">
+                <div class="flex items-center justify-between border-b dark:border-gray-700 pb-1.5 mb-1.5">
+                    <div class="flex items-center gap-1.5">
+                        <span class="bg-gradient-to-br ${hasTrain ? 'from-green-500 to-emerald-600 animate-pulse' : 'from-slate-400 to-slate-500'} text-white w-5 h-5 rounded-full flex items-center justify-center font-black text-[10px] shadow-sm">${idx + 1}</span>
+                        <h4 class="font-black text-gray-900 dark:text-white text-xs">${s.uiName}</h4>
                     </div>
-                    <div class="bg-purple-50/80 dark:bg-purple-900/20 p-3 rounded-2xl border ${state.t2 ? 'border-purple-400' : 'border-purple-100 dark:border-purple-800/50'} text-right min-w-[210px] shadow-sm transition-colors">
-                        <span class="text-[11px] font-black text-purple-700 dark:text-purple-400 block mb-1.5">🛤️ سكة اثنين (Track 2)</span>
-                        <div class="text-xs text-gray-800 dark:text-gray-200 leading-relaxed">${t2Html}</div>
+                    ${hasTrain ? '<span class="flex h-2.5 w-2.5 relative"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span></span>' : ''}
+                </div>
+                <div class="space-y-1 text-[11px]">
+                    <div class="bg-blue-50/70 dark:bg-blue-900/20 px-2 py-1 rounded-xl border ${state.t1 ? 'border-blue-400 bg-blue-100/80 dark:bg-blue-900/40' : 'border-blue-100 dark:border-blue-800/40'} flex justify-between items-center gap-1">
+                        <span class="font-black text-blue-700 dark:text-blue-400 text-[10px] whitespace-nowrap">🛤️ سكة 1:</span>
+                        <div class="truncate text-left text-[10.5px]">${t1Html}</div>
+                    </div>
+                    <div class="bg-purple-50/70 dark:bg-purple-900/20 px-2 py-1 rounded-xl border ${state.t2 ? 'border-purple-400 bg-purple-100/80 dark:bg-purple-900/40' : 'border-purple-100 dark:border-purple-800/40'} flex justify-between items-center gap-1">
+                        <span class="font-black text-purple-700 dark:text-purple-400 text-[10px] whitespace-nowrap">🛤️ سكة 2:</span>
+                        <div class="truncate text-left text-[10.5px]">${t2Html}</div>
                     </div>
                 </div>
             </div>
         `;
     });
+    html += '</div>';
     container.innerHTML = html;
 }
 
