@@ -94,12 +94,18 @@ body { font-family: 'Cairo', sans-serif; }
 <div class="flex items-center gap-2 mt-4">
     <button type="button" onclick="login()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black py-3.5 px-4 rounded-xl text-base shadow-lg shadow-green-500/30 transform hover:-translate-y-0.5 transition-all">دخول للنظام 🚀</button>
     <button type="button" onclick="requestBiometric()" title="تسجيل الدخول بالبصمة" class="w-14 h-14 shrink-0 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 rounded-xl flex items-center justify-center transition-all shadow-sm p-0">
-        <svg class="w-7 h-7 text-green-600 dark:text-green-400 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-           <path d="M12 11v5" />
-           <path d="M9 13v1" />
-           <path d="M15 13v1" />
-           <path d="M5.5 10.5a6.5 6.5 0 0 1 13 0v1.5a4 4 0 0 0 4 4v1a9 9 0 0 1-18 0v-1a4 4 0 0 0 4-4v-1.5z" />
-           <path d="M8.5 6.5a3.5 3.5 0 0 1 7 0v2.5a2 2 0 0 0 2 2" />
+        <svg class="w-7 h-7 text-green-600 dark:text-green-400 drop-shadow-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+            <path d="M12 2C7.5 2 4 5.5 4 10c0 2 .5 4 1.5 6" />
+            <path d="M19 12c0-3.5-2-6-5-7" />
+            <path d="M12 5c-2.5 0-4.5 2-4.5 5 0 1.5.5 3 1.2 4.5" />
+            <path d="M16 8c1 1.5 1.5 3 1.5 4.5 0 2.5-1 4.5-2.5 6" />
+            <path d="M12 8c-1.2 0-2.2 1-2.2 2.2 0 .8.4 1.8 1 2.8" />
+            <path d="M14.5 11.5c.3.5.5 1 .5 1.7 0 1.5-.8 3-1.8 4.3" />
+            <path d="M12 12.5c-.5 0-.9.4-.9.9 0 .5.3 1.2.7 1.9" />
+            <path d="M12 17v4" />
+            <path d="M9 19.5c1 .8 2 1.2 3 1.2s2-.4 3-1.2" />
+            <path d="M7 18.5c1.2 1.2 2.8 2 4.5 2s3.3-.8 4.5-2" />
+            <path d="M5.5 21c1.8 1.5 4 2.5 6.5 2.5s4.7-1 6.5-2.5" />
         </svg>
     </button>
 </div>
@@ -965,12 +971,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 700);
     }, 2000);
 
+    // استرجاع البيانات المحفوظة تلقائياً للبصمة والتذكر
     var savedRadioId = localStorage.getItem('savedRadioId');
+    var savedPassword = localStorage.getItem('savedPassword');
     if (savedRadioId) {
         var radioInput = document.getElementById('loginRadioId');
         var rememberCheck = document.getElementById('rememberMeCheck');
         if (radioInput) radioInput.value = savedRadioId;
         if (rememberCheck) rememberCheck.checked = true;
+    }
+    if (savedPassword) {
+        var passInput = document.getElementById('loginPassword');
+        if (passInput) passInput.value = savedPassword;
     }
     
     let todayDateStr = getTodayYYYYMMDD();
@@ -1033,7 +1045,11 @@ function login() {
     const passVal = document.getElementById('loginPassword').value.trim();
     const rememberMe = document.getElementById('rememberMeCheck').checked;
     if (!userVal) { showToast('يرجى إدخال رقم الراديو أولاً!', 'error'); return; }
-    if (rememberMe) { localStorage.setItem('savedRadioId', userVal); } else { localStorage.removeItem('savedRadioId'); }
+    
+    // حفظ البيانات في الـ localStorage لتسهيل الدخول بالبصمة في المرة القادمة
+    localStorage.setItem('savedRadioId', userVal);
+    localStorage.setItem('savedPassword', passVal);
+    if (rememberMe) { localStorage.setItem('rememberRadio', userVal); } else { localStorage.removeItem('rememberRadio'); }
 
     if (userVal.toLowerCase() === 'admin') {
         if (passVal === '123456') {
