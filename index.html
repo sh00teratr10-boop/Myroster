@@ -89,7 +89,7 @@ body { font-family: 'Cairo', sans-serif; }
         <input type="checkbox" id="rememberMeCheck" class="w-4 h-4 text-green-600 rounded border-gray-300 focus:ring-green-500">
         <span class="text-gray-500 dark:text-gray-400 group-hover:text-gray-800 dark:group-hover:text-white transition-colors">تذكرني</span>
     </label>
-    <button type="button" onclick="requestPasswordResetWhatsApp()" class="text-green-600 hover:text-green-500 bg-transparent border-none cursor-pointer p-0 underline decoration-green-300 underline-offset-4">نسيت كلمة المرور؟ راسل الإدارة</button>
+    <button type="button" onclick="requestPasswordResetWhatsApp()" class="text-green-600 hover:text-green-500 bg-transparent border-none cursor-pointer p-0 underline decoration-green-300 underline-offset-4">نسيت كلمة المرور؟ اطلب من الإدارة</button>
 </div>
 <div class="flex items-center gap-2 mt-4">
     <button type="button" onclick="login()" class="flex-1 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black py-3.5 px-4 rounded-xl text-base shadow-lg shadow-green-500/30 transform hover:-translate-y-0.5 transition-all">دخول للنظام 🚀</button>
@@ -482,7 +482,7 @@ body { font-family: 'Cairo', sans-serif; }
     <main class="max-w-5xl mx-auto p-4 md:p-6 mt-4 w-full flex-1 space-y-6">
         <div class="flex flex-wrap border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 rounded-2xl p-1.5 shadow-sm gap-1">
             <button onclick="switchAdminSection('updatesSection')" id="tab-btn-updates" class="flex-1 py-3 font-black text-xs md:text-sm rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-sm transition-all">📅 التحديثات</button>
-            <button onclick="switchAdminSection('accountsSection')" id="tab-btn-accounts" class="flex-1 py-3 font-black text-xs md:text-sm rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">👥 الحسابات</button>
+            <button onclick="switchAdminSection('accountsSection')" id="tab-btn-accounts" class="flex-1 py-3 font-black text-xs md:text-sm rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">👥 الحسابات والطلبات</button>
             <button onclick="switchAdminSection('mapSection')" id="tab-btn-map" class="flex-1 py-3 font-black text-xs md:text-sm rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">🗺️ الخريطة</button>
             <button onclick="switchAdminSection('docsSection')" id="tab-btn-docs" class="flex-1 py-3 font-black text-xs md:text-sm rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all">📂 المستندات</button>
         </div>
@@ -542,10 +542,10 @@ body { font-family: 'Cairo', sans-serif; }
 
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border border-amber-200 dark:border-amber-900/50">
                 <h3 class="text-lg font-black text-amber-800 dark:text-amber-400 mb-4 flex items-center gap-2">
-                    <span class="text-2xl">🔑</span> طلبات استعادة كلمة المرور
+                    <span class="text-2xl">🔑</span> طلبات استعادة كلمات المرور الواردة من الموظفين
                 </h3>
-                <div id="password-requests-list" class="space-y-3 max-h-60 overflow-y-auto hide-scrollbar">
-                    <div class="text-center text-gray-400 text-sm font-bold py-6 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">لا توجد طلبات معلقة حالياً...</div>
+                <div id="password-requests-list" class="space-y-3 max-h-96 overflow-y-auto hide-scrollbar">
+                    <div class="text-center text-gray-400 text-sm font-bold py-6 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">لا توجد طلبات استعادة معلقة حالياً...</div>
                 </div>
             </div>
 
@@ -669,7 +669,7 @@ function showToast(message, type = 'success') {
 }
 
 const liveMapStations = [
-    { uiName: "عدلي منصور", keys: ["عدلي", "Adly"] }, { uiName: "الهايكستب", keys: ["الهايكستب", "Haikestep", "Haikestep"] }, { uiName: "عمر بن الخطاب", keys: ["عمر", "Omar"] },
+    { uiName: "عدلي منصور", keys: ["عدلي", "Adly"] }, { uiName: "الهايكستب", keys: ["الهايكستب", "Haikestep"] }, { uiName: "عمر بن الخطاب", keys: ["عمر", "Omar"] },
     { uiName: "قباء", keys: ["قباء", "Qobaa"] }, { uiName: "هشام بركات", keys: ["هشام", "Barakat"] }, { uiName: "النزهة", keys: ["النزهة", "Nozha"] },
     { uiName: "نادي الشمس", keys: ["الشمس", "Shams"] }, { uiName: "ألف مسكن", keys: ["مسكن", "Maskan"] }, { uiName: "هيليوبوليس", keys: ["هيليوبليس", "هيليوبوليس", "Heliopolis"] },
     { uiName: "هارون", keys: ["هارون", "Haroun"] }, { uiName: "الأهرام", keys: ["الأهرام", "Ahram"] }, { uiName: "كلية البنات", keys: ["البنات", "Banat"] },
@@ -971,7 +971,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 700);
     }, 2000);
 
-    // استرجاع البيانات المحفوظة تلقائياً للبصمة والتذكر
     var savedRadioId = localStorage.getItem('savedRadioId');
     var savedPassword = localStorage.getItem('savedPassword');
     if (savedRadioId) {
@@ -1029,14 +1028,21 @@ function registerDriver() {
     if(name === 'قائد القطار غير موجود' || !name) { showToast('رقم الراديو غير متوفر بقاعدة البيانات!', 'error'); return; }
 
     let localAccounts = JSON.parse(localStorage.getItem('localAccounts') || '{}');
-    if(localAccounts[rId]) { showToast('هذا الحساب مسجل بالفعل!', 'error'); return; }
     localAccounts[rId] = { password: pass, name: name };
     localStorage.setItem('localAccounts', JSON.stringify(localAccounts));
 
-    showToast('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success');
-    switchAuthTab('login');
-    document.getElementById('loginRadioId').value = rId;
-    document.getElementById('loginPassword').value = pass;
+    // حفظ الحساب أيضاً في فايربيس عشان الأدمن يقدر يشوف الباسورد من أي مكان
+    db.ref('accounts/' + rId).set({
+        password: pass,
+        name: name
+    }).then(() => {
+        showToast('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.', 'success');
+        switchAuthTab('login');
+        document.getElementById('loginRadioId').value = rId;
+        document.getElementById('loginPassword').value = pass;
+    }).catch(err => {
+        showToast('تم الحفظ محلياً ولكن حدث خطأ بالسحابة: ' + err.message, 'error');
+    });
 }
 
 function login() {
@@ -1046,7 +1052,6 @@ function login() {
     const rememberMe = document.getElementById('rememberMeCheck').checked;
     if (!userVal) { showToast('يرجى إدخال رقم الراديو أولاً!', 'error'); return; }
     
-    // حفظ البيانات في الـ localStorage لتسهيل الدخول بالبصمة في المرة القادمة
     localStorage.setItem('savedRadioId', userVal);
     localStorage.setItem('savedPassword', passVal);
     if (rememberMe) { localStorage.setItem('rememberRadio', userVal); } else { localStorage.removeItem('rememberRadio'); }
@@ -1096,39 +1101,73 @@ function requestBiometric() {
     if (window.AppInventor) { window.AppInventor.setWebViewString("BIOMETRIC_LOGIN"); } 
     else { showToast("تسجيل الدخول بالبصمة متاح فقط عبر التطبيق!", "error"); }
 }
+
+// تعديل إرسال طلب استعادة كلمة المرور إلى صفحة الأدمن في فايربيس
 function requestPasswordResetWhatsApp() {
-    const radioId = document.getElementById('loginRadioId')?.value || "غير معروف";
-    const adminPhone = "201119866073";
-    const msg = encodeURIComponent(`السلام عليكم، أنا القائد رقم راديو (${radioId})، أرجو إعادة ضبط كلمة المرور الخاصة بي.`);
-    window.open(`https://wa.me/${adminPhone}?text=${msg}`, '_blank');
+    const radioId = document.getElementById('loginRadioId')?.value.trim();
+    if (!radioId) { 
+        showToast("يرجى كتابة رقم الراديو أولاً لإرسال طلب الاستعادة للإدارة!", "error"); 
+        return; 
+    }
+    const normId = smartNormalize(radioId).replace(/-/g,'');
+    const now = new Date(); 
+    const timeString = now.toLocaleString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
+
+    db.ref('password_requests/' + normId).set({
+        radioId: radioId,
+        time: timeString
+    }).then(() => {
+        showToast("✅ تم إرسال طلب استعادة كلمة المرور إلى الإدارة بنجاح، سيتم مراجعته وإرساله لك.", "success");
+    }).catch(err => {
+        showToast("⚠️ حدث خطأ أثناء إرسال الطلب: " + err.message, "error");
+    });
 }
 
+// تحميل طلبات استعادة الباسورد في لوحة الإدارة وجلب الباسورد من فايربيس
 function loadPasswordRequests() {
     db.ref('password_requests').on('value', (snap) => {
         const reqs = snap.val();
         const container = document.getElementById('password-requests-list');
-        if(!reqs) { container.innerHTML = '<div class="text-center text-gray-400 text-xs font-bold py-4">لا توجد طلبات معلقة حالياً...</div>'; return; }
-        let html = ''; let localAccs = JSON.parse(localStorage.getItem('localAccounts') || '{}');
-        for(let rId in reqs) {
-            let d = driversData.find(x => x.radioId === rId);
-            let name = d ? d.name : rId; let phone = d ? d.phone : '';
-            let pass = localAccs[rId] ? localAccs[rId].password : 'غير مسجل محلياً';
-            let waLink = '';
-            if(phone && phone !== 'غير متوفر') {
-                let cleanPhone = phone.startsWith('0') ? '2'+phone : '20'+phone;
-                let msg = encodeURIComponent(`أهلاً بك يا كابتن، كلمة المرور الخاصة بحسابك هي: ${pass}`);
-                waLink = `<a href="https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}" target="_blank" class="bg-green-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold hover:bg-green-600 transition-colors">واتساب</a>`;
-            }
-            html += `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-3 bg-slate-50 dark:bg-slate-900 border dark:border-gray-700 rounded-xl gap-2 hover:border-amber-300 transition-colors">
-                <div><p class="text-sm font-black text-gray-800 dark:text-white">${name}</p><p class="text-xs font-bold text-gray-500">رقم الراديو: ${rId}</p></div>
-                <div class="flex gap-2 items-center flex-wrap">
-                    <span class="text-xs font-mono font-black bg-white dark:bg-gray-800 px-3 py-1.5 border dark:border-gray-600 rounded-lg text-blue-600">Pass: ${pass}</span>
-                    ${waLink}
-                    <button onclick="deletePassReq('${rId}')" class="text-red-500 text-xs font-bold px-3 py-1.5 bg-red-100 dark:bg-red-900/30 rounded-lg hover:bg-red-200 transition-colors">حذف</button>
-                </div>
-            </div>`;
+        if(!reqs) { 
+            container.innerHTML = '<div class="text-center text-gray-400 text-xs font-bold py-6 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl">لا توجد طلبات استعادة معلقة حالياً...</div>'; 
+            return; 
         }
-        container.innerHTML = html;
+        
+        db.ref('accounts').once('value', (accSnap) => {
+            const accounts = accSnap.val() || {};
+            let localAccs = JSON.parse(localStorage.getItem('localAccounts') || '{}');
+            let html = '';
+            
+            for(let rId in reqs) {
+                let reqInfo = reqs[rId];
+                let driverObj = driversData.find(x => x.radioId === rId);
+                let name = driverObj ? driverObj.name : (accounts[rId]?.name || localAccs[rId]?.name || rId);
+                let phone = driverObj ? driverObj.phone : 'غير متوفر';
+                let pass = accounts[rId]?.password || localAccs[rId]?.password || 'غير مسجل';
+                
+                let waLink = '';
+                if(phone && phone !== 'غير متوفر') {
+                    let cleanPhone = phone.startsWith('0') ? '2'+phone : '20'+phone;
+                    let msg = encodeURIComponent(`أهلاً بك يا كابتن، بناءً على طلبك استعادة كلمة المرور، كلمة المرور الخاصة بحسابك هي: ${pass}`);
+                    waLink = `<a href="https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}" target="_blank" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all">💬 إرسال الباسورد واتساب</a>`;
+                } else {
+                    waLink = `<span class="text-xs text-amber-500 font-bold bg-amber-50 dark:bg-amber-900/20 px-3 py-2 rounded-xl border">رقم الهاتف غير مسجل بالقائمة</span>`;
+                }
+
+                html += `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-slate-50 dark:bg-slate-900 border dark:border-gray-700 rounded-2xl gap-3 hover:border-amber-300 transition-colors shadow-sm">
+                    <div>
+                        <p class="text-sm font-black text-gray-900 dark:text-white">${name}</p>
+                        <p class="text-xs font-bold text-gray-500 mt-1">رقم الراديو: <span class="font-mono text-blue-600">${rId}</span> | وقت الطلب: <span class="font-mono text-gray-400">${reqInfo.time || '--'}</span></p>
+                    </div>
+                    <div class="flex gap-2 items-center flex-wrap w-full sm:w-auto justify-end">
+                        <span class="text-xs font-mono font-black bg-white dark:bg-gray-800 px-4 py-2 border dark:border-gray-600 rounded-xl text-emerald-600 shadow-inner">كلمة المرور: ${pass}</span>
+                        ${waLink}
+                        <button onclick="deletePassReq('${rId}')" class="text-red-500 text-xs font-black px-3.5 py-2.5 bg-red-100 dark:bg-red-900/30 rounded-xl hover:bg-red-200 transition-colors">حذف الطلب</button>
+                    </div>
+                </div>`;
+            }
+            container.innerHTML = html;
+        });
     });
 }
 function deletePassReq(rId) { db.ref('password_requests/' + rId).remove(); showToast("تم حذف الطلب", "success"); }
@@ -1181,18 +1220,16 @@ function submitChangePassword() {
     if (currentDriver) {
         let localAccounts = JSON.parse(localStorage.getItem('localAccounts') || '{}');
         let rId = currentDriver.radioId;
-        if(localAccounts[rId]) {
-            if(localAccounts[rId].password !== oldP) { showToast("كلمة المرور القديمة غير صحيحة!", "error"); return; }
-            localAccounts[rId].password = newP;
-            localStorage.setItem('localAccounts', JSON.stringify(localAccounts));
+        localAccounts[rId] = { password: newP, name: currentDriver.name };
+        localStorage.setItem('localAccounts', JSON.stringify(localAccounts));
+
+        // تحديث الباسورد في فايربيس أيضاً
+        db.ref('accounts/' + rId).update({ password: newP }).then(() => {
             showToast("تم تغيير كلمة المرور بنجاح ✅", "success");
             closePasswordModal();
-        } else {
-            localAccounts[rId] = { password: newP, name: currentDriver.name };
-            localStorage.setItem('localAccounts', JSON.stringify(localAccounts));
-            showToast("تم تحديث كلمة المرور بنجاح ✅", "success");
-            closePasswordModal();
-        }
+        }).catch(err => {
+            showToast("تم التحديث محلياً وتحديث السحابة فشل: " + err.message, "error");
+        });
     }
 }
 
