@@ -377,7 +377,8 @@ body { font-family: 'Cairo', sans-serif; }
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4 sticky top-0 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm z-10 rounded-b-xl px-1">
             <h3 class="text-xl font-black text-transparent bg-clip-text bg-gradient-to-r from-green-500 to-emerald-600 flex items-center gap-2"><span>📞</span> دليل المسؤولين والأقسام</h3>
             <button onclick="closeContactModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl bg-gray-100 dark:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center leading-none">&times;</button>
-        </div>     
+        </div>
+        
         <div class="mb-6 space-y-6">
             <div>
                 <h4 class="font-black text-sm text-purple-600 dark:text-purple-400 mb-3 border-r-4 border-purple-600 pr-2">🚦 1. قسم التشغيل</h4>
@@ -434,6 +435,7 @@ body { font-family: 'Cairo', sans-serif; }
                     </div>
                 </div>
             </div>
+
             <div>
                 <h4 class="font-black text-sm text-red-600 dark:text-red-400 mb-3 border-r-4 border-red-600 pr-2">🚨 2. قسم CCP والورش</h4>
                 <div class="space-y-3">
@@ -475,6 +477,7 @@ body { font-family: 'Cairo', sans-serif; }
                     </div>
                 </div>
             </div>
+
             <div>
                 <h4 class="font-black text-sm text-blue-600 dark:text-blue-400 mb-3 border-r-4 border-blue-600 pr-2">📋 3. قسم التخطيط (Planning)</h4>
                 <div class="space-y-3">
@@ -540,6 +543,7 @@ body { font-family: 'Cairo', sans-serif; }
                     </div>
                 </div>
             </div>
+
             <div>
                 <h4 class="font-black text-sm text-emerald-600 dark:text-emerald-400 mb-3 border-r-4 border-emerald-600 pr-2">📦 4. قسم المهمات</h4>
                 <div class="space-y-3">
@@ -554,7 +558,9 @@ body { font-family: 'Cairo', sans-serif; }
                     </div>
                 </div>
             </div>
+
         </div>
+
         <button onclick="closeContactModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-black py-3 rounded-xl mt-2 text-sm">إغلاق</button>
     </div>
 </div>
@@ -589,6 +595,22 @@ body { font-family: 'Cairo', sans-serif; }
             <iframe id="pdfFrame" class="w-full h-full rounded-2xl border border-gray-300 dark:border-gray-700 hidden-section bg-white"></iframe>
             <div id="pdfLoadingState" class="text-center p-8 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-2xl shadow-sm text-gray-500 font-black flex flex-col items-center gap-3"><span class="animate-spin text-3xl">⏳</span> جاري الاستدعاء من السحابة...</div>
         </div>
+    </div>
+</div>
+
+<!-- نافذة ملاحظات السواق الجديدة -->
+<div id="tripNoteModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
+        <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
+            <h3 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-600 flex items-center gap-2"><span>📝</span> ملاحظات السواق</h3>
+            <button onclick="closeTripNoteModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl bg-gray-100 dark:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center leading-none">&times;</button>
+        </div>
+        <div class="space-y-4 mb-6">
+            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">رحلة رقم: <span id="noteTripNumber" class="text-blue-600 dark:text-blue-400 font-mono text-lg font-black bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md"></span></p>
+            <textarea id="tripNoteInput" rows="4" class="w-full px-4 py-3 bg-slate-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold shadow-inner focus:ring-2 focus:ring-amber-500 transition-all placeholder-gray-400" placeholder="اكتب ملاحظاتك، أعطال، تأخيرات..."></textarea>
+        </div>
+        <input type="hidden" id="noteDateVal">
+        <button onclick="saveTripNote()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">حفظ الملاحظات</button>
     </div>
 </div>
 
@@ -906,6 +928,46 @@ function isRestDay(code) {
     let c = code.toString().split('(')[0].trim().split(' ')[0].toUpperCase();
     return ['راحة', 'R', 'OFF', 'REST', 'ABSENT', 'AB', '-', 'NULL', 'AL', 'SL', 'CL', 'AL-SV', 'OOO', 'SICK', 'CASUAL', 'ANNUAL', 'LEAVE'].includes(c);
 }
+
+// 💡 وظائف ملاحظات الرحلات الجديدة
+function openTripNoteModal(tNum, dateVal) {
+    document.getElementById('noteTripNumber').textContent = tNum;
+    document.getElementById('noteDateVal').value = dateVal;
+    // سحب الملاحظة لو كان كاتب حاجة قبل كده
+    let savedNote = localStorage.getItem('tripNote_' + dateVal + '_' + tNum) || '';
+    document.getElementById('tripNoteInput').value = savedNote;
+    document.getElementById('tripNoteModal').classList.remove('hidden-section');
+}
+
+function closeTripNoteModal() {
+    document.getElementById('tripNoteModal').classList.add('hidden-section');
+}
+
+function saveTripNote() {
+    let tNum = document.getElementById('noteTripNumber').textContent;
+    let dateVal = document.getElementById('noteDateVal').value;
+    let noteVal = document.getElementById('tripNoteInput').value.trim();
+    
+    // حفظ الملاحظة على موبايل السواق
+    localStorage.setItem('tripNote_' + dateVal + '_' + tNum, noteVal);
+    
+    // الرفع في السحابة عشان الأدمن يراجع الملاحظات بعدين لو حب
+    if (currentDriver && noteVal !== "") {
+        db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}/${tNum}`).set({
+            note: noteVal,
+            timestamp: new Date().toLocaleString('ar-EG'),
+            driverName: currentDriver.name
+        });
+    } else if (noteVal === "" && currentDriver) {
+        // لو مسح الملاحظة، نمسحها من السيرفر برضه
+        db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}/${tNum}`).remove();
+    }
+    
+    showToast('تم حفظ الملاحظات بنجاح!', 'success');
+    closeTripNoteModal();
+    renderDailyDetails(); // بنعمل تحديث للشاشة عشان لون القلم ينور لو فيه ملاحظة
+}
+
 
 setInterval(() => { if (currentDriver && !isGhostMode && !document.getElementById('dashboard-page').classList.contains('hidden-section')) { renderDailyDetails(); } }, 10000);
 
@@ -1370,6 +1432,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
+// 💡 تعديل دالة الرحلات لدعم زرار "القلم" وملاحظات السواق
 function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ إجازة / ${shiftCodeRaw}</p></div>`;
@@ -1460,7 +1523,11 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 if (incMatch) incomingTime = incMatch.arrTime;
             } else if (incomingCode !== 'غير محدد') { incomingTime = 'تخزين / سكة'; }
 
+            // 💡 سحب رقم الوحدة والملاحظات وتحديد لون القلم
             let savedUnit = localStorage.getItem('unit_' + tNum) || '';
+            let savedNote = localStorage.getItem('tripNote_' + selectedDateVal + '_' + tNum) || '';
+            let penColorClass = savedNote ? 'from-amber-500 to-orange-600 animate-pulse ring-2 ring-orange-400' : 'from-gray-400 to-gray-500';
+
             tripsHTML += `
             <div class="flex flex-col p-5 bg-white dark:bg-gray-800 rounded-3xl premium-shadow border border-gray-100 dark:border-gray-700 mb-4 hover:border-green-300 dark:hover:border-green-600 transition-colors">
                 <div class="flex justify-between items-center mb-3 border-b dark:border-gray-700 pb-3">
@@ -1468,7 +1535,12 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 </div>
                 <div class="mb-4 bg-slate-50 dark:bg-gray-900/50 p-3 rounded-2xl flex flex-wrap sm:flex-nowrap items-center justify-between gap-3 border border-gray-200 dark:border-gray-700 shadow-inner">
                     <label class="text-[11px] font-black text-gray-700 dark:text-gray-300 whitespace-nowrap">رقم الوحدة (Unit):</label>
-                    <div class="flex gap-2 w-full sm:w-auto"><input type="text" id="unitInput_${tNum}" value="${savedUnit}" class="w-full sm:w-28 px-3 py-1.5 text-sm font-black text-center border dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 focus:ring-2 focus:ring-green-500 shadow-sm transition-all" placeholder=""><button onclick="saveUnitNumber('${tNum}')" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md transition-transform hover:scale-105">حفظ</button></div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <input type="text" id="unitInput_${tNum}" value="${savedUnit}" class="w-full sm:w-28 px-3 py-1.5 text-sm font-black text-center border dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 focus:ring-2 focus:ring-green-500 shadow-sm transition-all" placeholder="">
+                        <button onclick="saveUnitNumber('${tNum}')" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md transition-transform hover:scale-105">حفظ</button>
+                        <!-- زرار القلم السحري هنا 👇 -->
+                        <button onclick="openTripNoteModal('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r ${penColorClass} text-white px-3 py-1.5 rounded-xl text-sm font-black shadow-md transition-transform hover:scale-105" title="ملاحظات السواق">📝</button>
+                    </div>
                 </div>
                 <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-3 rounded-2xl border border-amber-200 dark:border-amber-800/50 mb-4 flex justify-between items-center text-xs shadow-sm">
                     <span class="font-black text-amber-800 dark:text-amber-400 flex items-center gap-1.5"><span>⬅️ قادم بـ:</span> <span class="text-lg font-mono text-amber-600 dark:text-amber-300 bg-white dark:bg-gray-800 px-2 py-0.5 rounded shadow-sm border border-amber-100 dark:border-gray-700">${incomingCode}</span></span>
@@ -2140,4 +2212,3 @@ function dismissArrivalAlert() {
 </script>
 </body>
 </html>
-    
