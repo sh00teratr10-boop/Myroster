@@ -248,8 +248,7 @@ body { font-family: 'Cairo', sans-serif; }
 </div>
 </main>
 </div>
-
-<!-- النوافذ المنبثقة (Modals) -->
+    <!-- النوافذ المنبثقة (Modals) -->
 <div id="passwordChangeModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -503,9 +502,18 @@ body { font-family: 'Cairo', sans-serif; }
                 <div>
                     <label class="block text-sm font-black text-gray-800 dark:text-gray-200 mb-3">🎯 ماذا تريد أن تحدث؟</label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <label class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-purple-50/50 dark:hover:bg-gray-700/50 transition-all bg-white dark:bg-gray-800 shadow-sm"><input type="radio" name="updateScope" value="daily" checked onchange="toggleScopeUI()" class="text-purple-500 w-5 h-5 focus:ring-purple-500"><span class="font-black text-sm text-gray-700 dark:text-gray-300">📅 يومية (تاريخ محدد)</span></label>
-                        <label class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-blue-50/50 dark:hover:bg-gray-700/50 transition-all bg-white dark:bg-gray-800 shadow-sm"><input type="radio" name="updateScope" value="rosterMonth" onchange="toggleScopeUI()" class="text-blue-500 w-5 h-5 focus:ring-blue-500"><span class="font-black text-sm text-gray-700 dark:text-gray-300">🏖️ روستر (شهر محدد)</span></label>
-                        <label class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-blue-50/50 dark:hover:bg-gray-700/50 transition-all bg-white dark:bg-gray-800 shadow-sm"><input type="radio" name="updateScope" value="schedulesMonth" onchange="toggleScopeUI()" class="text-blue-500 w-5 h-5 focus:ring-blue-500"><span class="font-black text-sm text-gray-700 dark:text-gray-300">📝 أسماء الورادي (شهر محدد)</span></label>
+                        <label class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-purple-50/50 dark:hover:bg-gray-700/50 transition-all bg-white dark:bg-gray-800 shadow-sm">
+                            <input type="radio" name="updateScope" value="daily" checked onchange="toggleScopeUI()" class="text-purple-500 w-5 h-5 focus:ring-purple-500">
+                            <span class="font-black text-sm text-gray-700 dark:text-gray-300">📅 يومية (تاريخ محدد)</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-blue-50/50 dark:hover:bg-gray-700/50 transition-all bg-white dark:bg-gray-800 shadow-sm">
+                            <input type="radio" name="updateScope" value="rosterMonth" onchange="toggleScopeUI()" class="text-blue-500 w-5 h-5 focus:ring-blue-500">
+                            <span class="font-black text-sm text-gray-700 dark:text-gray-300">🏖️ روستر (شهر محدد)</span>
+                        </label>
+                        <label class="flex items-center gap-3 p-4 border border-gray-200 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-blue-50/50 dark:hover:bg-gray-700/50 transition-all bg-white dark:bg-gray-800 shadow-sm">
+                            <input type="radio" name="updateScope" value="schedulesMonth" onchange="toggleScopeUI()" class="text-blue-500 w-5 h-5 focus:ring-blue-500">
+                            <span class="font-black text-sm text-gray-700 dark:text-gray-300">📝 أسماء الورادي (شهر محدد)</span>
+                        </label>
                     </div>
                 </div>
                 <div class="mt-4">
@@ -603,10 +611,7 @@ body { font-family: 'Cairo', sans-serif; }
         </div>
     </main>
 </div>
-
-<audio id="notifSound" src="https://assets.mixkit.co/active_storage/sfx/2869/2869-preview.mp3" preload="auto"></audio>
-
-<script>
+    <script>
 const firebaseConfig = {
 apiKey: "AIzaSyDYFgmS8IFoUtkkLxX_MXIO205HjNGDuO0",
 authDomain: "asdd-b2d02.firebaseapp.com",
@@ -621,7 +626,6 @@ if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.database();
 
 const dbURL = 'https://docs.google.com/spreadsheets/d/1W292oVl-gvwRP6MtRA5n8xq_gh0wJ_N249-pbYL6HHU/export?format=csv';
-const rosterURL = 'https://docs.google.com/spreadsheets/d/1H00eFiQFBWx6QzBFwuSmfUT4TywknKw_X_sf908Jhdc/export?format=csv';
 
 const aswanShiftsURL = 'https://docs.google.com/spreadsheets/d/1PKOrSSHb80Ay-zHvloh6TiI12oWPN3GhqsRTilTxRKI/export?format=csv';
 const alexShiftsURL = 'https://docs.google.com/spreadsheets/d/1a05qIi7EXMYNGqZaDUl4MLtQaS4WCj7MNKklS7_yNe8/export?format=csv';
@@ -641,13 +645,23 @@ const transitionSheetsURLs = {
 };
 
 let transitionMatrix = {};
-let driversData = [], rosterDataMap = {}, roster8DataMap = {}, schedules8DataMap = {};
+let driversData = [], rosterDataMap = {}, schedulesDataMap = {};
 let aswanDataMap = {}, luxorDataMap = {}, alexDataMap = {}; 
 let siwaTripsMap = {}, luxorTripsMap = {}, alexTripsMap = {};
 let siwaIncomingMap = {}, luxorIncomingMap = {}, alexIncomingMap = {};
 let currentDriver = null, validShiftsSet = new Set(), extractedBatchRoster = [];
 let alarmInterval = null, alertedTripsToday = new Set();
 let isGhostMode = false;
+
+// 💡 الجدول الاحتياطي القديم اللي كان بيظبط البحث لو فايربيس مفيهوش داتا للشهر
+let schedulesByDay = {
+1: "WD-447-[SIWA]", 2: "ST-416-[ALEX_WFH]", 3: "WE-341-[LUXOR]", 4: "ST-416-[ALEX_WFH]", 5: "ST-416-[ALEX_WFH]",
+6: "WD-447-[SIWA]", 7: "WD-447-[SIWA]", 8: "WD-447-[SIWA]", 9: "WD-447-[SIWA]", 10: "WE-341-[LUXOR]",
+11: "ST-416-[ALEX_WFH]", 12: "ST-416-[ALEX_WFH]", 13: "WD-447-[SIWA]", 14: "WD-447-[SIWA]", 15: "WD-447-[SIWA]",
+16: "WD-447-[SIWA]", 17: "WE-341-[LUXOR]", 18: "ST-416-[ALEX_WFH]", 19: "ST-416-[ALEX_WFH]", 20: "WD-447-[SIWA]",
+21: "WD-447-[SIWA]", 22: "WD-447-[SIWA]", 23: "ST-403-[ALEX]", 24: "WE-341-[LUXOR]", 25: "ST-416-[ALEX_WFH]",
+26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
+};
 
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast-notification');
@@ -685,14 +699,6 @@ const liveMapStations = [
 
 let liveMapInterval = null;
 let dailyShiftToDriver = {};
-let schedulesByDay = {
-1: "WD-447-[SIWA]", 2: "ST-416-[ALEX_WFH]", 3: "WE-341-[LUXOR]", 4: "ST-416-[ALEX_WFH]", 5: "ST-416-[ALEX_WFH]",
-6: "WD-447-[SIWA]", 7: "WD-447-[SIWA]", 8: "WD-447-[SIWA]", 9: "WD-447-[SIWA]", 10: "WE-341-[LUXOR]",
-11: "ST-416-[ALEX_WFH]", 12: "ST-416-[ALEX_WFH]", 13: "WD-447-[SIWA]", 14: "WD-447-[SIWA]", 15: "WD-447-[SIWA]",
-16: "WD-447-[SIWA]", 17: "WE-341-[LUXOR]", 18: "ST-416-[ALEX_WFH]", 19: "ST-416-[ALEX_WFH]", 20: "WD-447-[SIWA]",
-21: "WD-447-[SIWA]", 22: "WD-447-[SIWA]", 23: "ST-403-[ALEX]", 24: "WE-341-[LUXOR]", 25: "ST-416-[ALEX_WFH]",
-26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
-};
 
 function parseCSVText(csvText) {
     let lines = []; let curLine = ''; let inQuotes = false;
@@ -710,9 +716,10 @@ function parseCSVText(csvText) {
 }
 const cleanTxt = (txt) => (txt ? txt.trim().replace(/^"|"$/g, '').replace(/\r?\n|\r/g, ' ') : '');
 
+// 💡 دالة التنظيف الأصلية من الكود القديم عشان متكسرش الأرقام
 const smartNormalize = (txt) => {
     if (!txt) return '';
-    let v = txt.split('(')[0].trim().split(' ')[0].trim().toUpperCase().replace(/[\s_]/g, ''); 
+    let v = txt.trim().toUpperCase().replace(/[\s-_]/g, '');
     v = v.replace(/^([A-Z]+)(\d)$/, '$10$2');
     return v;
 };
@@ -744,16 +751,23 @@ function parseCSVRow(str) {
 
 function getDriverRosterForDate(driverId, dateVal) {
     let normId = smartNormalize(driverId).replace(/-/g, ''); 
-    let month = dateVal ? dateVal.split('-')[1] : getTodayYYYYMMDD().split('-')[1]; 
-    if (month === '08') { return roster8DataMap[normId] || rosterDataMap[normId] || {}; }
-    return rosterDataMap[normId] || {};
+    let month = dateVal ? parseInt(dateVal.split('-')[1], 10) : parseInt(getTodayYYYYMMDD().split('-')[1], 10); 
+    if (rosterDataMap && rosterDataMap[month] && rosterDataMap[month][normId]) {
+        return rosterDataMap[month][normId];
+    }
+    return {};
 }
+
+// 💡 تحديث الدالة دي عشان تقرأ الجدول من فايربيس، ولو ملقيتوش ترجع للجدول الاحتياطي القديم
 function getSmartScheduleName(dateVal, dayNum) {
     if (!dateVal) dateVal = getTodayYYYYMMDD();
     let parts = dateVal.split('-');
-    let month = parts[1];
+    let month = parseInt(parts[1], 10);
     let day = dayNum ? parseInt(dayNum, 10) : parseInt(parts[2], 10);
-    if (month === '08' && Object.keys(schedules8DataMap).length > 0) { return schedules8DataMap[day] || schedules8DataMap[30] || schedules8DataMap[1] || "WD-447-[SIWA]"; }
+    
+    if (schedulesDataMap && schedulesDataMap[month] && Object.keys(schedulesDataMap[month]).length > 0) { 
+        return schedulesDataMap[month][day] || schedulesDataMap[month][30] || schedulesDataMap[month][1] || "WD-447-[SIWA]"; 
+    }
     return schedulesByDay[day] || schedulesByDay[dayNum] || "WD-447-[SIWA]";
 }
 
@@ -903,8 +917,22 @@ async function loadAllData() {
             }
         });
 
-        db.ref('roster8').on('value', (snapshot) => { const cloudData = snapshot.val(); if (cloudData) { roster8DataMap = cloudData; if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); } });
-        db.ref('schedules8').on('value', (snapshot) => { const cloudData = snapshot.val(); if (cloudData) { schedules8DataMap = cloudData; if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); } });
+        for (let m = 1; m <= 12; m++) {
+            db.ref('roster' + m).on('value', (snapshot) => { 
+                const cloudData = snapshot.val(); 
+                if (cloudData) { 
+                    rosterDataMap[m] = cloudData; 
+                    if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); 
+                } 
+            });
+            db.ref('schedules' + m).on('value', (snapshot) => { 
+                const cloudData = snapshot.val(); 
+                if (cloudData) { 
+                    schedulesDataMap[m] = cloudData; 
+                    if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); 
+                } 
+            });
+        }
 
         db.ref('broadcasts').limitToLast(50).on('value', (snapshot) => {
             const data = snapshot.val();
@@ -1031,7 +1059,6 @@ function registerDriver() {
     localAccounts[rId] = { password: pass, name: name };
     localStorage.setItem('localAccounts', JSON.stringify(localAccounts));
 
-    // حفظ الحساب أيضاً في فايربيس عشان الأدمن يقدر يشوف الباسورد من أي مكان
     db.ref('accounts/' + rId).set({
         password: pass,
         name: name
@@ -1102,28 +1129,18 @@ function requestBiometric() {
     else { showToast("تسجيل الدخول بالبصمة متاح فقط عبر التطبيق!", "error"); }
 }
 
-// تعديل إرسال طلب استعادة كلمة المرور إلى صفحة الأدمن في فايربيس
 function requestPasswordResetWhatsApp() {
     const radioId = document.getElementById('loginRadioId')?.value.trim();
-    if (!radioId) { 
-        showToast("يرجى كتابة رقم الراديو أولاً لإرسال طلب الاستعادة للإدارة!", "error"); 
-        return; 
-    }
+    if (!radioId) { showToast("يرجى كتابة رقم الراديو أولاً لإرسال طلب الاستعادة للإدارة!", "error"); return; }
     const normId = smartNormalize(radioId).replace(/-/g,'');
     const now = new Date(); 
     const timeString = now.toLocaleString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
 
-    db.ref('password_requests/' + normId).set({
-        radioId: radioId,
-        time: timeString
-    }).then(() => {
+    db.ref('password_requests/' + normId).set({ radioId: radioId, time: timeString }).then(() => {
         showToast("✅ تم إرسال طلب استعادة كلمة المرور إلى الإدارة بنجاح، سيتم مراجعته وإرساله لك.", "success");
-    }).catch(err => {
-        showToast("⚠️ حدث خطأ أثناء إرسال الطلب: " + err.message, "error");
-    });
+    }).catch(err => { showToast("⚠️ حدث خطأ أثناء إرسال الطلب: " + err.message, "error"); });
 }
 
-// تحميل طلبات استعادة الباسورد في لوحة الإدارة وجلب الباسورد من فايربيس
 function loadPasswordRequests() {
     db.ref('password_requests').on('value', (snap) => {
         const reqs = snap.val();
@@ -1155,15 +1172,8 @@ function loadPasswordRequests() {
                 }
 
                 html += `<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 bg-slate-50 dark:bg-slate-900 border dark:border-gray-700 rounded-2xl gap-3 hover:border-amber-300 transition-colors shadow-sm">
-                    <div>
-                        <p class="text-sm font-black text-gray-900 dark:text-white">${name}</p>
-                        <p class="text-xs font-bold text-gray-500 mt-1">رقم الراديو: <span class="font-mono text-blue-600">${rId}</span> | وقت الطلب: <span class="font-mono text-gray-400">${reqInfo.time || '--'}</span></p>
-                    </div>
-                    <div class="flex gap-2 items-center flex-wrap w-full sm:w-auto justify-end">
-                        <span class="text-xs font-mono font-black bg-white dark:bg-gray-800 px-4 py-2 border dark:border-gray-600 rounded-xl text-emerald-600 shadow-inner">كلمة المرور: ${pass}</span>
-                        ${waLink}
-                        <button onclick="deletePassReq('${rId}')" class="text-red-500 text-xs font-black px-3.5 py-2.5 bg-red-100 dark:bg-red-900/30 rounded-xl hover:bg-red-200 transition-colors">حذف الطلب</button>
-                    </div>
+                    <div><p class="text-sm font-black text-gray-900 dark:text-white">${name}</p><p class="text-xs font-bold text-gray-500 mt-1">رقم الراديو: <span class="font-mono text-blue-600">${rId}</span> | وقت الطلب: <span class="font-mono text-gray-400">${reqInfo.time || '--'}</span></p></div>
+                    <div class="flex gap-2 items-center flex-wrap w-full sm:w-auto justify-end"><span class="text-xs font-mono font-black bg-white dark:bg-gray-800 px-4 py-2 border dark:border-gray-600 rounded-xl text-emerald-600 shadow-inner">كلمة المرور: ${pass}</span>${waLink}<button onclick="deletePassReq('${rId}')" class="text-red-500 text-xs font-black px-3.5 py-2.5 bg-red-100 dark:bg-red-900/30 rounded-xl hover:bg-red-200 transition-colors">حذف الطلب</button></div>
                 </div>`;
             }
             container.innerHTML = html;
@@ -1207,10 +1217,7 @@ function logout() {
 }
 
 function openPasswordModal() { toggleSettings(); document.getElementById('passwordChangeModal').classList.remove('hidden-section'); }
-function closePasswordModal() {
-    document.getElementById('passwordChangeModal').classList.add('hidden-section');
-    document.getElementById('change-old-pass').value = ''; document.getElementById('change-new-pass').value = ''; document.getElementById('change-confirm-pass').value = '';
-}
+function closePasswordModal() { document.getElementById('passwordChangeModal').classList.add('hidden-section'); document.getElementById('change-old-pass').value = ''; document.getElementById('change-new-pass').value = ''; document.getElementById('change-confirm-pass').value = ''; }
 function submitChangePassword() {
     const oldP = document.getElementById('change-old-pass').value.trim(); const newP = document.getElementById('change-new-pass').value.trim(); const confP = document.getElementById('change-confirm-pass').value.trim();
     if(!oldP || !newP || !confP) { showToast("يرجى ملء جميع الحقول!", "error"); return; }
@@ -1223,13 +1230,10 @@ function submitChangePassword() {
         localAccounts[rId] = { password: newP, name: currentDriver.name };
         localStorage.setItem('localAccounts', JSON.stringify(localAccounts));
 
-        // تحديث الباسورد في فايربيس أيضاً
         db.ref('accounts/' + rId).update({ password: newP }).then(() => {
             showToast("تم تغيير كلمة المرور بنجاح ✅", "success");
             closePasswordModal();
-        }).catch(err => {
-            showToast("تم التحديث محلياً وتحديث السحابة فشل: " + err.message, "error");
-        });
+        }).catch(err => { showToast("تم التحديث محلياً وتحديث السحابة فشل: " + err.message, "error"); });
     }
 }
 
@@ -1604,42 +1608,123 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
     matchingHTML += `</div>`; contentBox.innerHTML = matchingHTML;
 }
 
+// 💡 دالة البحث الكاسحة: بتمسح المسافات + بتدور في كل الجداول + لو مفيش رحلات بتدور على الرمز في الروستر
 function searchByTripCode() {
-    const query = document.getElementById('tripCodeInput').value.trim(); const dateVal = document.getElementById('tripSearchDateInput').value;
+    let rawQuery = document.getElementById('tripCodeInput').value.trim();
+    const dateVal = document.getElementById('tripSearchDateInput').value;
     const resultBox = document.getElementById('tripSearchResultBox');
-    if (!query) { resultBox.innerHTML = '<div class="text-center text-gray-400 py-10 text-xs font-bold border-2 border-dashed rounded-2xl dark:border-gray-700">اكتب رمز الوردية أو رقم الرحلة...</div>'; return; }
+    
+    if (!rawQuery) { resultBox.innerHTML = '<div class="text-center text-gray-400 py-10 text-xs font-bold border-2 border-dashed rounded-2xl dark:border-gray-700">حدد التاريخ واكتب الرمز أو رقم الرحلة لعرض التفاصيل الكاملة والقائد المعين...</div>'; return; }
     if (!dateVal) { showToast('⚠️ يرجى اختيار تاريخ للبحث!', 'error'); return; }
+
+    // تنظيف عربي ومسافات
+    let query = rawQuery.replace(/ام\s*/g, 'M').replace(/م\s*/g, 'M')
+                        .replace(/ان\s*/g, 'N').replace(/ن\s*/g, 'N')
+                        .replace(/اي\s*/g, 'E').replace(/ي\s*/g, 'E')
+                        .replace(/واحد/g, '1').replace(/اثنين|اتنين/g, '2').replace(/تلاته|ثلاثه|تلاتة|ثلاثة/g, '3')
+                        .replace(/اربعه|أربعه|اربعة|أربعة/g, '4').replace(/خمسه|خمسة/g, '5').replace(/سته|ستة/g, '6')
+                        .replace(/سبعه|سبعة/g, '7').replace(/تمنيه|ثمانيه|تمنية|ثمانية/g, '8').replace(/تسعه|تسعة/g, '9')
+                        .replace(/عشره|عشرة/g, '10').replace(/عشرين/g, '20').replace(/تلاتين|ثلاثين/g, '30')
+                        .replace(/\s+/g, ''); 
 
     const normQuery = smartNormalize(query);
     const dayNum = parseInt(dateVal.split('-')[2], 10); 
-    let scheduleRaw = getSmartScheduleName(dateVal, dayNum); let upperSch = scheduleRaw.toUpperCase();
-    let isLuxorActive = upperSch.includes("LUXOR") || upperSch.includes("WE"); let isAlexActive = upperSch.includes("ALEX") || upperSch.includes("ST");
+    let scheduleRaw = getSmartScheduleName(dateVal, dayNum);
+    let upperSch = scheduleRaw.toUpperCase();
+    
+    let isLuxorActive = upperSch.includes("LUXOR") || upperSch.includes("WE");
+    let isAlexActive = upperSch.includes("ALEX") || upperSch.includes("ST");
     let activeDataMap = isLuxorActive ? luxorDataMap : (isAlexActive ? alexDataMap : aswanDataMap);
     
-    let targetShiftCode = normQuery; let shiftData = activeDataMap[targetShiftCode];
-    if (!shiftData && /^\d{3,4}$/.test(query)) {
-        for (let shiftKey in activeDataMap) { if (activeDataMap[shiftKey].tripNumbers && activeDataMap[shiftKey].tripNumbers.includes(query)) { targetShiftCode = shiftKey; shiftData = activeDataMap[shiftKey]; break; } }
+    let targetShiftCode = normQuery;
+    let shiftData = activeDataMap[targetShiftCode];
+
+    // البحث في باقي الجداول للرموز
+    if (!shiftData && !/^\d{3,4}$/.test(normQuery)) {
+        if (aswanDataMap[targetShiftCode]) { shiftData = aswanDataMap[targetShiftCode]; scheduleRaw = "WD-447-[SIWA]"; }
+        else if (luxorDataMap[targetShiftCode]) { shiftData = luxorDataMap[targetShiftCode]; scheduleRaw = "WE-341-[LUXOR]"; }
+        else if (alexDataMap[targetShiftCode]) { shiftData = alexDataMap[targetShiftCode]; scheduleRaw = "ST-416-[ALEX_WFH]"; }
     }
 
+    // البحث برقم الرحلة
+    if (!shiftData && /^\d{3,4}$/.test(normQuery)) {
+        for (let shiftKey in activeDataMap) {
+            if (activeDataMap[shiftKey].tripNumbers && activeDataMap[shiftKey].tripNumbers.includes(normQuery)) {
+                targetShiftCode = shiftKey;
+                shiftData = activeDataMap[shiftKey];
+                break; 
+            }
+        }
+        if (!shiftData) {
+            let mapsConfigs = [
+                { map: aswanDataMap, sch: "WD-447-[SIWA]" },
+                { map: luxorDataMap, sch: "WE-341-[LUXOR]" },
+                { map: alexDataMap, sch: "ST-416-[ALEX_WFH]" }
+            ];
+            for (let config of mapsConfigs) {
+                for (let shiftKey in config.map) {
+                    if (config.map[shiftKey].tripNumbers && config.map[shiftKey].tripNumbers.includes(normQuery)) {
+                        targetShiftCode = shiftKey;
+                        shiftData = config.map[shiftKey];
+                        scheduleRaw = config.sch;
+                        break;
+                    }
+                }
+                if (shiftData) break;
+            }
+        }
+    }
+
+    // البحث عن القائد في الروستر
     let assignedDriver = null;
     for (let i = 0; i < driversData.length; i++) {
-        let d = driversData[i]; let dRoster = getDriverRosterForDate(d.serviceId, dateVal);
+        let d = driversData[i];
+        let dRoster = getDriverRosterForDate(d.serviceId, dateVal);
         if (dRoster && smartNormalize(dRoster[dayNum]) === targetShiftCode) { assignedDriver = d; break; }
     }
 
     let driverHTML = '';
     if (assignedDriver) {
         let phoneNum = assignedDriver.phone && assignedDriver.phone !== 'غير متوفر' ? assignedDriver.phone : '';
-        driverHTML = `<div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-5 rounded-3xl border border-blue-200 dark:border-gray-600 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm"><div><h5 class="font-black text-blue-800 dark:text-blue-400 text-xs mb-2">👨‍✈️ القائد المعين للوردية:</h5><p class="text-xl font-black text-gray-900 dark:text-white leading-relaxed">${assignedDriver.name}</p><p class="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1.5 font-bold bg-white dark:bg-gray-800 px-3 py-1 rounded-full inline-block border dark:border-gray-700">التشغيل: ${assignedDriver.rawServiceId} | راديو: ${assignedDriver.radioId}</p></div>${phoneNum ? `<div class="flex gap-2 mt-2 md:mt-0 w-full md:w-auto"><a href="tel:${phoneNum}" class="flex-1 md:flex-none bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-md text-center hover:-translate-y-0.5 transition-transform">📞 اتصال</a><a href="https://api.whatsapp.com/send?phone=${phoneNum.startsWith('0') ? '2' + phoneNum : '20' + phoneNum}" target="_blank" class="flex-1 md:flex-none bg-gradient-to-r from-emerald-400 to-green-500 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-md text-center hover:-translate-y-0.5 transition-transform">💬 واتساب</a></div>` : '<span class="text-xs text-gray-400 font-bold bg-white dark:bg-gray-800 px-4 py-2 rounded-xl border dark:border-gray-700 shadow-sm">الرقم غير متوفر</span>'}</div>`;
-    } else { driverHTML = `<div class="bg-gray-100 dark:bg-gray-800 p-5 rounded-2xl border dark:border-gray-700 mb-6 text-center shadow-sm"><p class="text-sm font-black text-gray-600 dark:text-gray-400">🤷‍♂️ لم يتم العثور على قائد قطار مسجل لهذه الوردية.</p></div>`; }
+        driverHTML = `
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-5 rounded-3xl border border-blue-200 dark:border-gray-600 mb-6 flex flex-col md:flex-row justify-between items-center gap-4 shadow-sm">
+                <div>
+                    <h5 class="font-black text-blue-800 dark:text-blue-400 text-xs mb-2">👨‍✈️ القائد المعين للوردية:</h5>
+                    <p class="text-xl font-black text-gray-900 dark:text-white leading-relaxed">${assignedDriver.name}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 font-mono mt-1.5 font-bold bg-white dark:bg-gray-800 px-3 py-1 rounded-full inline-block border dark:border-gray-700">التشغيل: ${assignedDriver.rawServiceId} | راديو: ${assignedDriver.radioId}</p>
+                </div>
+                ${phoneNum ? `
+                <div class="flex gap-2 mt-2 md:mt-0 w-full md:w-auto">
+                    <a href="tel:${phoneNum}" class="flex-1 md:flex-none bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-md text-center hover:-translate-y-0.5 transition-transform">📞 اتصال</a>
+                    <a href="https://api.whatsapp.com/send?phone=${phoneNum.startsWith('0') ? '2' + phoneNum : '20' + phoneNum}" target="_blank" class="flex-1 md:flex-none bg-gradient-to-r from-emerald-400 to-green-500 text-white px-5 py-2.5 rounded-xl font-black text-xs shadow-md text-center hover:-translate-y-0.5 transition-transform">💬 واتساب</a>
+                </div>` : '<span class="text-xs text-gray-400 font-bold bg-white dark:bg-gray-800 px-4 py-2 rounded-xl border dark:border-gray-700 shadow-sm">الرقم غير متوفر</span>'}
+            </div>
+        `;
+    } else {
+        driverHTML = `<div class="bg-gray-100 dark:bg-gray-800 p-5 rounded-2xl border dark:border-gray-700 mb-6 text-center shadow-sm"><p class="text-sm font-black text-gray-600 dark:text-gray-400">🤷‍♂️ لم يتم العثور على قائد قطار مسجل لهذه الوردية في الروستر المرفوع.</p></div>`;
+    }
 
-    if (shiftData && shiftData.tripNumbers) {
-        let fakeRoster = {}; fakeRoster[dayNum] = targetShiftCode;
+    if (shiftData || assignedDriver) {
+        let fakeRoster = {};
+        fakeRoster[dayNum] = targetShiftCode;
         let fullTripsHTML = generateDayTripsHTML(dayNum, targetShiftCode, targetShiftCode, scheduleRaw, fakeRoster, dateVal);
+        
         let searchedTripBadge = '';
-        if (/^\d{3,4}$/.test(query) && targetShiftCode !== normQuery) { searchedTripBadge = `<div class="mb-4 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 p-3 rounded-xl border border-green-200 dark:border-green-800 text-sm font-black text-center">✅ الرحلة رقم (${query}) تابعة لوردية: ${targetShiftCode}</div>`; }
-        resultBox.innerHTML = `<div class="text-right mb-4"><h3 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4 border-b dark:border-gray-700 pb-2">🚆 تفاصيل الوردية بالكامل</h3>${searchedTripBadge}${driverHTML}</div><div class="text-right">${fullTripsHTML}</div>`;
-    } else { resultBox.innerHTML = `<div class="bg-amber-50 dark:bg-amber-900/20 p-8 rounded-3xl border border-amber-200 dark:border-amber-800 text-center shadow-sm"><span class="text-4xl block mb-3 drop-shadow-md">⚠️</span><h4 class="font-black text-lg text-amber-800 dark:text-amber-400 mb-1">الوردية أو الرحلة غير موجودة</h4></div>`; }
+        if (/^\d{3,4}$/.test(normQuery) && targetShiftCode !== normQuery) {
+            searchedTripBadge = `<div class="mb-4 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 p-3 rounded-xl border border-green-200 dark:border-green-800 text-sm font-black text-center">✅ الرحلة رقم (${rawQuery}) تابعة لوردية: ${targetShiftCode}</div>`;
+        }
+
+        resultBox.innerHTML = `
+            <div class="text-right mb-4">
+                <h3 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600 mb-4 border-b dark:border-gray-700 pb-2">🚆 تفاصيل الوردية بالكامل</h3>
+                ${searchedTripBadge}
+                ${driverHTML}
+            </div>
+            <div class="text-right">${fullTripsHTML}</div>
+        `;
+    } else {
+        resultBox.innerHTML = `<div class="bg-amber-50 dark:bg-amber-900/20 p-8 rounded-3xl border border-amber-200 dark:border-amber-800 text-center shadow-sm"><span class="text-4xl block mb-3 drop-shadow-md">⚠️</span><h4 class="font-black text-lg text-amber-800 dark:text-amber-400 mb-1">الوردية أو الرحلة غير موجودة</h4></div>`;
+    }
 }
 
 function updateLiveAdminMap() {
@@ -1706,6 +1791,12 @@ function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { showToast("يرجى لصق البيانات من الإكسيل أولاً!", "error"); return; }
 
+    rawText = rawText.replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
+                     .replace(/Annual\s+leave/gi, 'AL')
+                     .replace(/Sick\s+Leave/gi, 'SL')
+                     .replace(/Casual\s+Leave/gi, 'CL')
+                     .replace(/Out\s+of\s+Operation/gi, 'OOO');
+
     const scope = document.querySelector('input[name="updateScope"]:checked').value;
     const isDailyMode = (scope === 'daily'); 
     extractedBatchRoster = [];
@@ -1725,71 +1816,75 @@ function processRawTextInput() {
             tbody.appendChild(tr);
         }
         document.getElementById('driverCount').textContent = Object.keys(newSchedules).length;
-        extractedBatchRoster = [{ type: 'schedules', data: newSchedules }]; 
+        extractedBatchRoster = [{ type: 'schedulesMonth', data: newSchedules }]; 
         document.getElementById('detectedDate').textContent = 'أسماء الورادي لشهر: ' + monthPickerVal;
         document.getElementById('parseResultBox').classList.remove('hidden-section');
-        showToast('تم فحص أسماء الورادي بنجاح', 'success');
+        showToast('تم الاستخراج بنجاح', 'success');
         return; 
     }
 
-    if (scope === 'daily') { document.getElementById('detectedDate').textContent = 'يومية تاريخ: ' + adminDateVal; } 
+    if (scope === 'daily') { document.getElementById('detectedDate').textContent = 'تاريخ اليومية المختار: ' + adminDateVal; } 
     else if (scope === 'rosterMonth') { document.getElementById('detectedDate').textContent = 'روستر لشهر: ' + monthPickerVal; } 
 
-    let parts = rawText.split(/((?:RDMC|ROMC|MC)[-_]?[A-Z]*\d+[A-Z0-9]*)/i);
+    const tokens = rawText.trim().split(/\s+/);
+    const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
+
+    let processedIDs = new Set();
+    let currentId = null, daysMap = {}, dayCount = 1; 
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
 
     function isShiftToken(t) {
-        if (/\d/.test(t)) return true;
-        if (/[-_():/]/.test(t)) return true;
-        const keywords = ['REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','SICK','LEAVE','CASUAL','ANNUAL','ADM','ROD','UNI','MEETING','TRAINING','MEDICAL','CLINIC','SWAP','WORK','EXAM','TEST', 'راحة', 'غياب', 'مرضي', 'سنوي', 'عارضة'];
-        if (keywords.includes(t.toUpperCase())) return true;
-        if (t.length <= 2 && t === t.toUpperCase()) return true;
+        const exact = ['R','REST','OFF','ABSENT','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV'];
+        if (exact.includes(t)) return true;
+        if (t === '-') return true;
+        if (t.includes('ورشة') || t.includes('سكة')) return true;
+        if (/^[MEN][-_]?\d{1,2}$/i.test(t)) return true; 
+        if (/^[MEN][-_]?DT(ABA|SLM)$/i.test(t)) return true;
+        if (/^[MEN][-_]?RES\d{1,2}$/i.test(t)) return true;
+        if (/^TRG[-_]?DRI[-_]?REF$/i.test(t)) return true;
         return false;
     }
 
-    for (let i = 1; i < parts.length; i += 2) {
-        let idToken = parts[i];
-        let dataToken = parts[i+1] || "";
-        
-        let currentId = idToken.toUpperCase().replace('ROMC', 'RDMC').replace(/-/g, '');
-        dataToken = dataToken.replace(/ID/gi, '').replace(/الكود/g, '');
-
-        let tokens = dataToken.trim().split(/\s+/).filter(t => t.length > 0);
-        let firstShiftIdx = -1;
-        
-        for (let j = 0; j < tokens.length; j++) {
-            if (isShiftToken(tokens[j])) {
-                firstShiftIdx = j;
-                break;
-            }
-        }
-        
-        let daysMap = {};
-        if (firstShiftIdx !== -1) {
+    function saveCurrentDriver() {
+        if (currentId && !processedIDs.has(currentId)) {
+            processedIDs.add(currentId);
             if (isDailyMode) {
-                daysMap[1] = tokens.slice(firstShiftIdx).join(' '); 
+                let finalShift = daysMap[1] || 'راحة';
+                extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
             } else {
-                let shiftTokens = tokens.slice(firstShiftIdx);
-                for(let d = 0; d < Math.min(shiftTokens.length, 31); d++) {
-                    daysMap[d+1] = shiftTokens[d];
+                if (Object.keys(daysMap).length > 0) {
+                    extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
                 }
-            }
-        } else {
-            if (isDailyMode) {
-                daysMap[1] = 'راحة'; 
-            } else {
-                for(let d = 1; d <= 31; d++) daysMap[d] = 'راحة';
-            }
-        }
-        
-        if (isDailyMode) {
-            extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1], mode: 'daily', dayNum: targetDayNum });
-        } else {
-            if (Object.keys(daysMap).length > 0) {
-                extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
             }
         }
     }
+
+    for (let i = 0; i < tokens.length; i++) {
+        let rawToken = tokens[i];
+        let token = rawToken.toUpperCase();
+        
+        if (rdmcPattern.test(token)) {
+            if (currentId) saveCurrentDriver(); 
+            currentId = token.replace('ROMC', 'RDMC').replace('-', '');
+            daysMap = {}; 
+            dayCount = 1; 
+            continue; 
+        }
+        
+        if (currentId) {
+            if (isShiftToken(token)) {
+                if (isDailyMode) {
+                    daysMap[1] = token; 
+                } else {
+                    if (dayCount <= 31) {
+                        daysMap[dayCount] = token;
+                        dayCount++;
+                    }
+                }
+            }
+        }
+    }
+    if (currentId) saveCurrentDriver(); 
 
     const tbody = document.getElementById('parsedRosterTable');
     tbody.innerHTML = '';
@@ -1811,12 +1906,13 @@ function processRawTextInput() {
 
 function saveAllRosterToFirebase() {
     if (!extractedBatchRoster || extractedBatchRoster.length === 0) { showToast("لا توجد بيانات لتحديثها!", "error"); return; }
+    
     let monthPickerVal = document.getElementById('adminMonthPicker').value || getTodayYYYYMMDD().slice(0,7); 
     let monthNum = parseInt(monthPickerVal.split('-')[1], 10);
     
-    if (extractedBatchRoster[0] && extractedBatchRoster[0].type === 'schedules') {
+    if (extractedBatchRoster[0] && extractedBatchRoster[0].type === 'schedulesMonth') {
         let scheduleNode = 'schedules' + monthNum;
-        db.ref(scheduleNode).set(extractedBatchRoster[0].data).then(() => { showToast("🌐✅ تم حفظ جدول أسماء الورادي بنجاح!", "success"); }).catch(err => { showToast("⚠️ خطأ في الحفظ: " + err.message, "error"); });
+        db.ref(scheduleNode).set(extractedBatchRoster[0].data).then(() => { showToast(`🌐✅ تم حفظ أسماء الورادي بنجاح لشهر ${monthNum}!`, "success"); }).catch(err => { showToast("⚠️ خطأ في الحفظ: " + err.message, "error"); });
         return; 
     }
 
@@ -1835,7 +1931,10 @@ function saveAllRosterToFirebase() {
         }
     });
 
-    db.ref().update(updates).then(() => { showToast("🌐✅ تم رفع واعتماد البيانات للسحابة بنجاح!", "success"); }).catch((err) => { showToast("⚠️ حدث خطأ أثناء الحفظ: " + err.message, "error"); });
+    db.ref().update(updates).then(() => { 
+        let updateMsg = (scope === 'daily') ? "اليومية المحددة" : `روستر شهر ${monthNum}`;
+        showToast(`🌐✅ تم تحديث واعتماد (${updateMsg}) للسحابة بنجاح!`, "success"); 
+    }).catch((err) => { showToast("⚠️ حدث خطأ أثناء الحفظ: " + err.message, "error"); });
 }
 
 function sendGlobalBroadcast() {
@@ -1920,3 +2019,4 @@ function dismissArrivalAlert() {
 </script>
 </body>
 </html>
+    
