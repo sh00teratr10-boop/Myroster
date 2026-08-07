@@ -174,8 +174,7 @@ body { font-family: 'Cairo', sans-serif; }
 <button onclick="switchTab('swaps')" id="btn-swaps" class="flex-1 py-2.5 px-3 rounded-xl bg-transparent text-gray-600 dark:text-gray-300 font-bold hover:bg-white/50 dark:hover:bg-gray-700/50 text-xs whitespace-nowrap transition-all">مبادلات</button>
 <button onclick="switchTab('tripSearch')" id="btn-tripSearch" class="flex-1 py-2.5 px-3 rounded-xl bg-transparent text-gray-600 dark:text-gray-300 font-bold hover:bg-white/50 dark:hover:bg-gray-700/50 text-xs whitespace-nowrap transition-all">بحث رحلة</button>
 </div>
-
-<div id="daily" class="tab-content active bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border border-gray-100 dark:border-gray-700 relative overflow-hidden">
+    <div id="daily" class="tab-content active bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border border-gray-100 dark:border-gray-700 relative overflow-hidden">
 <div class="absolute top-0 right-0 w-20 h-20 bg-green-500/10 rounded-bl-full pointer-events-none"></div>
 <div class="mb-6 flex flex-col sm:flex-row items-center justify-center gap-3 bg-slate-50 dark:bg-slate-700/30 p-4 rounded-2xl border dark:border-gray-700 relative shadow-inner">
     <div class="absolute right-4 top-4 text-[10px] font-black text-gray-400 flex items-center gap-1.5">
@@ -613,8 +612,8 @@ body { font-family: 'Cairo', sans-serif; }
         <button onclick="saveTripNote()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">حفظ الملاحظات</button>
     </div>
 </div>
-
-<div id="admin-page" class="hidden-section min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
+<!-- نهاية النوافذ المنبثقة (Modals) -->
+    <div id="admin-page" class="hidden-section min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
     <nav class="bg-gradient-to-r from-purple-800 to-indigo-900 text-white p-4 shadow-lg flex justify-between items-center relative overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
         <h1 class="text-xl font-black relative z-10 flex items-center gap-2"><span>👑</span> لوحة الإدارة الشاملة</h1>
@@ -754,6 +753,7 @@ body { font-family: 'Cairo', sans-serif; }
         </div>
     </main>
 </div>
+
 <script>
 const firebaseConfig = {
 apiKey: "AIzaSyDYFgmS8IFoUtkkLxX_MXIO205HjNGDuO0",
@@ -1598,6 +1598,9 @@ function renderDailyDetails() {
     document.getElementById('todayScheduleName').textContent = scheduleRaw;
     const normShift = smartNormalize(shiftCode);
     document.getElementById('tripsContainer').innerHTML = generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverRoster);
+    
+    // التعديل 1: تفعيل دالة جدولة المنبه في كوديلر بمجرد عرض الجدول
+    scheduleNextAlarmInKodular();
 }
 
 function renderFullMonth(driver) {
@@ -1801,7 +1804,6 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
     matchingHTML += `</div>`; contentBox.innerHTML = matchingHTML;
 }
 
-// 💡 دالة البحث الكاسحة: بتمسح المسافات + بتدور في كل الجداول + لو مفيش رحلات بتدور على الرمز في الروستر
 function searchByTripCode() {
     let rawQuery = document.getElementById('tripCodeInput').value.trim();
     const dateVal = document.getElementById('tripSearchDateInput').value;
@@ -2205,11 +2207,61 @@ function triggerArrivalAlarm(tripId) {
     if (window.AppInventor) { window.AppInventor.setWebViewString("ALARM:TRIP|" + (tripId || "Unknown")); } else { try { const audio = document.getElementById('notifSound'); audio.loop = true; audio.play(); } catch(e){} }
 }
 
+// 💡 التعديل 2: دالة إيقاف المنبه الجديدة
 function dismissArrivalAlert() {
     document.getElementById('customArrivalModal').classList.add('hidden-section');
-    if (!window.AppInventor) { try { const audio = document.getElementById('notifSound'); audio.pause(); audio.currentTime = 0; audio.loop = false; } catch(e){} }
+    
+    if (window.AppInventor) { 
+        // السطر ده هو اللي هيبعت إشارة إيقاف الصوت لـ Kodular
+        window.AppInventor.setWebViewString("STOP_ALARM"); 
+    } else { 
+        try { 
+            const audio = document.getElementById('notifSound'); 
+            if (audio) {
+                audio.pause(); 
+                audio.currentTime = 0; 
+                audio.loop = false; 
+            }
+        } catch(e){} 
+    }
+}
+
+// 💡 التعديل 3: دالة الجدولة لكوديلر
+function scheduleNextAlarmInKodular() {
+    if (!window.AppInventor) return; 
+
+    const now = new Date();
+    const currentTotalMins = now.getHours() * 60 + now.getMinutes();
+    let nextAlarmDiffMins = Infinity;
+    let targetTripInfo = "";
+
+    let allIncomingTimes = Array.from(document.querySelectorAll('#tripsContainer span')).filter(el => el.textContent.includes('وصول:'));
+
+    allIncomingTimes.forEach(el => {
+        let text = el.textContent; 
+        let timeMatch = text.match(/وصول:\s*(\d{1,2}):(\d{2})/);
+        if (timeMatch) {
+            let incH = parseInt(timeMatch[1], 10); 
+            let incM = parseInt(timeMatch[2], 10);
+            let incTotalMins = incH * 60 + incM;
+
+            if (incTotalMins < 4 * 60 && currentTotalMins > 20 * 60) incTotalMins += 24 * 60;
+            
+            let targetAlarmMins = incTotalMins - 3;
+            let diffMins = targetAlarmMins - currentTotalMins;
+
+            if (diffMins > 0 && diffMins < nextAlarmDiffMins) {
+                nextAlarmDiffMins = diffMins;
+                targetTripInfo = timeMatch[0];
+            }
+        }
+    });
+
+    if (nextAlarmDiffMins !== Infinity) {
+        let millisToAlarm = nextAlarmDiffMins * 60 * 1000; 
+        window.AppInventor.setWebViewString("SET_TIMER|" + millisToAlarm + "|" + targetTripInfo);
+    }
 }
 </script>
 </body>
-</html> 
- 
+</html>
