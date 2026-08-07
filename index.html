@@ -796,7 +796,6 @@ let currentDriver = null, validShiftsSet = new Set(), extractedBatchRoster = [];
 let alarmInterval = null, alertedTripsToday = new Set();
 let isGhostMode = false;
 
-// 💡 الجدول الاحتياطي القديم اللي كان بيظبط البحث لو فايربيس مفيهوش داتا للشهر
 let schedulesByDay = {
 1: "WD-447-[SIWA]", 2: "ST-416-[ALEX_WFH]", 3: "WE-341-[LUXOR]", 4: "ST-416-[ALEX_WFH]", 5: "ST-416-[ALEX_WFH]",
 6: "WD-447-[SIWA]", 7: "WD-447-[SIWA]", 8: "WD-447-[SIWA]", 9: "WD-447-[SIWA]", 10: "WE-341-[LUXOR]",
@@ -859,7 +858,6 @@ function parseCSVText(csvText) {
 }
 const cleanTxt = (txt) => (txt ? txt.trim().replace(/^"|"$/g, '').replace(/\r?\n|\r/g, ' ') : '');
 
-// 💡 دالة التنظيف الأصلية من الكود القديم عشان متكسرش الأرقام
 const smartNormalize = (txt) => {
     if (!txt) return '';
     let v = txt.trim().toUpperCase().replace(/[\s-_]/g, '');
@@ -901,7 +899,6 @@ function getDriverRosterForDate(driverId, dateVal) {
     return {};
 }
 
-// 💡 تحديث الدالة دي عشان تقرأ الجدول من فايربيس، ولو ملقيتوش ترجع للجدول الاحتياطي القديم
 function getSmartScheduleName(dateVal, dayNum) {
     if (!dateVal) dateVal = getTodayYYYYMMDD();
     let parts = dateVal.split('-');
@@ -929,11 +926,9 @@ function isRestDay(code) {
     return ['راحة', 'R', 'OFF', 'REST', 'ABSENT', 'AB', '-', 'NULL', 'AL', 'SL', 'CL', 'AL-SV', 'OOO', 'SICK', 'CASUAL', 'ANNUAL', 'LEAVE'].includes(c);
 }
 
-// 💡 وظائف ملاحظات الرحلات الجديدة
 function openTripNoteModal(tNum, dateVal) {
     document.getElementById('noteTripNumber').textContent = tNum;
     document.getElementById('noteDateVal').value = dateVal;
-    // سحب الملاحظة لو كان كاتب حاجة قبل كده
     let savedNote = localStorage.getItem('tripNote_' + dateVal + '_' + tNum) || '';
     document.getElementById('tripNoteInput').value = savedNote;
     document.getElementById('tripNoteModal').classList.remove('hidden-section');
@@ -948,10 +943,8 @@ function saveTripNote() {
     let dateVal = document.getElementById('noteDateVal').value;
     let noteVal = document.getElementById('tripNoteInput').value.trim();
     
-    // حفظ الملاحظة على موبايل السواق
     localStorage.setItem('tripNote_' + dateVal + '_' + tNum, noteVal);
     
-    // الرفع في السحابة عشان الأدمن يراجع الملاحظات بعدين لو حب
     if (currentDriver && noteVal !== "") {
         db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}/${tNum}`).set({
             note: noteVal,
@@ -959,15 +952,13 @@ function saveTripNote() {
             driverName: currentDriver.name
         });
     } else if (noteVal === "" && currentDriver) {
-        // لو مسح الملاحظة، نمسحها من السيرفر برضه
         db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}/${tNum}`).remove();
     }
     
     showToast('تم حفظ الملاحظات بنجاح!', 'success');
     closeTripNoteModal();
-    renderDailyDetails(); // بنعمل تحديث للشاشة عشان لون القلم ينور لو فيه ملاحظة
+    renderDailyDetails(); 
 }
-
 
 setInterval(() => { if (currentDriver && !isGhostMode && !document.getElementById('dashboard-page').classList.contains('hidden-section')) { renderDailyDetails(); } }, 10000);
 
@@ -1432,7 +1423,6 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
-// 💡 تعديل دالة الرحلات لدعم زرار "القلم" وملاحظات السواق
 function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ إجازة / ${shiftCodeRaw}</p></div>`;
@@ -1510,20 +1500,48 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
 
         let tripsHTML = '';
         myShiftData.tripNumbers.forEach((tNum, index) => {
-            let scheduleMatch = null; let usedIncMap = activeIncomingMap;
-            if (isTransition) { scheduleMatch = tomorrowTripsMap[tNum] || activeTripsMap[tNum]; usedIncMap = tomorrowIncomingMap[tNum] ? tomorrowIncomingMap : activeIncomingMap; } 
-            else { scheduleMatch = activeTripsMap[tNum]; }
+            
+            // التعديل السحري الجديد للمواعيد
+            let scheduleMatch = null; 
+            let usedIncMap = activeIncomingMap;
+            let tNumInt = parseInt(tNum, 10);
+            
+            if (isTransition) { 
+                if (tNumInt < 300) {
+                    scheduleMatch = tomorrowTripsMap[tNum] || activeTripsMap[tNum];
+                    usedIncMap = tomorrowIncomingMap[tNum] ? tomorrowIncomingMap : activeIncomingMap;
+                } else {
+                    scheduleMatch = activeTripsMap[tNum] || tomorrowTripsMap[tNum];
+                    usedIncMap = activeIncomingMap[tNum] ? activeIncomingMap : tomorrowIncomingMap;
+                }
+            } else { 
+                scheduleMatch = activeTripsMap[tNum]; 
+            }
+            
             let dep = scheduleMatch ? scheduleMatch.depTime : '---'; let arr = scheduleMatch ? scheduleMatch.arrTime : '---'; let route = scheduleMatch ? scheduleMatch.route : 'مسار تشغيل الخط الثالث';
-            let incomingCode = usedIncMap[tNum] || 'غير محدد'; let incomingTime = '---';
+            
+            let incomingCode = usedIncMap[tNum] || 'غير محدد'; 
+            let incomingTime = '---';
             if (/^\d{3,4}$/.test(incomingCode)) {
-                let incMatch = null; let incNumInt = parseInt(incomingCode, 10);
-                if (isTransition) { if (incNumInt < 300) { incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incomingCode]; } else { incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incomingCode]; } } 
-                else { incMatch = activeTripsMap[incomingCode]; }
-                if (!incMatch) { if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode]; else if (luxorTripsMap[incomingCode]) incMatch = luxorTripsMap[incomingCode]; else if (alexTripsMap[incomingCode]) incMatch = alexTripsMap[incomingCode]; }
+                let incMatch = null; 
+                let incNumInt = parseInt(incomingCode, 10);
+                if (isTransition) { 
+                    if (incNumInt < 300) { 
+                        incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incomingCode]; 
+                    } else { 
+                        incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incomingCode]; 
+                    } 
+                } else { 
+                    incMatch = activeTripsMap[incomingCode]; 
+                }
+                if (!incMatch) { 
+                    if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode]; 
+                    else if (luxorTripsMap[incomingCode]) incMatch = luxorTripsMap[incomingCode]; 
+                    else if (alexTripsMap[incomingCode]) incMatch = alexTripsMap[incomingCode]; 
+                }
                 if (incMatch) incomingTime = incMatch.arrTime;
             } else if (incomingCode !== 'غير محدد') { incomingTime = 'تخزين / سكة'; }
 
-            // 💡 سحب رقم الوحدة والملاحظات وتحديد لون القلم
             let savedUnit = localStorage.getItem('unit_' + tNum) || '';
             let savedNote = localStorage.getItem('tripNote_' + selectedDateVal + '_' + tNum) || '';
             let penColorClass = savedNote ? 'from-amber-500 to-orange-600 animate-pulse ring-2 ring-orange-400' : 'from-gray-400 to-gray-500';
@@ -1538,7 +1556,6 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                     <div class="flex gap-2 w-full sm:w-auto">
                         <input type="text" id="unitInput_${tNum}" value="${savedUnit}" class="w-full sm:w-28 px-3 py-1.5 text-sm font-black text-center border dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 focus:ring-2 focus:ring-green-500 shadow-sm transition-all" placeholder="">
                         <button onclick="saveUnitNumber('${tNum}')" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md transition-transform hover:scale-105">حفظ</button>
-                        <!-- زرار القلم السحري هنا 👇 -->
                         <button onclick="openTripNoteModal('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r ${penColorClass} text-white px-3 py-1.5 rounded-xl text-sm font-black shadow-md transition-transform hover:scale-105" title="ملاحظات السواق">📝</button>
                     </div>
                 </div>
@@ -1599,7 +1616,6 @@ function renderDailyDetails() {
     const normShift = smartNormalize(shiftCode);
     document.getElementById('tripsContainer').innerHTML = generateDayTripsHTML(dayNum, shiftCode, normShift, scheduleRaw, driverRoster);
     
-    // التعديل 1: تفعيل دالة جدولة المنبه في كوديلر بمجرد عرض الجدول
     scheduleNextAlarmInKodular();
 }
 
@@ -1812,7 +1828,6 @@ function searchByTripCode() {
     if (!rawQuery) { resultBox.innerHTML = '<div class="text-center text-gray-400 py-10 text-xs font-bold border-2 border-dashed rounded-2xl dark:border-gray-700">حدد التاريخ واكتب الرمز أو رقم الرحلة لعرض التفاصيل الكاملة والقائد المعين...</div>'; return; }
     if (!dateVal) { showToast('⚠️ يرجى اختيار تاريخ للبحث!', 'error'); return; }
 
-    // تنظيف عربي ومسافات
     let query = rawQuery.replace(/ام\s*/g, 'M').replace(/م\s*/g, 'M')
                         .replace(/ان\s*/g, 'N').replace(/ن\s*/g, 'N')
                         .replace(/اي\s*/g, 'E').replace(/ي\s*/g, 'E')
@@ -1834,14 +1849,12 @@ function searchByTripCode() {
     let targetShiftCode = normQuery;
     let shiftData = activeDataMap[targetShiftCode];
 
-    // البحث في باقي الجداول للرموز
     if (!shiftData && !/^\d{3,4}$/.test(normQuery)) {
         if (aswanDataMap[targetShiftCode]) { shiftData = aswanDataMap[targetShiftCode]; scheduleRaw = "WD-447-[SIWA]"; }
         else if (luxorDataMap[targetShiftCode]) { shiftData = luxorDataMap[targetShiftCode]; scheduleRaw = "WE-341-[LUXOR]"; }
         else if (alexDataMap[targetShiftCode]) { shiftData = alexDataMap[targetShiftCode]; scheduleRaw = "ST-416-[ALEX_WFH]"; }
     }
 
-    // البحث برقم الرحلة
     if (!shiftData && /^\d{3,4}$/.test(normQuery)) {
         for (let shiftKey in activeDataMap) {
             if (activeDataMap[shiftKey].tripNumbers && activeDataMap[shiftKey].tripNumbers.includes(normQuery)) {
@@ -1870,7 +1883,6 @@ function searchByTripCode() {
         }
     }
 
-    // البحث عن القائد في الروستر
     let assignedDriver = null;
     for (let i = 0; i < driversData.length; i++) {
         let d = driversData[i];
@@ -2207,12 +2219,9 @@ function triggerArrivalAlarm(tripId) {
     if (window.AppInventor) { window.AppInventor.setWebViewString("ALARM:TRIP|" + (tripId || "Unknown")); } else { try { const audio = document.getElementById('notifSound'); audio.loop = true; audio.play(); } catch(e){} }
 }
 
-// 💡 التعديل 2: دالة إيقاف المنبه الجديدة
 function dismissArrivalAlert() {
     document.getElementById('customArrivalModal').classList.add('hidden-section');
-    
     if (window.AppInventor) { 
-        // السطر ده هو اللي هيبعت إشارة إيقاف الصوت لـ Kodular
         window.AppInventor.setWebViewString("STOP_ALARM"); 
     } else { 
         try { 
@@ -2226,7 +2235,6 @@ function dismissArrivalAlert() {
     }
 }
 
-// 💡 التعديل 3: دالة الجدولة لكوديلر
 function scheduleNextAlarmInKodular() {
     if (!window.AppInventor) return; 
 
@@ -2265,3 +2273,4 @@ function scheduleNextAlarmInKodular() {
 </script>
 </body>
 </html>
+    
