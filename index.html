@@ -1299,7 +1299,7 @@ function login() {
     if (rememberMe) { localStorage.setItem('rememberRadio', userVal); } else { localStorage.removeItem('rememberRadio'); }
 
     if (userVal.toLowerCase() === 'admin') {
-        if (passVal === '123456') {
+        if (passVal === '3132') {
             document.getElementById('auth-page').classList.add('hidden-section');
             document.getElementById('admin-page').classList.remove('hidden-section');
             updateLiveAdminMap();
