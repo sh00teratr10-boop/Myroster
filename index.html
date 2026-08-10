@@ -1053,8 +1053,15 @@ async function loadAllTransitionSheets() {
                     let cleanV = cleanTxt(val).replace(/\.0$/, '');
                     if (cleanV === '') return;
                     let isHandover = false;
-                    let m = cleanV.match(/^([MN][-_]?[A-Z0-9]+)$/i);
-                    if (m && smartNormalize(m[1]) !== currentShift) { handover = m[1]; isHandover = true; } else if (cleanV.includes('RES')) { handover = cleanV; isHandover = true; }
+                    
+                    // 🟢 التعديل الذكي لفك شفرة الاستلام (بيصطاد الوردية حتى لو جمبها أقواس زي M11 -(140))
+                    let m = cleanV.match(/([MEN][-_]?\d{1,2})/i); 
+                    if (m && smartNormalize(m[1]) !== currentShift) { 
+                        handover = m[1]; isHandover = true; 
+                    } else if (cleanV.includes('RES')) { 
+                        handover = cleanV; isHandover = true; 
+                    }
+
                     if (!isHandover) {
                         if (/^\d{3,4}$/.test(cleanV)) { if (!currentSequence.includes(cleanV)) currentSequence.push(cleanV); } 
                         else if (cleanV.includes("SWP")) sweepCode = cleanV; 
@@ -1528,7 +1535,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
-// 🟢 التعديل الجذري والذكي للاستلامات (تصحيح الـ M والـ N في التحويلات)
+// 🟢 التعديل الجذري والذكي للاستلامات في أيام التحويلات
 function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ إجازة / ${shiftCodeRaw}</p></div>`;
@@ -1547,7 +1554,6 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     let isTransition = false; let transitionNotes = ""; let tomorrowTripsMap = {}; let tomorrowIncomingMap = {};
     const selectedDateVal = dateValOverride || document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
     
-    // تواريخ إمبارح وبكرا
     let dObjYest = new Date(selectedDateVal); dObjYest.setDate(dObjYest.getDate() - 1);
     let yDateVal = `${dObjYest.getFullYear()}-${String(dObjYest.getMonth() + 1).padStart(2, '0')}-${String(dObjYest.getDate()).padStart(2, '0')}`;
     let yDayNum = dObjYest.getDate();
@@ -1562,7 +1568,6 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     let cleanYesterday = yesterdayScheduleRaw.split('[')[0].replace(/-$/, '').trim();
     let cleanTomorrow = tomorrowScheduleRaw.split('[')[0].replace(/-$/, '').trim();
 
-    // 1. تحديد بيانات رحلات النايت لو بكرا تحويلة
     if (normShift.startsWith('N')) {
         let nightTransitionData = getNightShiftData(scheduleRaw, tomorrowScheduleRaw, normShift);
         if (cleanToday !== cleanTomorrow && nightTransitionData) {
@@ -1578,15 +1583,15 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
 
     if (myShiftData && myShiftData.tripNumbers && myShiftData.tripNumbers.length > 0) {
         
-        // 2. البحث عن الاستلام (مين سلمني القطر؟)
         let receiveFromCode = null; let receiveFromDriverName = null;
         
-        // 🟢 التعديل الذكي: لو أنا وردية صباحية (M) وإمبارح كان جدول مختلف، هبص في جدول تحويلة إمبارح
-        if (normShift.startsWith('M') && cleanYesterday !== cleanToday) {
+        // 🟢 لو أنا وردية صباحية (M) وإمبارح كان جدول مختلف، هبص في جدول تحويلة إمبارح
+        if (cleanYesterday !== cleanToday && normShift.startsWith('M')) {
             let transKey = `${cleanYesterday}_${cleanToday}`;
             if (transitionMatrix[transKey]) {
                 for (let nShift in transitionMatrix[transKey]) {
-                    if (smartNormalize(transitionMatrix[transKey][nShift].handover) === normShift) {
+                    let nData = transitionMatrix[transKey][nShift];
+                    if (nData.handover && smartNormalize(nData.handover) === normShift) {
                         receiveFromCode = nShift;
                         break;
                     }
@@ -1610,22 +1615,36 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
             }
         } 
         
-        // لو أنا مش M أو مفيش تحويلة، هبص في جدول النهارده العادي (مين سلمني النهارده؟)
+        // لو ملقتش في التحويلة، أو يوم عادي هتبص في جدول النهارده
         if (!receiveFromCode) {
             for (let shiftKey in activeDataMap) { 
-                if (activeDataMap[shiftKey].handoverCode === normShift) { 
+                // حماية إضافية عشان النيت ميستلمش من نيت
+                let isValid = true;
+                if (normShift.startsWith('N') && shiftKey.startsWith('N')) isValid = false;
+                
+                if (isValid && activeDataMap[shiftKey].handoverCode === normShift) { 
                     receiveFromCode = shiftKey; 
                     break; 
                 } 
+            }
+            // لو لسه ملقتش، هات أي حد بيسلمني وخلاص
+            if (!receiveFromCode) {
+                for (let shiftKey in activeDataMap) { 
+                    let isValid = true;
+                    if (normShift.startsWith('N') && shiftKey.startsWith('N')) isValid = false;
+                    
+                    if (isValid && activeDataMap[shiftKey].handoverCode === normShift && shiftKey !== normShift) { 
+                        receiveFromCode = shiftKey; 
+                        break; 
+                    } 
+                }
             }
         }
 
         let handoverCode = myShiftData.handoverCode; let handoverDriverName = null;
 
-        // 3. جلب اسم السواق اللي سلمني
         if (receiveFromCode) {
             let receiveDateVal = selectedDateVal; let receiveDayNum = dayNum;
-            // لو هستلم من N، يبقى السواق ده شغال من إمبارح، هجيب بياناته من روستر إمبارح
             if (receiveFromCode.startsWith('N')) {
                 receiveDateVal = yDateVal; receiveDayNum = yDayNum;
             }
@@ -1635,10 +1654,8 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
             }
         }
 
-        // 4. جلب اسم السواق اللي هسلمه
         if (handoverCode) {
             let handoverDateVal = selectedDateVal; let handoverDayNum = dayNum;
-            // لو أنا وردية N، يبقى هسلم الصبح بكرا، هجيب بيانات السواق اللي هيستلم مني من روستر بكرا
             if (normShift.startsWith('N')) {
                 handoverDateVal = tomDateVal; handoverDayNum = tomDayNum;
             }
