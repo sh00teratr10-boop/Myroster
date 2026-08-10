@@ -167,7 +167,7 @@ body { font-family: 'Cairo', sans-serif; }
 </nav>
 
 <main class="max-w-6xl mx-auto p-4 mt-4 flex-1 w-full">
-<div class="flex p-1.5 mb-6 glass-panel rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/50 overflow-x-auto hide-scrollbar gap-1">
+    <div class="flex p-1.5 mb-6 glass-panel rounded-2xl shadow-sm border border-gray-200/60 dark:border-gray-700/50 overflow-x-auto hide-scrollbar gap-1">
 <button onclick="switchTab('daily')" id="btn-daily" class="flex-1 py-2.5 px-3 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-black shadow-md text-xs whitespace-nowrap transition-all">اليومي</button>
 <button onclick="switchTab('weekly')" id="btn-weekly" class="flex-1 py-2.5 px-3 rounded-xl bg-transparent text-gray-600 dark:text-gray-300 font-bold hover:bg-white/50 dark:hover:bg-gray-700/50 text-xs whitespace-nowrap transition-all">الأسبوعي</button>
 <button onclick="switchTab('monthly')" id="btn-monthly" class="flex-1 py-2.5 px-3 rounded-xl bg-transparent text-gray-600 dark:text-gray-300 font-bold hover:bg-white/50 dark:hover:bg-gray-700/50 text-xs whitespace-nowrap transition-all">الشهر</button>
@@ -248,7 +248,8 @@ body { font-family: 'Cairo', sans-serif; }
 </div>
 </main>
 </div>
-    <!-- النوافذ المنبثقة (Modals) -->
+
+<!-- النوافذ المنبثقة (Modals) -->
 <div id="passwordChangeModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -270,6 +271,24 @@ body { font-family: 'Cairo', sans-serif; }
             </div>
         </div>
         <button onclick="submitChangePassword()" class="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">حفظ كلمة المرور</button>
+    </div>
+</div>
+
+<!-- نافذة الواتساب للإدارة (الجديدة) -->
+<div id="adminWhatsappModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
+        <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
+            <h3 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-green-600 flex items-center gap-2"><span>📤</span> إرسال للإدارة</h3>
+            <button onclick="closeAdminWhatsappModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl bg-gray-100 dark:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center leading-none">&times;</button>
+        </div>
+        <p class="text-xs text-gray-500 dark:text-gray-400 font-bold mb-4 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border dark:border-gray-700">اختر الجهة المراد إرسال طلب المبادلة إليها عبر واتساب:</p>
+        <div class="space-y-3">
+            <button onclick="sendToAdminWhatsapp('ataba')" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">💬 مكتب العتبة</button>
+            <button onclick="sendToAdminWhatsapp('adly')" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">💬 مكتب عدلي منصور</button>
+            <button onclick="sendToAdminWhatsapp('dispatcher')" class="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">💬 الديسباتشر</button>
+        </div>
+        <input type="hidden" id="adminWhatsappMsgHolder">
+        <button onclick="closeAdminWhatsappModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-black py-3 rounded-xl text-sm mt-4 transition-colors hover:bg-gray-300 dark:hover:bg-gray-600">إلغاء</button>
     </div>
 </div>
 
@@ -598,7 +617,6 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- نافذة ملاحظات السواق الجديدة -->
 <div id="tripNoteModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -614,7 +632,6 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- 🟢 التحديث 8: نافذة تسكين الورش والـ PTW يدوياً للأدمن -->
 <div id="manualAssignModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all flex flex-col max-h-[90vh]">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -632,7 +649,6 @@ body { font-family: 'Cairo', sans-serif; }
         </div>
     </div>
 </div>
-<!-- نهاية النوافذ المنبثقة (Modals) -->
 
     <div id="admin-page" class="hidden-section min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
     <nav class="bg-gradient-to-r from-purple-800 to-indigo-900 text-white p-4 shadow-lg flex justify-between items-center relative overflow-hidden">
@@ -1221,7 +1237,6 @@ document.addEventListener('DOMContentLoaded', function() {
     loadAllData();
     setInterval(checkUpcomingTrainsAlarm, 2000);
 
-    // 🟢 التحديث 7: حقن زرار تسكين الورش والـ PTW بجوار زرار "فحص واستخراج" في الأدمن
     setTimeout(() => {
         let extractBtnContainer = document.querySelector('button[onclick="processRawTextInput()"]');
         if(extractBtnContainer && extractBtnContainer.parentElement && !document.getElementById('btnManualAssign')) {
@@ -1256,7 +1271,6 @@ function searchDriver() {
     document.getElementById('regServiceId').value = driver ? driver.rawServiceId : '';
 }
 
-// 🟢 التحديث 1: حماية الحساب من التكرار
 function registerDriver() {
     const rId = smartNormalize(document.getElementById('regRadioId').value).replace(/-/g,'');
     const pass = document.getElementById('regPassword').value.trim();
@@ -1299,7 +1313,7 @@ function login() {
     if (rememberMe) { localStorage.setItem('rememberRadio', userVal); } else { localStorage.removeItem('rememberRadio'); }
 
     if (userVal.toLowerCase() === 'admin') {
-        if (passVal === '3132') {
+        if (passVal === '123456') {
             document.getElementById('auth-page').classList.add('hidden-section');
             document.getElementById('admin-page').classList.remove('hidden-section');
             updateLiveAdminMap();
@@ -1339,7 +1353,6 @@ function login() {
     } else { showToast('رقم الراديو غير مسجل بالنظام!', 'error'); }
 }
 
-// 🟢 التحديث 3: الدخول التلقائي بالبصمة بناءً على البيانات المحفوظة
 function biometricSuccess() {
     const savedId = localStorage.getItem('savedRadioId');
     const savedPass = localStorage.getItem('savedPassword');
@@ -1441,7 +1454,6 @@ function returnToAdmin() {
     showToast("تمت العودة للوحة الإدارة بنجاح", "success");
 }
 
-// 🟢 التحديث 6: تصفير بحث الرحلات وقفل الإعدادات مع تسجيل الخروج
 function logout() {
     currentDriver = null; isGhostMode = false;
     if (liveMapInterval) clearInterval(liveMapInterval);
@@ -1483,6 +1495,27 @@ function submitChangePassword() {
     }
 }
 
+// 🟢 دوال فتح الواتساب للإدارة (النافذة الجديدة)
+function openAdminWhatsappModal(encodedMsg) {
+    document.getElementById('adminWhatsappMsgHolder').value = encodedMsg;
+    document.getElementById('adminWhatsappModal').classList.remove('hidden-section');
+}
+function closeAdminWhatsappModal() {
+    document.getElementById('adminWhatsappModal').classList.add('hidden-section');
+}
+function sendToAdminWhatsapp(target) {
+    const msg = document.getElementById('adminWhatsappMsgHolder').value;
+    const phones = {
+        'ataba': '+201149076809',
+        'adly': '+201157422561',
+        'dispatcher': '+201125807602'
+    };
+    if(phones[target]) {
+        window.open(`https://api.whatsapp.com/send?phone=${phones[target]}&text=${msg}`, '_blank');
+        closeAdminWhatsappModal();
+    }
+}
+
 function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     if (!todayScheduleStr || !tomorrowScheduleStr || !shiftCode) return null;
     let cleanToday = todayScheduleStr.split('[')[0].replace(/-$/, '').trim();
@@ -1495,6 +1528,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
+// 🟢 التعديل الجذري والذكي للاستلامات (تصحيح الـ M والـ N في التحويلات)
 function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ إجازة / ${shiftCodeRaw}</p></div>`;
@@ -1512,14 +1546,25 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
 
     let isTransition = false; let transitionNotes = ""; let tomorrowTripsMap = {}; let tomorrowIncomingMap = {};
     const selectedDateVal = dateValOverride || document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
+    
+    // تواريخ إمبارح وبكرا
+    let dObjYest = new Date(selectedDateVal); dObjYest.setDate(dObjYest.getDate() - 1);
+    let yDateVal = `${dObjYest.getFullYear()}-${String(dObjYest.getMonth() + 1).padStart(2, '0')}-${String(dObjYest.getDate()).padStart(2, '0')}`;
+    let yDayNum = dObjYest.getDate();
+    let yesterdayScheduleRaw = getSmartScheduleName(yDateVal, yDayNum);
 
+    let tomorrowD = new Date(selectedDateVal); tomorrowD.setDate(tomorrowD.getDate() + 1);
+    let tomDateVal = `${tomorrowD.getFullYear()}-${String(tomorrowD.getMonth() + 1).padStart(2, '0')}-${String(tomorrowD.getDate()).padStart(2, '0')}`;
+    let tomDayNum = tomorrowD.getDate();
+    let tomorrowScheduleRaw = getSmartScheduleName(tomDateVal, tomDayNum);
+
+    let cleanToday = scheduleRaw.split('[')[0].replace(/-$/, '').trim();
+    let cleanYesterday = yesterdayScheduleRaw.split('[')[0].replace(/-$/, '').trim();
+    let cleanTomorrow = tomorrowScheduleRaw.split('[')[0].replace(/-$/, '').trim();
+
+    // 1. تحديد بيانات رحلات النايت لو بكرا تحويلة
     if (normShift.startsWith('N')) {
-        let currentDayNum = dayNum; let tomorrowDayNum = currentDayNum + 1;
-        let tomorrowScheduleRaw = (tomorrowDayNum <= 31) ? getSmartScheduleName(selectedDateVal, tomorrowDayNum) : scheduleRaw;
-        let cleanToday = scheduleRaw.split('[')[0].replace(/-$/, '').trim();
-        let cleanTomorrow = tomorrowScheduleRaw.split('[')[0].replace(/-$/, '').trim();
         let nightTransitionData = getNightShiftData(scheduleRaw, tomorrowScheduleRaw, normShift);
-        
         if (cleanToday !== cleanTomorrow && nightTransitionData) {
             isTransition = true;
             myShiftData = { tripNumbers: nightTransitionData.trips, handoverCode: nightTransitionData.handover ? smartNormalize(nightTransitionData.handover) : null };
@@ -1532,16 +1577,57 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     }
 
     if (myShiftData && myShiftData.tripNumbers && myShiftData.tripNumbers.length > 0) {
+        
+        // 2. البحث عن الاستلام (مين سلمني القطر؟)
         let receiveFromCode = null; let receiveFromDriverName = null;
-        for (let shiftKey in activeDataMap) { if (activeDataMap[shiftKey].handoverCode === normShift) { receiveFromCode = shiftKey; break; } }
+        
+        // 🟢 التعديل الذكي: لو أنا وردية صباحية (M) وإمبارح كان جدول مختلف، هبص في جدول تحويلة إمبارح
+        if (normShift.startsWith('M') && cleanYesterday !== cleanToday) {
+            let transKey = `${cleanYesterday}_${cleanToday}`;
+            if (transitionMatrix[transKey]) {
+                for (let nShift in transitionMatrix[transKey]) {
+                    if (smartNormalize(transitionMatrix[transKey][nShift].handover) === normShift) {
+                        receiveFromCode = nShift;
+                        break;
+                    }
+                }
+                
+                // لو ملقاش الاستلام صراحة في الجدول، هيدور برقم القطر
+                if (!receiveFromCode) {
+                    let firstTrip = (myShiftData.tripNumbers && myShiftData.tripNumbers.length > 0) ? myShiftData.tripNumbers[0] : null;
+                    let incomingTrip = firstTrip ? activeIncomingMap[firstTrip] : null;
+                    
+                    for (let nShift in transitionMatrix[transKey]) {
+                        let nData = transitionMatrix[transKey][nShift];
+                        if (firstTrip && nData.trips) {
+                            if ((incomingTrip && nData.trips.includes(incomingTrip)) || nData.trips.includes(firstTrip)) {
+                                receiveFromCode = nShift;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        } 
+        
+        // لو أنا مش M أو مفيش تحويلة، هبص في جدول النهارده العادي (مين سلمني النهارده؟)
+        if (!receiveFromCode) {
+            for (let shiftKey in activeDataMap) { 
+                if (activeDataMap[shiftKey].handoverCode === normShift) { 
+                    receiveFromCode = shiftKey; 
+                    break; 
+                } 
+            }
+        }
+
         let handoverCode = myShiftData.handoverCode; let handoverDriverName = null;
 
+        // 3. جلب اسم السواق اللي سلمني
         if (receiveFromCode) {
             let receiveDateVal = selectedDateVal; let receiveDayNum = dayNum;
+            // لو هستلم من N، يبقى السواق ده شغال من إمبارح، هجيب بياناته من روستر إمبارح
             if (receiveFromCode.startsWith('N')) {
-                let dObj = new Date(selectedDateVal); dObj.setDate(dObj.getDate() - 1);
-                receiveDateVal = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
-                receiveDayNum = dObj.getDate();
+                receiveDateVal = yDateVal; receiveDayNum = yDayNum;
             }
             for (let i = 0; i < driversData.length; i++) {
                 let d = driversData[i]; let dRoster = getDriverRosterForDate(d.serviceId, receiveDateVal);
@@ -1549,12 +1635,12 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
             }
         }
 
+        // 4. جلب اسم السواق اللي هسلمه
         if (handoverCode) {
             let handoverDateVal = selectedDateVal; let handoverDayNum = dayNum;
-            if (isTransition || (normShift.startsWith('N') && handoverCode.startsWith('M'))) {
-                let dObj = new Date(selectedDateVal); dObj.setDate(dObj.getDate() + 1);
-                handoverDateVal = `${dObj.getFullYear()}-${String(dObj.getMonth() + 1).padStart(2, '0')}-${String(dObj.getDate()).padStart(2, '0')}`;
-                handoverDayNum = dObj.getDate();
+            // لو أنا وردية N، يبقى هسلم الصبح بكرا، هجيب بيانات السواق اللي هيستلم مني من روستر بكرا
+            if (normShift.startsWith('N')) {
+                handoverDateVal = tomDateVal; handoverDayNum = tomDayNum;
             }
             for (let i = 0; i < driversData.length; i++) {
                 let d = driversData[i]; let dRoster = getDriverRosterForDate(d.serviceId, handoverDateVal);
@@ -1597,9 +1683,9 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 let incNumInt = parseInt(incomingCode, 10);
                 if (isTransition) { 
                     if (incNumInt < 300) { 
-                        incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incomingCode]; 
+                        incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incNumInt]; 
                     } else { 
-                        incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incomingCode]; 
+                        incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incNumInt]; 
                     } 
                 } else { 
                     incMatch = activeTripsMap[incomingCode]; 
@@ -1726,7 +1812,6 @@ function toggleTheme() {
     if(themeBtn) { themeBtn.textContent = isDark ? "الوضع النهاري ☀️" : "الوضع الليلي 🌙"; }
 }
 
-// 🟢 التحديث 6: تصفير بحث الرحلة عند تغيير التبويب
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('main .flex button').forEach(b => { b.className = 'flex-1 py-2.5 px-3 rounded-xl bg-transparent text-gray-600 dark:text-gray-300 font-bold hover:bg-white/50 dark:hover:bg-gray-700/50 text-xs whitespace-nowrap transition-all'; });
@@ -1802,6 +1887,7 @@ function switchSwapSubTab(subTabId) {
     if(subTabId === 'weeklySwap') { loadWeeklyBlockSwap(); }
 }
 
+// 🟢 التعديل الجديد: استخدام نافذة الواتساب للمبادلة اليومية
 function compareDailySwaps() {
     const dateVal = document.getElementById('swapDailyDate').value; const targetQuery = document.getElementById('swapTargetDriverInput').value.trim().toLowerCase();
     const resultBox = document.getElementById('dailySwapResultBox');
@@ -1815,7 +1901,6 @@ function compareDailySwaps() {
     let myShift = myRoster[dayNum] || 'راحة'; let targetShift = targetRoster[dayNum] || 'راحة';
     const swapText = `السلام عليكم، طلب مبادلة يومية:\n- مقدم الطلب: ${currentDriver.name} (${currentDriver.rawServiceId}) - وردية: ${myShift}\n- مع الزميل: ${targetDriver.name} (${targetDriver.rawServiceId}) - وردية: ${targetShift}\n- بتاريخ: ${dateVal}`;
     const encodedMsg = encodeURIComponent(swapText);
-    const atabaPhone = "+201149076809", adlyPhone = "+201157422561", dispatcherPhone = "+201125807602";
 
     resultBox.innerHTML = `
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1824,16 +1909,12 @@ function compareDailySwaps() {
         </div>
         <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border dark:border-gray-700 space-y-4 mt-3 shadow-sm">
             <textarea readonly rows="4" class="w-full p-3 text-xs font-mono font-bold bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-300 focus:outline-none shadow-inner">${swapText}</textarea>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                <a href="https://api.whatsapp.com/send?phone=${atabaPhone}&text=${encodedMsg}" target="_blank" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white font-black py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow-sm hover:-translate-y-0.5 transition-transform">💬 العتبة</a>
-                <a href="https://api.whatsapp.com/send?phone=${adlyPhone}&text=${encodedMsg}" target="_blank" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white font-black py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow-sm hover:-translate-y-0.5 transition-transform">💬 عدلي</a>
-                <a href="https://api.whatsapp.com/send?phone=${dispatcherPhone}&text=${encodedMsg}" target="_blank" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white font-black py-2.5 px-3 rounded-xl text-xs flex justify-center items-center gap-1.5 shadow-sm hover:-translate-y-0.5 transition-transform">💬 الديسباتشر</a>
-            </div>
+            <button onclick="openAdminWhatsappModal('${encodedMsg}')" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black py-3 rounded-xl text-xs flex justify-center items-center gap-2 shadow-sm hover:-translate-y-0.5 transition-transform mt-2">📤 إرسال طلب المبادلة للإدارة</button>
         </div>
     `;
 }
 
-// 🟢 التحديث 7: أزرار التواصل في المبادلة الأسبوعية
+// 🟢 التعديل الجديد: استخدام نافذة الواتساب للمبادلة الأسبوعية
 function loadWeeklyBlockSwap() {
     const resultBox = document.getElementById('weeklySwapResultBox');
     if (!currentDriver) return;
@@ -1907,7 +1988,6 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
             
             let weeklySwapText = `السلام عليكم، طلب مبادلة أسبوعية (بلوك):\n- مقدم الطلب: ${currentDriver.name} (${currentDriver.rawServiceId})\n- مع الزميل: ${d.name} (${d.rawServiceId})\n- فترة البلوك: من يوم ${start} إلى يوم ${end} لشهر ${monthPickerVal}`;
             let encodedWeeklyMsg = encodeURIComponent(weeklySwapText);
-            const atabaPhone = "+201149076809", adlyPhone = "+201157422561", dispatcherPhone = "+201125807602";
 
             matchingHTML += `<div class="bg-white dark:bg-gray-800 p-5 rounded-2xl border dark:border-gray-700 shadow-sm flex flex-col gap-4 hover:border-purple-300 dark:hover:border-purple-700 transition-colors">
                 <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b dark:border-gray-700 pb-3">
@@ -1922,10 +2002,8 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
             if (phoneNum) { matchingHTML += `<a href="tel:${phoneNum}" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">📞 اتصال مباشر</a><a href="https://api.whatsapp.com/send?phone=${waPhone}&text=${msg}" target="_blank" class="bg-gradient-to-r from-emerald-400 to-green-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">💬 تواصل واتساب</a>`; }
             matchingHTML += `</div>
                 <div class="flex items-center gap-2 flex-wrap pt-3 border-t dark:border-gray-700">
-                    <span class="text-[11px] font-black text-purple-600 dark:text-purple-400">📤 إرسال طلب البلوك للإدارة:</span>
-                    <a href="https://api.whatsapp.com/send?phone=${atabaPhone}&text=${encodedWeeklyMsg}" target="_blank" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-3 py-1.5 rounded-xl text-[11px] font-black shadow-sm flex items-center gap-1 hover:-translate-y-0.5 transition-transform">💬 العتبة</a>
-                    <a href="https://api.whatsapp.com/send?phone=${adlyPhone}&text=${encodedWeeklyMsg}" target="_blank" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-3 py-1.5 rounded-xl text-[11px] font-black shadow-sm flex items-center gap-1 hover:-translate-y-0.5 transition-transform">💬 عدلي</a>
-                    <a href="https://api.whatsapp.com/send?phone=${dispatcherPhone}&text=${encodedWeeklyMsg}" target="_blank" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-3 py-1.5 rounded-xl text-[11px] font-black shadow-sm flex items-center gap-1 hover:-translate-y-0.5 transition-transform">💬 الديسباتشر</a>
+                    <span class="text-[11px] font-black text-purple-600 dark:text-purple-400 w-full sm:w-auto mb-2 sm:mb-0">إرسال طلب البلوك للإدارة:</span>
+                    <button onclick="openAdminWhatsappModal('${encodedWeeklyMsg}')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">📤 إرسال للإدارة</button>
                 </div>
             </div>`;
         }
@@ -2058,24 +2136,63 @@ function updateLiveAdminMap() {
     let currentSecs = currentH * 3600 + currentM * 60 + currentS;
     if (currentH < 4) currentSecs += 24 * 3600; 
 
-    const dateVal = getTodayYYYYMMDD(); const dayNum = parseInt(dateVal.split('-')[2], 10);
-    let scheduleRaw = getSmartScheduleName(dateVal, dayNum); let upperSch = scheduleRaw.toUpperCase();
+    const dateVal = getTodayYYYYMMDD(); const todayNum = parseInt(dateVal.split('-')[2], 10);
+    let scheduleRaw = getSmartScheduleName(dateVal, todayNum); let upperSch = scheduleRaw.toUpperCase();
     let activeTripsMap = {}, activeShiftDataMap = {};
+    
     if (upperSch.includes("LUXOR") || upperSch.includes("WE")) { activeTripsMap = luxorTripsMap; activeShiftDataMap = luxorDataMap; } 
     else if (upperSch.includes("ALEX") || upperSch.includes("ST")) { activeTripsMap = alexTripsMap; activeShiftDataMap = alexDataMap; } 
     else { activeTripsMap = siwaTripsMap; activeShiftDataMap = aswanDataMap; }
 
     const isBefore745 = currentH < 7 || (currentH === 7 && currentM < 45);
+    
     let yesterdayD = new Date(); yesterdayD.setDate(yesterdayD.getDate() - 1);
     const yStr = `${yesterdayD.getFullYear()}-${String(yesterdayD.getMonth() + 1).padStart(2, '0')}-${String(yesterdayD.getDate()).padStart(2, '0')}`;
     const yNum = yesterdayD.getDate();
 
+    let tomorrowD = new Date(); tomorrowD.setDate(tomorrowD.getDate() + 1);
+    const tomorrowStr = `${tomorrowD.getFullYear()}-${String(tomorrowD.getMonth() + 1).padStart(2, '0')}-${String(tomorrowD.getDate()).padStart(2, '0')}`;
+    const tomorrowNum = tomorrowD.getDate();
+
+    let todaySch = scheduleRaw;
+    let yesterdaySch = getSmartScheduleName(yStr, yNum);
+    let tomorrowSch = getSmartScheduleName(tomorrowStr, tomorrowNum);
+
     dailyShiftToDriver = {};
     driversData.forEach(d => {
-        let dRoster = getDriverRosterForDate(d.serviceId, dateVal); let shiftCode = smartNormalize(dRoster[dayNum]);
+        let dRoster = getDriverRosterForDate(d.serviceId, dateVal); let shiftCode = smartNormalize(dRoster[todayNum]);
         if (shiftCode && !isRestDay(shiftCode)) { if (!isBefore745 || !shiftCode.startsWith('N')) { if(!dailyShiftToDriver[shiftCode]) dailyShiftToDriver[shiftCode] = d; } }
         if (isBefore745) { let yRoster = getDriverRosterForDate(d.serviceId, yStr); let yShift = smartNormalize(yRoster[yNum]); if (yShift && yShift.startsWith('N')) { dailyShiftToDriver[yShift] = d; } }
     });
+
+    let tripToDriverMap = {};
+    for (let shiftCode in dailyShiftToDriver) {
+        let d = dailyShiftToDriver[shiftCode];
+        let assignedTrips = [];
+
+        if (shiftCode.startsWith('N')) {
+            let baseSch = isBefore745 ? yesterdaySch : todaySch;
+            let nextSch = isBefore745 ? todaySch : tomorrowSch;
+            
+            let nData = getNightShiftData(baseSch, nextSch, shiftCode);
+            if (nData && nData.trips) {
+                assignedTrips = nData.trips;
+            } else {
+                let baseDataMap = (baseSch.toUpperCase().includes("LUXOR") || baseSch.toUpperCase().includes("WE")) ? luxorDataMap : ((baseSch.toUpperCase().includes("ALEX") || baseSch.toUpperCase().includes("ST")) ? alexDataMap : aswanDataMap);
+                if (baseDataMap[shiftCode] && baseDataMap[shiftCode].tripNumbers) { assignedTrips = baseDataMap[shiftCode].tripNumbers; }
+            }
+        } else {
+            if (activeShiftDataMap[shiftCode] && activeShiftDataMap[shiftCode].tripNumbers) { assignedTrips = activeShiftDataMap[shiftCode].tripNumbers; }
+        }
+
+        assignedTrips.forEach(tNum => {
+            if (isBefore745 && shiftCode.startsWith('N')) {
+                tripToDriverMap[tNum] = d.name; 
+            } else if (!tripToDriverMap[tNum]) {
+                tripToDriverMap[tNum] = d.name;
+            }
+        });
+    }
 
     let stationState = {}; liveMapStations.forEach(s => { stationState[s.uiName] = { t1: null, t2: null }; });
 
@@ -2086,9 +2203,9 @@ function updateLiveAdminMap() {
             if (Math.abs(tSecs - currentSecs) <= 50) {
                 let matchedUIStation = liveMapStations.find(s => s.keys.some(k => rawStation.includes(k)));
                 if (matchedUIStation) {
-                    let isTrack1 = parseInt(tripNum, 10) % 2 !== 0; let driverName = "غير مسجل"; let shiftCodeFound = "";
-                    for(let shiftKey in activeShiftDataMap) { if(activeShiftDataMap[shiftKey].tripNumbers.includes(tripNum)) { shiftCodeFound = shiftKey; break; } }
-                    if(shiftCodeFound && dailyShiftToDriver[shiftCodeFound]) { driverName = dailyShiftToDriver[shiftCodeFound].name; }
+                    let isTrack1 = parseInt(tripNum, 10) % 2 !== 0; 
+                    let driverName = tripToDriverMap[tripNum] || "غير مسجل"; 
+                    
                     let info = { trip: tripNum, driver: driverName, time: timeStr };
                     if (isTrack1) stationState[matchedUIStation.uiName].t1 = info; else stationState[matchedUIStation.uiName].t2 = info;
                 }
@@ -2109,7 +2226,6 @@ function updateLiveAdminMap() {
 function renderLineMapStations() { updateLiveAdminMap(); }
 function toggleScopeUI() { document.getElementById('parseResultBox').classList.add('hidden-section'); }
 
-// 🟢 التحديث 2: المكنسة الشاملة (Regex قوي وذكي لشفط كل حاجة)
 function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { showToast("يرجى لصق البيانات من الإكسيل أولاً!", "error"); return; }
@@ -2242,7 +2358,6 @@ function processRawTextInput() {
     document.getElementById('parseResultBox').classList.remove('hidden-section');
 }
 
-// 🟢 التحديث 4 و 5: إشعار تلقائي لكل السواقين وتفريغ الخانات بعد الاعتماد
 function saveAllRosterToFirebase() {
     if (!extractedBatchRoster || extractedBatchRoster.length === 0) { showToast("لا توجد بيانات لتحديثها!", "error"); return; }
     
@@ -2416,7 +2531,6 @@ function scheduleNextAlarmInKodular() {
     }
 }
 
-// 🟢 التحديث 8: نافذة تسكين الورش والـ PTW يدوياً للأدمن
 const trickyShiftsList = [
     "M-DTABA", "M-DTSLM", "E-DTABA", "E-DTSLM", "N-DTABA", "N-DTSLM",
     "M-PTW", "E-PTW", "N-PTW", "M-RES01", "M-RES02", "M-RES03", "E-RES01", "N-RES01"
@@ -2450,7 +2564,6 @@ function applyManualAssignments() {
         let inputVal = document.getElementById('manual_shift_' + shift).value.trim().toUpperCase();
         if(inputVal) {
             let rdmcId = inputVal.replace('ROMC', 'RDMC').replace('-', '');
-            // لو الأدمن كتب رقم بس (2883) الكود هيكتبله RDMC قبلها أوتوماتيك
             if(!rdmcId.startsWith('RDMC') && !rdmcId.startsWith('MC')) {
                 rdmcId = 'RDMC' + rdmcId; 
             }
