@@ -28,17 +28,19 @@ body { font-family: 'Cairo', sans-serif; }
 .premium-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-.hidden-toast { opacity: 0; pointer-events: none; transform: translate(-50%, -20px); }
-.show-toast { opacity: 1; pointer-events: auto; transform: translate(-50%, 0); }
+/* 🟢 التعديل الجديد: تصميم رسالة التنبيه في منتصف الشاشة */
+.hidden-toast { opacity: 0; pointer-events: none; transform: translate(-50%, -30%) scale(0.85); }
+.show-toast { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 .ghost-mode-banner { background-color: #fee2e2; color: #991b1b; padding: 8px 16px; text-align: center; font-weight: bold; border-bottom: 2px solid #ef4444; z-index: 99999; position: sticky; top: 0; }
 .dark .ghost-mode-banner { background-color: #7f1d1d; color: #fca5a5; border-bottom: 2px solid #b91c1c; }
 </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
 
-<div id="toast-notification" class="hidden-toast fixed top-5 left-1/2 transform -translate-x-1/2 bg-white dark:bg-gray-800 shadow-2xl rounded-2xl px-6 py-4 flex items-center gap-4 z-[100] border-r-4 transition-all duration-300 border-gray-200 dark:border-gray-700">
-    <span id="toast-icon" class="text-2xl drop-shadow-sm"></span>
-    <p id="toast-message" class="text-sm font-black text-gray-800 dark:text-gray-100"></p>
+<!-- 🟢 التعديل الجديد: الهيكل الجديد للرسالة في منتصف الشاشة -->
+<div id="toast-notification" class="hidden-toast fixed top-1/2 left-1/2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl rounded-[2rem] p-8 flex flex-col items-center justify-center gap-3 z-[999999] transition-all duration-300 border border-gray-100 dark:border-gray-700 min-w-[280px] max-w-[85vw] text-center">
+    <span id="toast-icon" class="text-6xl drop-shadow-md mb-2"></span>
+    <p id="toast-message" class="text-lg font-black text-gray-800 dark:text-gray-100 leading-relaxed"></p>
 </div>
 
 <div id="ghost-banner" class="ghost-mode-banner hidden-section flex justify-between items-center">
@@ -132,8 +134,7 @@ body { font-family: 'Cairo', sans-serif; }
 </form>
 </div>
 </div>
-
-<div id="dashboard-page" class="hidden-section min-h-screen flex flex-col">
+    <div id="dashboard-page" class="hidden-section min-h-screen flex flex-col">
 <nav class="glass-panel shadow-sm border-b dark:border-gray-700/50 p-3 z-40 sticky top-0">
 <div class="max-w-6xl mx-auto flex justify-between items-center">
 <div>
@@ -274,7 +275,7 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- نافذة الواتساب للإدارة (الجديدة) -->
+<!-- نافذة الواتساب للإدارة -->
 <div id="adminWhatsappModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -289,6 +290,22 @@ body { font-family: 'Cairo', sans-serif; }
         </div>
         <input type="hidden" id="adminWhatsappMsgHolder">
         <button onclick="closeAdminWhatsappModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-black py-3 rounded-xl text-sm mt-4 transition-colors hover:bg-gray-300 dark:hover:bg-gray-600">إلغاء</button>
+    </div>
+</div>
+
+<!-- 🟢 نافذة تفضيلات القائد -->
+<div id="driverPreferencesModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all flex flex-col max-h-[90vh]">
+        <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
+            <h3 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-orange-500 flex items-center gap-2"><span>⭐</span> تفضيلات القائد</h3>
+            <button onclick="closeDriverPreferencesModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl bg-gray-100 dark:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center leading-none">&times;</button>
+        </div>
+        <div id="driverPreferencesContent" class="space-y-4 overflow-y-auto hide-scrollbar flex-1 pr-1">
+            <div class="text-center text-gray-400 py-10 font-bold text-sm">جاري تحميل تفضيلات القائد...</div>
+        </div>
+        <div class="mt-4 pt-3 border-t dark:border-gray-700">
+            <button onclick="closeDriverPreferencesModal()" class="w-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-black py-3 rounded-xl text-sm transition-colors hover:bg-gray-300 dark:hover:bg-gray-600">إغلاق</button>
+        </div>
     </div>
 </div>
 
@@ -790,7 +807,7 @@ body { font-family: 'Cairo', sans-serif; }
         </div>
     </main>
 </div>
-    <script>
+        <script>
 const firebaseConfig = {
 apiKey: "AIzaSyDYFgmS8IFoUtkkLxX_MXIO205HjNGDuO0",
 authDomain: "asdd-b2d02.firebaseapp.com",
@@ -823,11 +840,15 @@ const transitionSheetsURLs = {
     "ST-416_WD-447": "https://docs.google.com/spreadsheets/d/1vreq2l4hCr8xQVeoUSukmc5o01wRavBUsXHhD9kBF0w/export?format=csv"
 };
 
+// 🟢 التعديل الجديد: رابط تفضيلات القائد من الشيت بتاعك
+const driverPrefsURL = 'https://docs.google.com/spreadsheets/d/1bwxDHamv7bJEpdfTG9brzjoBdu5go9YBcODBCQHG8Ko/export?format=csv';
+
 let transitionMatrix = {};
 let driversData = [], rosterDataMap = {}, schedulesDataMap = {};
 let aswanDataMap = {}, luxorDataMap = {}, alexDataMap = {}; 
 let siwaTripsMap = {}, luxorTripsMap = {}, alexTripsMap = {};
 let siwaIncomingMap = {}, luxorIncomingMap = {}, alexIncomingMap = {};
+let driverPreferencesMap = {}; // 🟢 خريطة التفضيلات
 let currentDriver = null, validShiftsSet = new Set(), extractedBatchRoster = [];
 let alarmInterval = null, alertedTripsToday = new Set();
 let isGhostMode = false;
@@ -841,6 +862,7 @@ let schedulesByDay = {
 26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
 };
 
+// 🟢 دالة التنبيه (Toast) بتظهر لمدة ثانية ونص (1500 ملي ثانية)
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast-notification');
     const toastMessage = document.getElementById('toast-message');
@@ -857,7 +879,7 @@ function showToast(message, type = 'success') {
     setTimeout(() => {
         toast.classList.remove('show-toast');
         toast.classList.add('hidden-toast');
-    }, 3000);
+    }, 1500);
 }
 
 const liveMapStations = [
@@ -1054,7 +1076,6 @@ async function loadAllTransitionSheets() {
                     if (cleanV === '') return;
                     let isHandover = false;
                     
-                    // 🟢 التعديل الذكي لفك شفرة الاستلام (بيصطاد الوردية حتى لو جمبها أقواس زي M11 -(140))
                     let m = cleanV.match(/([MEN][-_]?\d{1,2})/i); 
                     if (m && smartNormalize(m[1]) !== currentShift) { 
                         handover = m[1]; isHandover = true; 
@@ -1107,6 +1128,28 @@ async function fetchAndParseFullSchedule(url, tripsMapTarget, isAlex = false) {
     } catch(e) {}
 }
 
+// 🟢 التعديل الجديد: سحب تفضيلات ورغبات السواقين
+async function fetchDriverPreferences() {
+    try {
+        const res = await fetch(driverPrefsURL);
+        const lines = parseCSVText(await res.text());
+        for (let i = 1; i < lines.length; i++) {
+            let cols = parseCSVRow(lines[i]);
+            if (cols.length < 21) continue;
+            let rawCode = cleanTxt(cols[2]);
+            if (!rawCode || !rawCode.includes('MC')) continue;
+            let normId = smartNormalize(rawCode).replace(/-/g, '');
+            
+            driverPreferencesMap[normId] = {
+                shifts: [cleanTxt(cols[6]), cleanTxt(cols[7]), cleanTxt(cols[8])].filter(x => x && x !== 'NaN'),
+                evenTrips: [cleanTxt(cols[10]), cleanTxt(cols[11]), cleanTxt(cols[12])].filter(x => x && x !== 'NaN'),
+                oddTripsStart: [cleanTxt(cols[14]), cleanTxt(cols[15]), cleanTxt(cols[16])].filter(x => x && x !== 'NaN'),
+                oddTripsEnd: [cleanTxt(cols[18]), cleanTxt(cols[19]), cleanTxt(cols[20])].filter(x => x && x !== 'NaN')
+            };
+        }
+    } catch (e) { console.log('Prefs Error', e); }
+}
+
 let isInitialBroadcastLoad = true;
 let lastBroadcastText = "";
 
@@ -1116,6 +1159,7 @@ async function loadAllData() {
         await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
         await fetchAndParseShifts(alexShiftsURL, alexDataMap);
         await fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
+        await fetchDriverPreferences(); // 🟢 تحميل التفضيلات
 
         fetch(dbURL).then(res => res.text()).then(text => {
             const dbLines = parseCSVText(text);
@@ -1356,7 +1400,7 @@ function login() {
         }
         document.getElementById('dailyDatePicker').value = initialDateStr;
         buildDashboardData(driver);
-        showToast(`أهلاً بك يا ${driver.name}`, 'success');
+        showToast(`أهلاً بك يا قائد قطار ${driver.name}`, 'success');
     } else { showToast('رقم الراديو غير مسجل بالنظام!', 'error'); }
 }
 
@@ -1421,7 +1465,7 @@ function loadPasswordRequests() {
                 let waLink = '';
                 if(phone && phone !== 'غير متوفر') {
                     let cleanPhone = phone.startsWith('0') ? '2'+phone : '20'+phone;
-                    let msg = encodeURIComponent(`أهلاً بك يا كابتن، بناءً على طلبك استعادة كلمة المرور، كلمة المرور الخاصة بحسابك هي: ${pass}`);
+                    let msg = encodeURIComponent(`أهلاً بك يا قائد قطار، بناءً على طلبك استعادة كلمة المرور، كلمة المرور الخاصة بحسابك هي: ${pass}`);
                     waLink = `<a href="https://api.whatsapp.com/send?phone=${cleanPhone}&text=${msg}" target="_blank" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-2.5 rounded-xl text-xs font-black shadow-md flex items-center gap-1.5 transition-all">💬 إرسال الباسورد واتساب</a>`;
                 } else {
                     waLink = `<span class="text-xs text-amber-500 font-bold bg-amber-50 dark:bg-amber-900/20 px-3 py-2 rounded-xl border">رقم الهاتف غير مسجل بالقائمة</span>`;
@@ -1450,7 +1494,7 @@ function ghostLogin() {
         document.getElementById('welcomeMessage').textContent = 'مرحباً بك، قائد قطار ' + driver.name;
         document.getElementById('dailyDatePicker').value = getTodayYYYYMMDD();
         buildDashboardData(driver);
-        showToast(`تم التخفي وتصفح حساب الكابتن ${driver.name}`, "success");
+        showToast(`تم التخفي وتصفح حساب قائد قطار ${driver.name}`, "success");
     } else { showToast("رقم الراديو غير موجود!", "error"); }
 }
 function returnToAdmin() {
@@ -1502,7 +1546,6 @@ function submitChangePassword() {
     }
 }
 
-// 🟢 دوال فتح الواتساب للإدارة (النافذة الجديدة)
 function openAdminWhatsappModal(encodedMsg) {
     document.getElementById('adminWhatsappMsgHolder').value = encodedMsg;
     document.getElementById('adminWhatsappModal').classList.remove('hidden-section');
@@ -1523,6 +1566,40 @@ function sendToAdminWhatsapp(target) {
     }
 }
 
+// 🟢 دالة فتح نافذة رغبات القائد
+function openDriverPreferencesModal(serviceId) {
+    let normId = smartNormalize(serviceId).replace(/-/g, '');
+    let prefs = driverPreferencesMap[normId];
+    let contentBox = document.getElementById('driverPreferencesContent');
+    
+    if (!prefs) {
+        contentBox.innerHTML = '<div class="text-center text-amber-500 py-6 text-sm font-black border-2 border-dashed border-amber-200 dark:border-amber-800 rounded-2xl bg-amber-50 dark:bg-amber-900/20">⚠️ لم يقم هذا القائد بتسجيل رغباته في الاستبيان حتى الآن.</div>';
+    } else {
+        let formatList = (arr) => arr.length ? arr.map((item, idx) => `<span class="bg-white dark:bg-gray-700 px-3 py-1.5 rounded-lg text-[11px] font-black border dark:border-gray-600 shadow-sm whitespace-nowrap text-gray-800 dark:text-gray-200">${idx+1}- ${item}</span>`).join(' ') : '<span class="text-gray-400 text-xs">غير محدد</span>';
+        
+        contentBox.innerHTML = `
+            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 p-4 rounded-2xl border border-blue-100 dark:border-blue-800 shadow-sm mb-3">
+                <h4 class="font-black text-blue-800 dark:text-blue-400 text-xs mb-2">⏱️ الشيفتات المفضلة:</h4>
+                <div class="flex flex-wrap gap-2">${formatList(prefs.shifts)}</div>
+            </div>
+            <div class="bg-gradient-to-r from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 p-4 rounded-2xl border border-purple-100 dark:border-purple-800 shadow-sm mb-3">
+                <h4 class="font-black text-purple-800 dark:text-purple-400 text-xs mb-2">🔄 حلقات زوجية (استلام وتسليم 6 رحلات):</h4>
+                <div class="flex flex-wrap gap-2">${formatList(prefs.evenTrips)}</div>
+            </div>
+            <div class="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-4 rounded-2xl border border-emerald-100 dark:border-emerald-800 shadow-sm mb-3">
+                <h4 class="font-black text-emerald-800 dark:text-emerald-400 text-xs mb-2">➡️ استلام الفردي (5 رحلات):</h4>
+                <div class="flex flex-wrap gap-2">${formatList(prefs.oddTripsStart)}</div>
+            </div>
+            <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-4 rounded-2xl border border-amber-100 dark:border-amber-800 shadow-sm">
+                <h4 class="font-black text-amber-800 dark:text-amber-400 text-xs mb-2">⬅️ تسليم الفردي (5 رحلات):</h4>
+                <div class="flex flex-wrap gap-2">${formatList(prefs.oddTripsEnd)}</div>
+            </div>
+        `;
+    }
+    document.getElementById('driverPreferencesModal').classList.remove('hidden-section');
+}
+function closeDriverPreferencesModal() { document.getElementById('driverPreferencesModal').classList.add('hidden-section'); }
+
 function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     if (!todayScheduleStr || !tomorrowScheduleStr || !shiftCode) return null;
     let cleanToday = todayScheduleStr.split('[')[0].replace(/-$/, '').trim();
@@ -1535,7 +1612,6 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
-// 🟢 التعديل الجذري والذكي للاستلامات في أيام التحويلات
 function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ إجازة / ${shiftCodeRaw}</p></div>`;
@@ -1585,58 +1661,37 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
         
         let receiveFromCode = null; let receiveFromDriverName = null;
         
-        // 🟢 لو أنا وردية صباحية (M) وإمبارح كان جدول مختلف، هبص في جدول تحويلة إمبارح
         if (cleanYesterday !== cleanToday && normShift.startsWith('M')) {
             let transKey = `${cleanYesterday}_${cleanToday}`;
             if (transitionMatrix[transKey]) {
                 for (let nShift in transitionMatrix[transKey]) {
                     let nData = transitionMatrix[transKey][nShift];
-                    if (nData.handover && smartNormalize(nData.handover) === normShift) {
-                        receiveFromCode = nShift;
-                        break;
-                    }
+                    if (nData.handover && smartNormalize(nData.handover) === normShift) { receiveFromCode = nShift; break; }
                 }
-                
-                // لو ملقاش الاستلام صراحة في الجدول، هيدور برقم القطر
                 if (!receiveFromCode) {
                     let firstTrip = (myShiftData.tripNumbers && myShiftData.tripNumbers.length > 0) ? myShiftData.tripNumbers[0] : null;
                     let incomingTrip = firstTrip ? activeIncomingMap[firstTrip] : null;
-                    
                     for (let nShift in transitionMatrix[transKey]) {
                         let nData = transitionMatrix[transKey][nShift];
                         if (firstTrip && nData.trips) {
-                            if ((incomingTrip && nData.trips.includes(incomingTrip)) || nData.trips.includes(firstTrip)) {
-                                receiveFromCode = nShift;
-                                break;
-                            }
+                            if ((incomingTrip && nData.trips.includes(incomingTrip)) || nData.trips.includes(firstTrip)) { receiveFromCode = nShift; break; }
                         }
                     }
                 }
             }
         } 
         
-        // لو ملقتش في التحويلة، أو يوم عادي هتبص في جدول النهارده
         if (!receiveFromCode) {
             for (let shiftKey in activeDataMap) { 
-                // حماية إضافية عشان النيت ميستلمش من نيت
                 let isValid = true;
                 if (normShift.startsWith('N') && shiftKey.startsWith('N')) isValid = false;
-                
-                if (isValid && activeDataMap[shiftKey].handoverCode === normShift) { 
-                    receiveFromCode = shiftKey; 
-                    break; 
-                } 
+                if (isValid && activeDataMap[shiftKey].handoverCode === normShift) { receiveFromCode = shiftKey; break; } 
             }
-            // لو لسه ملقتش، هات أي حد بيسلمني وخلاص
             if (!receiveFromCode) {
                 for (let shiftKey in activeDataMap) { 
                     let isValid = true;
                     if (normShift.startsWith('N') && shiftKey.startsWith('N')) isValid = false;
-                    
-                    if (isValid && activeDataMap[shiftKey].handoverCode === normShift && shiftKey !== normShift) { 
-                        receiveFromCode = shiftKey; 
-                        break; 
-                    } 
+                    if (isValid && activeDataMap[shiftKey].handoverCode === normShift && shiftKey !== normShift) { receiveFromCode = shiftKey; break; } 
                 }
             }
         }
@@ -1645,9 +1700,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
 
         if (receiveFromCode) {
             let receiveDateVal = selectedDateVal; let receiveDayNum = dayNum;
-            if (receiveFromCode.startsWith('N')) {
-                receiveDateVal = yDateVal; receiveDayNum = yDayNum;
-            }
+            if (receiveFromCode.startsWith('N')) { receiveDateVal = yDateVal; receiveDayNum = yDayNum; }
             for (let i = 0; i < driversData.length; i++) {
                 let d = driversData[i]; let dRoster = getDriverRosterForDate(d.serviceId, receiveDateVal);
                 if (dRoster && smartNormalize(dRoster[receiveDayNum]) === receiveFromCode) { receiveFromDriverName = d.name; break; }
@@ -1656,9 +1709,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
 
         if (handoverCode) {
             let handoverDateVal = selectedDateVal; let handoverDayNum = dayNum;
-            if (normShift.startsWith('N')) {
-                handoverDateVal = tomDateVal; handoverDayNum = tomDayNum;
-            }
+            if (normShift.startsWith('N')) { handoverDateVal = tomDateVal; handoverDayNum = tomDayNum; }
             for (let i = 0; i < driversData.length; i++) {
                 let d = driversData[i]; let dRoster = getDriverRosterForDate(d.serviceId, handoverDateVal);
                 if (dRoster && smartNormalize(dRoster[handoverDayNum]) === handoverCode) { handoverDriverName = d.name; break; }
@@ -1680,33 +1731,18 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
             let tNumInt = parseInt(tNum, 10);
             
             if (isTransition) { 
-                if (tNumInt < 300) {
-                    scheduleMatch = tomorrowTripsMap[tNum] || activeTripsMap[tNum];
-                    usedIncMap = tomorrowIncomingMap[tNum] ? tomorrowIncomingMap : activeIncomingMap;
-                } else {
-                    scheduleMatch = activeTripsMap[tNum] || tomorrowTripsMap[tNum];
-                    usedIncMap = activeIncomingMap[tNum] ? activeIncomingMap : tomorrowIncomingMap;
-                }
-            } else { 
-                scheduleMatch = activeTripsMap[tNum]; 
-            }
+                if (tNumInt < 300) { scheduleMatch = tomorrowTripsMap[tNum] || activeTripsMap[tNum]; usedIncMap = tomorrowIncomingMap[tNum] ? tomorrowIncomingMap : activeIncomingMap; } 
+                else { scheduleMatch = activeTripsMap[tNum] || tomorrowTripsMap[tNum]; usedIncMap = activeIncomingMap[tNum] ? activeIncomingMap : tomorrowIncomingMap; }
+            } else { scheduleMatch = activeTripsMap[tNum]; }
             
             let dep = scheduleMatch ? scheduleMatch.depTime : '---'; let arr = scheduleMatch ? scheduleMatch.arrTime : '---'; let route = scheduleMatch ? scheduleMatch.route : 'مسار تشغيل الخط الثالث';
-            
-            let incomingCode = usedIncMap[tNum] || 'غير محدد'; 
-            let incomingTime = '---';
+            let incomingCode = usedIncMap[tNum] || 'غير محدد'; let incomingTime = '---';
             if (/^\d{3,4}$/.test(incomingCode)) {
-                let incMatch = null; 
-                let incNumInt = parseInt(incomingCode, 10);
+                let incMatch = null; let incNumInt = parseInt(incomingCode, 10);
                 if (isTransition) { 
-                    if (incNumInt < 300) { 
-                        incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incNumInt]; 
-                    } else { 
-                        incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incNumInt]; 
-                    } 
-                } else { 
-                    incMatch = activeTripsMap[incomingCode]; 
-                }
+                    if (incNumInt < 300) { incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incNumInt]; } 
+                    else { incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incNumInt]; } 
+                } else { incMatch = activeTripsMap[incomingCode]; }
                 if (!incMatch) { 
                     if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode]; 
                     else if (luxorTripsMap[incomingCode]) incMatch = luxorTripsMap[incomingCode]; 
@@ -1904,7 +1940,6 @@ function switchSwapSubTab(subTabId) {
     if(subTabId === 'weeklySwap') { loadWeeklyBlockSwap(); }
 }
 
-// 🟢 التعديل الجديد: استخدام نافذة الواتساب للمبادلة اليومية
 function compareDailySwaps() {
     const dateVal = document.getElementById('swapDailyDate').value; const targetQuery = document.getElementById('swapTargetDriverInput').value.trim().toLowerCase();
     const resultBox = document.getElementById('dailySwapResultBox');
@@ -1931,7 +1966,6 @@ function compareDailySwaps() {
     `;
 }
 
-// 🟢 التعديل الجديد: استخدام نافذة الواتساب للمبادلة الأسبوعية
 function loadWeeklyBlockSwap() {
     const resultBox = document.getElementById('weeklySwapResultBox');
     if (!currentDriver) return;
@@ -2017,7 +2051,9 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
             matchingHTML += `</div></div>
                 <div class="flex items-center gap-2 flex-wrap">`;
             if (phoneNum) { matchingHTML += `<a href="tel:${phoneNum}" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">📞 اتصال مباشر</a><a href="https://api.whatsapp.com/send?phone=${waPhone}&text=${msg}" target="_blank" class="bg-gradient-to-r from-emerald-400 to-green-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">💬 تواصل واتساب</a>`; }
-            matchingHTML += `</div>
+            
+            // 🟢 زرار التفضيلات 
+            matchingHTML += `<button onclick="openDriverPreferencesModal('${d.rawServiceId}')" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">⭐ تفضيلات القائد</button></div>
                 <div class="flex items-center gap-2 flex-wrap pt-3 border-t dark:border-gray-700">
                     <span class="text-[11px] font-black text-purple-600 dark:text-purple-400 w-full sm:w-auto mb-2 sm:mb-0">إرسال طلب البلوك للإدارة:</span>
                     <button onclick="openAdminWhatsappModal('${encodedWeeklyMsg}')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">📤 إرسال للإدارة</button>
@@ -2375,6 +2411,7 @@ function processRawTextInput() {
     document.getElementById('parseResultBox').classList.remove('hidden-section');
 }
 
+// 🟢 التعديل: مسح الذاكرة وتفريغ الشاشة بعد الرفع للسحابة
 function saveAllRosterToFirebase() {
     if (!extractedBatchRoster || extractedBatchRoster.length === 0) { showToast("لا توجد بيانات لتحديثها!", "error"); return; }
     
@@ -2386,7 +2423,12 @@ function saveAllRosterToFirebase() {
         let scheduleNode = 'schedules' + monthNum;
         db.ref(scheduleNode).set(extractedBatchRoster[0].data).then(() => { 
             showToast(`🌐✅ تم حفظ أسماء الورادي بنجاح لشهر ${monthNum}!`, "success"); 
+            
+            // تفريغ الذاكرة والشاشة بالكامل
             document.getElementById('rawTextInput').value = '';
+            document.getElementById('parsedRosterTable').innerHTML = '';
+            document.getElementById('driverCount').textContent = '0';
+            extractedBatchRoster = []; 
             document.getElementById('parseResultBox').classList.add('hidden-section');
         }).catch(err => { showToast("⚠️ خطأ في الحفظ: " + err.message, "error"); });
         return; 
@@ -2410,7 +2452,11 @@ function saveAllRosterToFirebase() {
         let updateMsg = (scope === 'daily') ? "اليومية المحددة" : `روستر شهر ${monthNum}`;
         showToast(`🌐✅ تم تحديث واعتماد (${updateMsg}) للسحابة بنجاح!`, "success"); 
         
+        // تفريغ الذاكرة والشاشة بالكامل
         document.getElementById('rawTextInput').value = '';
+        document.getElementById('parsedRosterTable').innerHTML = '';
+        document.getElementById('driverCount').textContent = '0';
+        extractedBatchRoster = []; 
         document.getElementById('parseResultBox').classList.add('hidden-section');
 
         const now = new Date(); 
@@ -2548,9 +2594,14 @@ function scheduleNextAlarmInKodular() {
     }
 }
 
+// 🟢 التعديل: إضافة كل التدويرات (RES) وتصاريح العمل (PTW) مرتبة بالشفتات
 const trickyShiftsList = [
-    "M-DTABA", "M-DTSLM", "E-DTABA", "E-DTSLM", "N-DTABA", "N-DTSLM",
-    "M-PTW", "E-PTW", "N-PTW", "M-RES01", "M-RES02", "M-RES03", "E-RES01", "N-RES01"
+    "M-DTABA", "E-DTABA", "N-DTABA", 
+    "M-DTSLM", "E-DTSLM", "N-DTSLM", 
+    "M-RES01", "M-RES02", "M-RES03", 
+    "E-RES01", "E-RES02", "E-RES03", 
+    "N-RES01", "N-RES02", "N-RES03",
+    "M-PTW", "E-PTW", "N-PTW"
 ];
 
 function openManualAssignModal() {
@@ -2613,3 +2664,4 @@ function applyManualAssignments() {
 </script>
 </body>
 </html>
+    
