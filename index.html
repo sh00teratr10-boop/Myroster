@@ -808,7 +808,6 @@ body { font-family: 'Cairo', sans-serif; }
     </main>
 </div>
 
-<!-- النافذة المنبثقة لتغيير باسوورد الأدمن (تفتح من الزرار في الأعلى) -->
 <div id="adminPasswordModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -2337,10 +2336,16 @@ function updateLiveAdminMap() {
 function renderLineMapStations() { updateLiveAdminMap(); }
 function toggleScopeUI() { document.getElementById('parseResultBox').classList.add('hidden-section'); }
 
-// 🟢 دالة الفحص الأصلية كما طلبت بالحرف الواحد 🟢
 function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
+
+    rawText = rawText.replace(/(?:[a-zA-Z+&]-?)?PTW-[a-fA-F0-9]{8}/gi, '');
+    rawText = rawText.replace(/RES(\d{1,2})-([MEN])/gi, '$2-RES$1');
+    rawText = rawText.replace(/[MEN]-\d{1,2}\s+(?:\d+\s+)?(?:رصيف|مؤقتا|وتخزينه|سكة)/gi, ' ');
+    rawText = rawText.replace(/\(\s*\d+\s*\)\s*[MEN]-\d{1,2}/gi, ' ');
+    rawText = rawText.replace(/\d+-[MEN]\s*\)\s*\d+/gi, ' ');
+    rawText = rawText.replace(/\([^)]+\)/g, ' ');
 
     rawText = rawText.replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
                      .replace(/Annual\s+leave/gi, 'AL')
@@ -2377,69 +2382,50 @@ function processRawTextInput() {
     if (scope === 'daily') { document.getElementById('detectedDate').textContent = 'تاريخ اليومية المختار: ' + adminDateVal; } 
     else if (scope === 'rosterMonth') { document.getElementById('detectedDate').textContent = 'روستر لشهر: ' + monthPickerVal; } 
 
-    const tokens = rawText.trim().split(/\s+/);
-    const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
-
-    let processedIDs = new Set();
-    let currentId = null, daysMap = {}, dayCount = 1; 
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
 
     function cleanShiftToken(t) {
         let upper = t.toUpperCase();
-        
         let matchDigits = upper.match(/^([MEN][-_]?\d{1,3})/);
         if (matchDigits) return matchDigits[1];
-
         let matchPTW = upper.match(/^([MEN][-_]?PTW)/);
         if (matchPTW) return matchPTW[1];
-
         let matchDT = upper.match(/^([MEN][-_]?DT[A-Z]+)/);
         if (matchDT) return matchDT[1];
-
         let matchRES = upper.match(/^([MEN][-_]?RES\d*)/);
         if (matchRES) return matchRES[1];
-        
         let matchTRG = upper.match(/^(TRG[-_]?DRI[-_]?REF)/);
         if (matchTRG) return matchTRG[1];
-
         const exact = ['R','REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV'];
         if (exact.includes(upper)) return upper;
         if (upper.includes('ورشة') || upper.includes('سكة')) return upper;
-
         return null; 
     }
 
-    function saveCurrentDriver() {
-        if (currentId && !processedIDs.has(currentId)) {
-            processedIDs.add(currentId);
-            if (isDailyMode) {
-                let finalShift = daysMap[1] || 'راحة';
-                extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
-            } else {
-                if (Object.keys(daysMap).length > 0) {
-                    extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
-                }
-            }
-        }
-    }
+    const driverBlockRegex = /(RDMC[-_]?[a-zA-Z]?\d+)([\s\S]*?)(?=(?:RDMC[-_]?[a-zA-Z]?\d+)|$)/gi;
+    let match;
+    let processedIDs = new Set();
 
-    for (let i = 0; i < tokens.length; i++) {
-        let rawToken = tokens[i];
+    while ((match = driverBlockRegex.exec(rawText)) !== null) {
+        let rawId = match[1];
+        let blockText = match[2]; 
+        let currentId = rawId.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
         
-        if (rdmcPattern.test(rawToken)) {
-            if (currentId) saveCurrentDriver(); 
-            currentId = rawToken.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
-            daysMap = {}; 
-            dayCount = 1; 
-            continue; 
-        }
-        
-        if (currentId) {
-            let cleanedToken = cleanShiftToken(rawToken); 
+        if (processedIDs.has(currentId)) continue;
+        processedIDs.add(currentId);
+
+        let daysMap = {}; 
+        let dayCount = 1; 
+
+        let tokens = blockText.trim().split(/\s+/);
+
+        for (let i = 0; i < tokens.length; i++) {
+            let cleanedToken = cleanShiftToken(tokens[i]); 
             if (cleanedToken) {
                 let finalToken = cleanedToken.replace(/_/g, ' '); 
                 if (isDailyMode) {
                     daysMap[1] = finalToken; 
+                    break; 
                 } else {
                     if (dayCount <= 31) {
                         daysMap[dayCount] = finalToken;
@@ -2448,8 +2434,16 @@ function processRawTextInput() {
                 }
             }
         }
+
+        if (isDailyMode) {
+            let finalShift = daysMap[1] || 'راحة';
+            extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
+        } else {
+            if (Object.keys(daysMap).length > 0) {
+                extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
+            }
+        }
     }
-    if (currentId) saveCurrentDriver(); 
 
     const tbody = document.getElementById('parsedRosterTable');
     tbody.innerHTML = '';
@@ -2467,7 +2461,6 @@ function processRawTextInput() {
     document.getElementById('parseResultBox').classList.remove('hidden-section');
 }
 
-// 🟢 دالة الرفع للسحابة الأصلية (تحديث وإحلال الجديد مكان القديم مباشرة بدون مسح باقي السواقين) 🟢
 function saveAllRosterToFirebase() {
     if (!extractedBatchRoster || extractedBatchRoster.length === 0) { showToast("لا توجد بيانات لتحديثها!", "error"); return; }
     
@@ -2495,6 +2488,16 @@ function saveAllRosterToFirebase() {
             let dailyDateVal = document.getElementById('adminDailyDateInput').value;
             let dailyMonthNum = parseInt(dailyDateVal.split('-')[1], 10);
             let rosterNode = 'roster' + dailyMonthNum;
+            
+            // ⭐ التنظيف الذكي: لو الوردية اتحدثت في اليومية، امسحها من السواق القديم
+            if (item.shift !== 'راحة' && rosterDataMap[dailyMonthNum]) {
+                for (let oldDriverId in rosterDataMap[dailyMonthNum]) {
+                    if (oldDriverId !== normId && rosterDataMap[dailyMonthNum][oldDriverId][item.dayNum] === item.shift) {
+                        updates[`${rosterNode}/${oldDriverId}/${item.dayNum}`] = 'راحة'; // مسح الوردية من الموظف القديم
+                    }
+                }
+            }
+            
             updates[`${rosterNode}/${normId}/${item.dayNum}`] = item.shift; 
         } else { 
             let rosterNode = 'roster' + monthNum;
@@ -2503,7 +2506,7 @@ function saveAllRosterToFirebase() {
     });
 
     db.ref().update(updates).then(() => { 
-        let updateMsg = (scope === 'daily') ? "اليومية المحددة" : `روستر شهر ${monthNum}`;
+        let updateMsg = (scope === 'daily') ? "اليومية المحددة وتنظيف التعارض" : `روستر شهر ${monthNum}`;
         showToast(`🌐✅ تم تحديث واعتماد (${updateMsg}) للسحابة بنجاح!`, "success"); 
         
         document.getElementById('rawTextInput').value = '';
@@ -2719,3 +2722,4 @@ function applyManualAssignments() {
 </script>
 </body>
 </html>
+    
