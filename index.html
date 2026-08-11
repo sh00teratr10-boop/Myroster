@@ -28,7 +28,6 @@ body { font-family: 'Cairo', sans-serif; }
 .premium-shadow { box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
 .hide-scrollbar::-webkit-scrollbar { display: none; }
 .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-/* 🟢 التعديل الجديد: تصميم رسالة التنبيه في منتصف الشاشة */
 .hidden-toast { opacity: 0; pointer-events: none; transform: translate(-50%, -30%) scale(0.85); }
 .show-toast { opacity: 1; pointer-events: auto; transform: translate(-50%, -50%) scale(1); }
 .ghost-mode-banner { background-color: #fee2e2; color: #991b1b; padding: 8px 16px; text-align: center; font-weight: bold; border-bottom: 2px solid #ef4444; z-index: 99999; position: sticky; top: 0; }
@@ -37,7 +36,6 @@ body { font-family: 'Cairo', sans-serif; }
 </head>
 <body class="bg-slate-50 dark:bg-slate-900 text-gray-900 dark:text-white min-h-screen transition-colors duration-300">
 
-<!-- 🟢 التعديل الجديد: الهيكل الجديد للرسالة في منتصف الشاشة -->
 <div id="toast-notification" class="hidden-toast fixed top-1/2 left-1/2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-xl shadow-2xl rounded-[2rem] p-8 flex flex-col items-center justify-center gap-3 z-[999999] transition-all duration-300 border border-gray-100 dark:border-gray-700 min-w-[280px] max-w-[85vw] text-center">
     <span id="toast-icon" class="text-6xl drop-shadow-md mb-2"></span>
     <p id="toast-message" class="text-lg font-black text-gray-800 dark:text-gray-100 leading-relaxed"></p>
@@ -275,7 +273,6 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- نافذة الواتساب للإدارة -->
 <div id="adminWhatsappModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -293,7 +290,6 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- 🟢 نافذة تفضيلات القائد -->
 <div id="driverPreferencesModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-md rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all flex flex-col max-h-[90vh]">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -656,10 +652,10 @@ body { font-family: 'Cairo', sans-serif; }
             <button onclick="closeManualAssignModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl bg-gray-100 dark:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center leading-none">&times;</button>
         </div>
         <div class="mb-4 bg-blue-50 dark:bg-blue-900/20 p-3 rounded-xl border border-blue-100 dark:border-blue-800 text-xs font-bold text-blue-700 dark:text-blue-300 shadow-sm leading-relaxed">
-            أدخل رقم تشغيل القائد (مثال: 2883) أمام الوردية المطلوبة. سيتم دمج هذه الورديات مباشرة في نتائج الاستخراج الحالية لرفعها مع اليومية.
+            أدخل رقم تشغيل القائد أمام الوردية المطلوبة. سيتم دمج هذه الورديات مباشرة في نتائج الاستخراج الحالية لرفعها مع اليومية.
         </div>
         <div class="overflow-y-auto hide-scrollbar flex-1 pr-2 space-y-3" id="manualAssignListContainer">
-            <!-- سيتم توليد الحقول هنا عبر الجافاسكريبت -->
+            <!-- سيتم توليد الحقول هنا عبر الجافاسكريبت بدون أي أمثلة -->
         </div>
         <div class="mt-5 pt-4 border-t dark:border-gray-700">
             <button onclick="applyManualAssignments()" class="w-full bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-black py-3.5 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">حفظ وإضافة للنتائج 🚀</button>
@@ -671,7 +667,11 @@ body { font-family: 'Cairo', sans-serif; }
     <nav class="bg-gradient-to-r from-purple-800 to-indigo-900 text-white p-4 shadow-lg flex justify-between items-center relative overflow-hidden">
         <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20"></div>
         <h1 class="text-xl font-black relative z-10 flex items-center gap-2"><span>👑</span> لوحة الإدارة الشاملة</h1>
-        <button onclick="logout()" class="bg-red-500/80 hover:bg-red-500 px-4 py-2 rounded-xl font-black text-xs shadow-sm backdrop-blur-sm relative z-10 transition-colors">خروج</button>
+        <div class="flex items-center gap-2 relative z-10">
+            <!-- 🟢 زرار باسوورد الأدمن الصغير والشيك جداً -->
+            <button onclick="openAdminPasswordModal()" class="bg-purple-600/80 hover:bg-purple-500 px-3 py-1.5 rounded-xl font-black text-xs shadow-sm backdrop-blur-sm transition-colors flex items-center gap-1"><span>⚙️</span> باسورد الأدمن</button>
+            <button onclick="logout()" class="bg-red-500/80 hover:bg-red-500 px-4 py-1.5 rounded-xl font-black text-xs shadow-sm backdrop-blur-sm transition-colors">خروج</button>
+        </div>
     </nav>
 
     <main class="max-w-5xl mx-auto p-4 md:p-6 mt-4 w-full flex-1 space-y-6">
@@ -807,7 +807,32 @@ body { font-family: 'Cairo', sans-serif; }
         </div>
     </main>
 </div>
-        <script>
+
+<!-- النافذة المنبثقة لتغيير باسوورد الأدمن (تفتح من الزرار في الأعلى) -->
+<div id="adminPasswordModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
+    <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-right transition-all">
+        <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
+            <h3 class="text-lg font-black text-purple-600 flex items-center gap-2"><span>⚙️</span> تغيير كلمة مرور الإدارة</h3>
+            <button onclick="closeAdminPasswordModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl bg-gray-100 dark:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center leading-none">&times;</button>
+        </div>
+        <div class="space-y-4 mb-6">
+            <div>
+                <label class="block text-xs font-black mb-1.5 text-gray-700 dark:text-gray-300">كلمة المرور الحالية</label>
+                <input type="password" id="adminOldPass" class="w-full px-4 py-3 bg-slate-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold shadow-inner">
+            </div>
+            <div>
+                <label class="block text-xs font-black mb-1.5 text-gray-700 dark:text-gray-300">كلمة المرور الجديدة</label>
+                <input type="password" id="adminNewPass" class="w-full px-4 py-3 bg-slate-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold shadow-inner">
+            </div>
+            <div>
+                <label class="block text-xs font-black mb-1.5 text-gray-700 dark:text-gray-300">تأكيد كلمة المرور الجديدة</label>
+                <input type="password" id="adminConfirmPass" class="w-full px-4 py-3 bg-slate-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold shadow-inner">
+            </div>
+        </div>
+        <button onclick="changeAdminPassword()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5">تحديث الباسورد</button>
+    </div>
+</div>
+    <script>
 const firebaseConfig = {
 apiKey: "AIzaSyDYFgmS8IFoUtkkLxX_MXIO205HjNGDuO0",
 authDomain: "asdd-b2d02.firebaseapp.com",
@@ -840,7 +865,6 @@ const transitionSheetsURLs = {
     "ST-416_WD-447": "https://docs.google.com/spreadsheets/d/1vreq2l4hCr8xQVeoUSukmc5o01wRavBUsXHhD9kBF0w/export?format=csv"
 };
 
-// 🟢 التعديل الجديد: رابط تفضيلات القائد من الشيت بتاعك
 const driverPrefsURL = 'https://docs.google.com/spreadsheets/d/1bwxDHamv7bJEpdfTG9brzjoBdu5go9YBcODBCQHG8Ko/export?format=csv';
 
 let transitionMatrix = {};
@@ -848,10 +872,11 @@ let driversData = [], rosterDataMap = {}, schedulesDataMap = {};
 let aswanDataMap = {}, luxorDataMap = {}, alexDataMap = {}; 
 let siwaTripsMap = {}, luxorTripsMap = {}, alexTripsMap = {};
 let siwaIncomingMap = {}, luxorIncomingMap = {}, alexIncomingMap = {};
-let driverPreferencesMap = {}; // 🟢 خريطة التفضيلات
+let driverPreferencesMap = {}; 
 let currentDriver = null, validShiftsSet = new Set(), extractedBatchRoster = [];
 let alarmInterval = null, alertedTripsToday = new Set();
 let isGhostMode = false;
+let adminPassword = '123456'; 
 
 let schedulesByDay = {
 1: "WD-447-[SIWA]", 2: "ST-416-[ALEX_WFH]", 3: "WE-341-[LUXOR]", 4: "ST-416-[ALEX_WFH]", 5: "ST-416-[ALEX_WFH]",
@@ -862,7 +887,6 @@ let schedulesByDay = {
 26: "ST-416-[ALEX_WFH]", 27: "WD-447-[SIWA]", 28: "WD-447-[SIWA]", 29: "WD-447-[SIWA]", 30: "WD-447-[SIWA]", 31: "WE-341-[LUXOR]"
 };
 
-// 🟢 دالة التنبيه (Toast) بتظهر لمدة ثانية ونص (1500 ملي ثانية)
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast-notification');
     const toastMessage = document.getElementById('toast-message');
@@ -1128,7 +1152,6 @@ async function fetchAndParseFullSchedule(url, tripsMapTarget, isAlex = false) {
     } catch(e) {}
 }
 
-// 🟢 التعديل الجديد: سحب تفضيلات ورغبات السواقين
 async function fetchDriverPreferences() {
     try {
         const res = await fetch(driverPrefsURL);
@@ -1147,7 +1170,7 @@ async function fetchDriverPreferences() {
                 oddTripsEnd: [cleanTxt(cols[18]), cleanTxt(cols[19]), cleanTxt(cols[20])].filter(x => x && x !== 'NaN')
             };
         }
-    } catch (e) { console.log('Prefs Error', e); }
+    } catch (e) { }
 }
 
 let isInitialBroadcastLoad = true;
@@ -1155,11 +1178,15 @@ let lastBroadcastText = "";
 
 async function loadAllData() {
     try {
+        db.ref('accounts/admin/password').on('value', snap => {
+            if(snap.val()) adminPassword = snap.val();
+        });
+
         loadAllTransitionSheets(); 
         await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
         await fetchAndParseShifts(alexShiftsURL, alexDataMap);
         await fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
-        await fetchDriverPreferences(); // 🟢 تحميل التفضيلات
+        await fetchDriverPreferences(); 
 
         fetch(dbURL).then(res => res.text()).then(text => {
             const dbLines = parseCSVText(text);
@@ -1247,7 +1274,7 @@ async function loadAllData() {
         await buildIncomingMap(luxorCercrlURL, luxorIncomingMap);
         await buildIncomingMap(alexCercrlURL, alexIncomingMap);
 
-    } catch (error) { console.log("خطأ في التحميل:", error); }
+    } catch (error) {}
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -1357,6 +1384,13 @@ function login() {
     const userVal = document.getElementById('loginRadioId').value.trim();
     const passVal = document.getElementById('loginPassword').value.trim();
     const rememberMe = document.getElementById('rememberMeCheck').checked;
+    
+    if (!userVal && localStorage.getItem('savedRadioId')) {
+        document.getElementById('loginRadioId').value = localStorage.getItem('savedRadioId');
+        document.getElementById('loginPassword').value = localStorage.getItem('savedPassword');
+        return login(); 
+    }
+    
     if (!userVal) { showToast('يرجى إدخال رقم الراديو أولاً!', 'error'); return; }
     
     localStorage.setItem('savedRadioId', userVal);
@@ -1364,7 +1398,7 @@ function login() {
     if (rememberMe) { localStorage.setItem('rememberRadio', userVal); } else { localStorage.removeItem('rememberRadio'); }
 
     if (userVal.toLowerCase() === 'admin') {
-        if (passVal === '123456') {
+        if (passVal === adminPassword) {
             document.getElementById('auth-page').classList.add('hidden-section');
             document.getElementById('admin-page').classList.remove('hidden-section');
             updateLiveAdminMap();
@@ -1425,7 +1459,9 @@ function requestBiometric() {
     if (window.AppInventor) { 
         window.AppInventor.setWebViewString("BIOMETRIC_LOGIN"); 
     } else { 
-        showToast("تسجيل الدخول بالبصمة متاح فقط عبر التطبيق!", "error"); 
+        document.getElementById('loginRadioId').value = savedId;
+        document.getElementById('loginPassword').value = savedPass;
+        login(); 
     }
 }
 
@@ -1437,7 +1473,7 @@ function requestPasswordResetWhatsApp() {
     const timeString = now.toLocaleString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
 
     db.ref('password_requests/' + normId).set({ radioId: radioId, time: timeString }).then(() => {
-        showToast("✅ تم إرسال طلب استعادة كلمة المرور إلى الإدارة بنجاح، سيتم مراجعته وإرساله لك.", "success");
+        showToast("✅ تم إرسال طلب استعادة كلمة المرور إلى الإدارة بنجاح.", "success");
     }).catch(err => { showToast("⚠️ حدث خطأ أثناء إرسال الطلب: " + err.message, "error"); });
 }
 
@@ -1497,6 +1533,7 @@ function ghostLogin() {
         showToast(`تم التخفي وتصفح حساب قائد قطار ${driver.name}`, "success");
     } else { showToast("رقم الراديو غير موجود!", "error"); }
 }
+
 function returnToAdmin() {
     isGhostMode = false; currentDriver = null;
     document.getElementById('dashboard-page').classList.add('hidden-section');
@@ -1512,6 +1549,8 @@ function logout() {
     document.getElementById('admin-page').classList.add('hidden-section');
     document.getElementById('ghost-banner').classList.add('hidden-section');
     document.getElementById('auth-page').classList.remove('hidden-section');
+    
+    document.getElementById('loginRadioId').value = '';
     document.getElementById('loginPassword').value = '';
     
     const settingsMenu = document.getElementById('settingsMenu');
@@ -1546,6 +1585,27 @@ function submitChangePassword() {
     }
 }
 
+function openAdminPasswordModal() { document.getElementById('adminPasswordModal').classList.remove('hidden-section'); }
+function closeAdminPasswordModal() { document.getElementById('adminPasswordModal').classList.add('hidden-section'); }
+function changeAdminPassword() {
+    const oldP = document.getElementById('adminOldPass').value.trim();
+    const newP = document.getElementById('adminNewPass').value.trim();
+    const confP = document.getElementById('adminConfirmPass').value.trim();
+
+    if(!oldP || !newP || !confP) { showToast("يرجى ملء جميع الحقول!", "error"); return; }
+    if(newP !== confP) { showToast("كلمة المرور غير متطابقة!", "error"); return; }
+    if(oldP !== adminPassword) { showToast("كلمة المرور الحالية غير صحيحة!", "error"); return; }
+    
+    db.ref('accounts/admin/password').set(newP).then(() => {
+        showToast("تم تغيير كلمة مرور الإدارة بنجاح ✅", "success");
+        document.getElementById('adminOldPass').value = '';
+        document.getElementById('adminNewPass').value = '';
+        document.getElementById('adminConfirmPass').value = '';
+        adminPassword = newP;
+        closeAdminPasswordModal();
+    }).catch(err => { showToast("حدث خطأ: " + err.message, "error"); });
+}
+
 function openAdminWhatsappModal(encodedMsg) {
     document.getElementById('adminWhatsappMsgHolder').value = encodedMsg;
     document.getElementById('adminWhatsappModal').classList.remove('hidden-section');
@@ -1566,7 +1626,6 @@ function sendToAdminWhatsapp(target) {
     }
 }
 
-// 🟢 دالة فتح نافذة رغبات القائد
 function openDriverPreferencesModal(serviceId) {
     let normId = smartNormalize(serviceId).replace(/-/g, '');
     let prefs = driverPreferencesMap[normId];
@@ -1741,7 +1800,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 let incMatch = null; let incNumInt = parseInt(incomingCode, 10);
                 if (isTransition) { 
                     if (incNumInt < 300) { incMatch = tomorrowTripsMap[incomingCode] || activeTripsMap[incNumInt]; } 
-                    else { incMatch = activeTripsMap[incomingCode] || tomorrowTripsMap[incNumInt]; } 
+                    else { incMatch = activeTripsMap[incNumInt] || tomorrowTripsMap[incNumInt]; } 
                 } else { incMatch = activeTripsMap[incomingCode]; }
                 if (!incMatch) { 
                     if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode]; 
@@ -2052,7 +2111,6 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
                 <div class="flex items-center gap-2 flex-wrap">`;
             if (phoneNum) { matchingHTML += `<a href="tel:${phoneNum}" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">📞 اتصال مباشر</a><a href="https://api.whatsapp.com/send?phone=${waPhone}&text=${msg}" target="_blank" class="bg-gradient-to-r from-emerald-400 to-green-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">💬 تواصل واتساب</a>`; }
             
-            // 🟢 زرار التفضيلات 
             matchingHTML += `<button onclick="openDriverPreferencesModal('${d.rawServiceId}')" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">⭐ تفضيلات القائد</button></div>
                 <div class="flex items-center gap-2 flex-wrap pt-3 border-t dark:border-gray-700">
                     <span class="text-[11px] font-black text-purple-600 dark:text-purple-400 w-full sm:w-auto mb-2 sm:mb-0">إرسال طلب البلوك للإدارة:</span>
@@ -2279,9 +2337,10 @@ function updateLiveAdminMap() {
 function renderLineMapStations() { updateLiveAdminMap(); }
 function toggleScopeUI() { document.getElementById('parseResultBox').classList.add('hidden-section'); }
 
+// 🟢 دالة الفحص الأصلية كما طلبت بالحرف الواحد 🟢
 function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
-    if (!rawText.trim()) { showToast("يرجى لصق البيانات من الإكسيل أولاً!", "error"); return; }
+    if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
 
     rawText = rawText.replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
                      .replace(/Annual\s+leave/gi, 'AL')
@@ -2312,7 +2371,6 @@ function processRawTextInput() {
         extractedBatchRoster = [{ type: 'schedulesMonth', data: newSchedules }]; 
         document.getElementById('detectedDate').textContent = 'أسماء الورادي لشهر: ' + monthPickerVal;
         document.getElementById('parseResultBox').classList.remove('hidden-section');
-        showToast('تم الاستخراج بنجاح', 'success');
         return; 
     }
 
@@ -2397,7 +2455,6 @@ function processRawTextInput() {
     tbody.innerHTML = '';
     if(extractedBatchRoster.length === 0) {
         tbody.innerHTML = `<tr><td colspan="2" class="text-center p-4 text-red-500 font-bold">لم يتم العثور على بيانات.</td></tr>`;
-        showToast('فشل الاستخراج. تأكد من البيانات', 'error');
     } else {
         extractedBatchRoster.forEach(item => {
             const tr = document.createElement('tr');
@@ -2405,13 +2462,12 @@ function processRawTextInput() {
             tr.innerHTML = `<td class="p-3 border-b border-gray-200 dark:border-gray-700 font-black text-blue-600">${item.rdmcId}</td><td class="p-3 border-b border-gray-200 dark:border-gray-700 font-black text-green-600">${displayShifts}</td>`;
             tbody.appendChild(tr);
         });
-        showToast('تم الاستخراج بنجاح', 'success');
     }
     document.getElementById('driverCount').textContent = extractedBatchRoster.length;
     document.getElementById('parseResultBox').classList.remove('hidden-section');
 }
 
-// 🟢 التعديل: مسح الذاكرة وتفريغ الشاشة بعد الرفع للسحابة
+// 🟢 دالة الرفع للسحابة الأصلية (تحديث وإحلال الجديد مكان القديم مباشرة بدون مسح باقي السواقين) 🟢
 function saveAllRosterToFirebase() {
     if (!extractedBatchRoster || extractedBatchRoster.length === 0) { showToast("لا توجد بيانات لتحديثها!", "error"); return; }
     
@@ -2423,8 +2479,6 @@ function saveAllRosterToFirebase() {
         let scheduleNode = 'schedules' + monthNum;
         db.ref(scheduleNode).set(extractedBatchRoster[0].data).then(() => { 
             showToast(`🌐✅ تم حفظ أسماء الورادي بنجاح لشهر ${monthNum}!`, "success"); 
-            
-            // تفريغ الذاكرة والشاشة بالكامل
             document.getElementById('rawTextInput').value = '';
             document.getElementById('parsedRosterTable').innerHTML = '';
             document.getElementById('driverCount').textContent = '0';
@@ -2452,17 +2506,11 @@ function saveAllRosterToFirebase() {
         let updateMsg = (scope === 'daily') ? "اليومية المحددة" : `روستر شهر ${monthNum}`;
         showToast(`🌐✅ تم تحديث واعتماد (${updateMsg}) للسحابة بنجاح!`, "success"); 
         
-        // تفريغ الذاكرة والشاشة بالكامل
         document.getElementById('rawTextInput').value = '';
         document.getElementById('parsedRosterTable').innerHTML = '';
         document.getElementById('driverCount').textContent = '0';
         extractedBatchRoster = []; 
         document.getElementById('parseResultBox').classList.add('hidden-section');
-
-        const now = new Date(); 
-        const timeString = now.toLocaleString('ar-EG', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: true });
-        let broadcastText = `📢 إشعار تلقائي: تم تحديث واعتماد (${updateMsg}) بنجاح. يرجى مراجعة جداولكم على التطبيق.`;
-        db.ref('broadcasts').push({ text: broadcastText, time: timeString });
 
     }).catch((err) => { showToast("⚠️ حدث خطأ أثناء الحفظ: " + err.message, "error"); });
 }
@@ -2594,24 +2642,22 @@ function scheduleNextAlarmInKodular() {
     }
 }
 
-// 🟢 التعديل: إضافة كل التدويرات (RES) وتصاريح العمل (PTW) مرتبة بالشفتات
-const trickyShiftsList = [
-    "M-DTABA", "E-DTABA", "N-DTABA", 
-    "M-DTSLM", "E-DTSLM", "N-DTSLM", 
-    "M-RES01", "M-RES02", "M-RES03", 
-    "E-RES01", "E-RES02", "E-RES03", 
-    "N-RES01", "N-RES02", "N-RES03",
-    "M-PTW", "E-PTW", "N-PTW"
-];
-
 function openManualAssignModal() {
     const container = document.getElementById('manualAssignListContainer');
     container.innerHTML = '';
+    const trickyShiftsList = [
+        "M-DTABA", "E-DTABA", "N-DTABA", 
+        "M-DTSLM", "E-DTSLM", "N-DTSLM", 
+        "M-RES01", "M-RES02", "M-RES03", 
+        "E-RES01", "E-RES02", "E-RES03", 
+        "N-RES01", "N-RES02", "N-RES03",
+        "M-PTW", "E-PTW", "N-PTW"
+    ];
     trickyShiftsList.forEach(shift => {
         container.innerHTML += `
             <div class="flex items-center justify-between bg-slate-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-200 dark:border-gray-700">
                 <span class="font-black text-purple-600 dark:text-purple-400 text-sm w-24 text-left mr-2" dir="ltr">${shift}</span>
-                <input type="text" id="manual_shift_${shift}" class="flex-1 px-3 py-2 text-sm font-bold bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all text-center" placeholder="رقم التشغيل (مثال 2883)">
+                <input type="text" id="manual_shift_${shift}" class="flex-1 px-3 py-2 text-sm font-bold bg-white dark:bg-gray-800 border dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 transition-all text-center" placeholder="">
             </div>
         `;
     });
@@ -2627,6 +2673,15 @@ function applyManualAssignments() {
     let adminDateVal = document.getElementById('adminDailyDateInput').value || getTodayYYYYMMDD();
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
     let addedCount = 0;
+
+    const trickyShiftsList = [
+        "M-DTABA", "E-DTABA", "N-DTABA", 
+        "M-DTSLM", "E-DTSLM", "N-DTSLM", 
+        "M-RES01", "M-RES02", "M-RES03", 
+        "E-RES01", "E-RES02", "E-RES03", 
+        "N-RES01", "N-RES02", "N-RES03",
+        "M-PTW", "E-PTW", "N-PTW"
+    ];
 
     trickyShiftsList.forEach(shift => {
         let inputVal = document.getElementById('manual_shift_' + shift).value.trim().toUpperCase();
@@ -2664,4 +2719,3 @@ function applyManualAssignments() {
 </script>
 </body>
 </html>
-    
