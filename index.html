@@ -1043,6 +1043,79 @@ function saveTripNote() {
 
 setInterval(() => { if (currentDriver && !isGhostMode && !document.getElementById('dashboard-page').classList.contains('hidden-section')) { renderDailyDetails(); } }, 10000);
 
+// ⭐ دالة الرادار (الميني) المضافة حديثاً لتتبع قطار الاستلام
+function updateLiveRadars() {
+    const radars = document.querySelectorAll('.live-radar-station');
+    if(radars.length === 0) return;
+    const now = new Date();
+    let cH = now.getHours(); let cM = now.getMinutes(); let cS = now.getSeconds();
+    let currentSecs = cH * 3600 + cM * 60 + cS;
+    if (cH < 4) currentSecs += 24 * 3600;
+
+    radars.forEach(radar => {
+        let tt;
+        try { tt = JSON.parse(radar.getAttribute('data-timetable')); } catch(e) { return; }
+        let stations = [];
+        for(let s in tt) {
+            let timeStr = tt[s];
+            let p = timeStr.split(':');
+            if(p.length >= 2) {
+                let h = parseInt(p[0], 10); let m = parseInt(p[1], 10);
+                if(h < 4) h += 24;
+                stations.push({ name: s, sec: h * 3600 + m * 60, time: timeStr });
+            }
+        }
+        stations.sort((a,b) => a.sec - b.sec);
+
+        let statusText = "جاري الحساب...";
+        if(stations.length > 0) {
+            let first = stations[0];
+            let last = stations[stations.length - 1];
+
+            if (currentSecs < first.sec - 60) {
+                statusText = "لم يقم القطار ⏳";
+            } else if (currentSecs > last.sec + 60) {
+                statusText = "وصل النهاية 🏁";
+            } else {
+                let prev = null; let next = null;
+                for(let i=0; i<stations.length; i++) {
+                    if(currentSecs <= stations[i].sec) {
+                        next = stations[i];
+                        prev = i > 0 ? stations[i-1] : null;
+                        break;
+                    }
+                }
+                if(!next) {
+                    statusText = "وصل: " + last.name;
+                } else {
+                    if (prev) {
+                        let timeSincePrev = currentSecs - prev.sec;
+                        let timeToNext = next.sec - currentSecs;
+                        
+                        if(timeSincePrev <= 40) {
+                            statusText = "الآن في: " + prev.name;
+                        } else if (timeToNext <= 60) {
+                            statusText = "داخل على: " + next.name;
+                        } else {
+                            statusText = "تخطى: " + prev.name;
+                        }
+                    } else {
+                        statusText = "قيام من: " + next.name;
+                    }
+                }
+            }
+        }
+
+        if(radar.textContent !== statusText) {
+            radar.style.opacity = 0;
+            setTimeout(() => {
+                radar.textContent = statusText;
+                radar.style.opacity = 1;
+            }, 500); 
+        }
+    });
+}
+
 async function fetchAndParseShifts(url, targetMap) {
     try {
         const res = await fetch(url);
@@ -1313,6 +1386,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     loadAllData();
     setInterval(checkUpcomingTrainsAlarm, 2000);
+    setInterval(updateLiveRadars, 1000); // تشغيل الرادار الحي
 
     setTimeout(() => {
         let extractBtnContainer = document.querySelector('button[onclick="processRawTextInput()"]');
@@ -1777,10 +1851,79 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
         let receiveHTML = '';
         if (receiveFromCode) {
             let displayName = receiveFromDriverName ? `قائد قطار / <span class="text-blue-600">${receiveFromDriverName}</span>` : `<span class="text-amber-500">غير مسجل باليومية</span>`;
-            receiveHTML = `<div class="mb-5 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 text-right shadow-sm flex items-center justify-between"><div><p class="text-xs font-black text-blue-800 dark:text-blue-400 mb-1.5">🤲 استلام الوردية من:</p><p class="font-black text-gray-800 dark:text-gray-200 text-sm">${displayName}</p></div><span class="text-xs text-blue-700 bg-white dark:bg-gray-800 dark:text-blue-300 font-mono font-black border dark:border-gray-700 px-4 py-2 rounded-xl shadow-sm">وردية: ${receiveFromCode}</span></div>`;
+            receiveHTML = `<div class="mb-5 p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-100 dark:border-blue-800 text-right shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <div><p class="text-xs font-black text-blue-800 dark:text-blue-400 mb-1.5">🤲 استلام الوردية من:</p><p class="font-black text-gray-800 dark:text-gray-200 text-sm">${displayName}</p></div>
+                    <span class="text-xs text-blue-700 bg-white dark:bg-gray-800 dark:text-blue-300 font-mono font-black border dark:border-gray-700 px-4 py-2 rounded-xl shadow-sm">وردية: ${receiveFromCode}</span>
+                </div>`;
         } else {
-            receiveHTML = `<div class="mb-5 p-5 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-600 text-right shadow-sm flex items-center justify-between"><div><p class="text-xs font-black text-gray-600 dark:text-gray-300 mb-1.5">🤲 استلام الوردية:</p><p class="font-black text-gray-500 text-sm">تجهيز / استلام من السكة أو الورشة</p></div><span class="text-3xl drop-shadow-sm">🚉</span></div>`;
+            receiveHTML = `<div class="mb-5 p-5 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-700/50 dark:to-gray-800/50 rounded-2xl border border-gray-200 dark:border-gray-600 text-right shadow-sm flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <div><p class="text-xs font-black text-gray-600 dark:text-gray-300 mb-1.5">🤲 استلام الوردية:</p><p class="font-black text-gray-500 text-sm">تجهيز / استلام من السكة أو الورشة</p></div>
+                    <span class="text-3xl drop-shadow-sm">🚉</span>
+                </div>`;
         }
+
+        // =========================================
+        // ⭐ إضافة الرادار الحي لتتبع "الزميل" المُسلِّم
+        // =========================================
+        let radarHTML = '';
+        if (receiveFromCode) {
+            let colleagueShiftData = null;
+            let colleagueTripsMap = null;
+
+            if (receiveFromCode.startsWith('N')) {
+                let nData = getNightShiftData(yesterdayScheduleRaw, scheduleRaw, receiveFromCode);
+                if (nData && nData.trips) {
+                    colleagueShiftData = { tripNumbers: nData.trips };
+                    if (scheduleRaw.toUpperCase().includes("LUXOR") || scheduleRaw.toUpperCase().includes("WE")) { colleagueTripsMap = luxorTripsMap; } 
+                    else if (scheduleRaw.toUpperCase().includes("SIWA") || scheduleRaw.toUpperCase().includes("WD")) { colleagueTripsMap = siwaTripsMap; } 
+                    else if (scheduleRaw.toUpperCase().includes("ALEX") || scheduleRaw.toUpperCase().includes("ST")) { colleagueTripsMap = alexTripsMap; }
+                } else {
+                    let ySchUpper = yesterdayScheduleRaw.toUpperCase();
+                    let yDataMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorDataMap : ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexDataMap : aswanDataMap);
+                    colleagueShiftData = yDataMap[receiveFromCode];
+                    colleagueTripsMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorTripsMap : ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexTripsMap : siwaTripsMap);
+                }
+            } else {
+                colleagueShiftData = activeDataMap[receiveFromCode];
+                colleagueTripsMap = activeTripsMap;
+            }
+
+            if (colleagueShiftData && colleagueShiftData.tripNumbers && colleagueShiftData.tripNumbers.length > 0) {
+                let lastTripCode = colleagueShiftData.tripNumbers[colleagueShiftData.tripNumbers.length - 1];
+                let incMatch = colleagueTripsMap ? colleagueTripsMap[lastTripCode] : null;
+
+                if (incMatch && incMatch.fullTimes) {
+                    let sortedKeys = Object.keys(incMatch.fullTimes).sort((a, b) => timeToMins(incMatch.fullTimes[a]) - timeToMins(incMatch.fullTimes[b]));
+                    if (sortedKeys.length > 0) {
+                        let firstStName = sortedKeys[0];
+                        let firstStTime = incMatch.fullTimes[firstStName];
+                        let lastStName = sortedKeys[sortedKeys.length - 1];
+                        let lastStTime = incMatch.fullTimes[lastStName];
+                        let ttJson = JSON.stringify(incMatch.fullTimes).replace(/'/g, "\\'");
+
+                        radarHTML = `
+                        <div class="mt-4 bg-slate-800 rounded-xl p-3 flex justify-between items-center text-white relative overflow-hidden border border-slate-700 shadow-inner">
+                            <div class="text-[10px] text-right z-10 w-1/3">
+                                <span class="text-green-400 font-black block mb-0.5">🟢 ${firstStName}</span>
+                                <span class="font-mono text-gray-300 font-bold">${firstStTime}</span>
+                            </div>
+                            <div class="text-center z-10 w-1/3 px-1 flex flex-col items-center">
+                                <span class="text-[8px] text-gray-400 font-black block mb-0.5 tracking-wide">الزميل (رحلة ${lastTripCode})</span>
+                                <div class="live-radar-station text-amber-400 font-black text-[11px] drop-shadow-md transition-opacity duration-500 min-h-[16px]" data-timetable='${ttJson}'>جاري التتبع...</div>
+                            </div>
+                            <div class="text-[10px] text-left z-10 w-1/3">
+                                <span class="text-red-400 font-black block mb-0.5">🔴 ${lastStName}</span>
+                                <span class="font-mono text-gray-300 font-bold">${lastStTime}</span>
+                            </div>
+                        </div>`;
+                    }
+                }
+            }
+        }
+        receiveHTML += radarHTML + `</div>`; 
+        // =========================================
 
         let tripsHTML = '';
         myShiftData.tripNumbers.forEach((tNum, index) => {
@@ -2340,13 +2483,6 @@ function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
 
-    rawText = rawText.replace(/(?:[a-zA-Z+&]-?)?PTW-[a-fA-F0-9]{8}/gi, '');
-    rawText = rawText.replace(/RES(\d{1,2})-([MEN])/gi, '$2-RES$1');
-    rawText = rawText.replace(/[MEN]-\d{1,2}\s+(?:\d+\s+)?(?:رصيف|مؤقتا|وتخزينه|سكة)/gi, ' ');
-    rawText = rawText.replace(/\(\s*\d+\s*\)\s*[MEN]-\d{1,2}/gi, ' ');
-    rawText = rawText.replace(/\d+-[MEN]\s*\)\s*\d+/gi, ' ');
-    rawText = rawText.replace(/\([^)]+\)/g, ' ');
-
     rawText = rawText.replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
                      .replace(/Annual\s+leave/gi, 'AL')
                      .replace(/Sick\s+Leave/gi, 'SL')
@@ -2382,50 +2518,69 @@ function processRawTextInput() {
     if (scope === 'daily') { document.getElementById('detectedDate').textContent = 'تاريخ اليومية المختار: ' + adminDateVal; } 
     else if (scope === 'rosterMonth') { document.getElementById('detectedDate').textContent = 'روستر لشهر: ' + monthPickerVal; } 
 
+    const tokens = rawText.trim().split(/\s+/);
+    const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
+
+    let processedIDs = new Set();
+    let currentId = null, daysMap = {}, dayCount = 1; 
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
 
     function cleanShiftToken(t) {
         let upper = t.toUpperCase();
+        
         let matchDigits = upper.match(/^([MEN][-_]?\d{1,3})/);
         if (matchDigits) return matchDigits[1];
+
         let matchPTW = upper.match(/^([MEN][-_]?PTW)/);
         if (matchPTW) return matchPTW[1];
+
         let matchDT = upper.match(/^([MEN][-_]?DT[A-Z]+)/);
         if (matchDT) return matchDT[1];
+
         let matchRES = upper.match(/^([MEN][-_]?RES\d*)/);
         if (matchRES) return matchRES[1];
+        
         let matchTRG = upper.match(/^(TRG[-_]?DRI[-_]?REF)/);
         if (matchTRG) return matchTRG[1];
+
         const exact = ['R','REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV'];
         if (exact.includes(upper)) return upper;
         if (upper.includes('ورشة') || upper.includes('سكة')) return upper;
+
         return null; 
     }
 
-    const driverBlockRegex = /(RDMC[-_]?[a-zA-Z]?\d+)([\s\S]*?)(?=(?:RDMC[-_]?[a-zA-Z]?\d+)|$)/gi;
-    let match;
-    let processedIDs = new Set();
+    function saveCurrentDriver() {
+        if (currentId && !processedIDs.has(currentId)) {
+            processedIDs.add(currentId);
+            if (isDailyMode) {
+                let finalShift = daysMap[1] || 'راحة';
+                extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
+            } else {
+                if (Object.keys(daysMap).length > 0) {
+                    extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
+                }
+            }
+        }
+    }
 
-    while ((match = driverBlockRegex.exec(rawText)) !== null) {
-        let rawId = match[1];
-        let blockText = match[2]; 
-        let currentId = rawId.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
+    for (let i = 0; i < tokens.length; i++) {
+        let rawToken = tokens[i];
         
-        if (processedIDs.has(currentId)) continue;
-        processedIDs.add(currentId);
-
-        let daysMap = {}; 
-        let dayCount = 1; 
-
-        let tokens = blockText.trim().split(/\s+/);
-
-        for (let i = 0; i < tokens.length; i++) {
-            let cleanedToken = cleanShiftToken(tokens[i]); 
+        if (rdmcPattern.test(rawToken)) {
+            if (currentId) saveCurrentDriver(); 
+            currentId = rawToken.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
+            daysMap = {}; 
+            dayCount = 1; 
+            continue; 
+        }
+        
+        if (currentId) {
+            let cleanedToken = cleanShiftToken(rawToken); 
             if (cleanedToken) {
                 let finalToken = cleanedToken.replace(/_/g, ' '); 
                 if (isDailyMode) {
                     daysMap[1] = finalToken; 
-                    break; 
                 } else {
                     if (dayCount <= 31) {
                         daysMap[dayCount] = finalToken;
@@ -2434,16 +2589,8 @@ function processRawTextInput() {
                 }
             }
         }
-
-        if (isDailyMode) {
-            let finalShift = daysMap[1] || 'راحة';
-            extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
-        } else {
-            if (Object.keys(daysMap).length > 0) {
-                extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
-            }
-        }
     }
+    if (currentId) saveCurrentDriver(); 
 
     const tbody = document.getElementById('parsedRosterTable');
     tbody.innerHTML = '';
@@ -2488,16 +2635,6 @@ function saveAllRosterToFirebase() {
             let dailyDateVal = document.getElementById('adminDailyDateInput').value;
             let dailyMonthNum = parseInt(dailyDateVal.split('-')[1], 10);
             let rosterNode = 'roster' + dailyMonthNum;
-            
-            // ⭐ التنظيف الذكي: لو الوردية اتحدثت في اليومية، امسحها من السواق القديم
-            if (item.shift !== 'راحة' && rosterDataMap[dailyMonthNum]) {
-                for (let oldDriverId in rosterDataMap[dailyMonthNum]) {
-                    if (oldDriverId !== normId && rosterDataMap[dailyMonthNum][oldDriverId][item.dayNum] === item.shift) {
-                        updates[`${rosterNode}/${oldDriverId}/${item.dayNum}`] = 'راحة'; // مسح الوردية من الموظف القديم
-                    }
-                }
-            }
-            
             updates[`${rosterNode}/${normId}/${item.dayNum}`] = item.shift; 
         } else { 
             let rosterNode = 'roster' + monthNum;
@@ -2506,7 +2643,7 @@ function saveAllRosterToFirebase() {
     });
 
     db.ref().update(updates).then(() => { 
-        let updateMsg = (scope === 'daily') ? "اليومية المحددة وتنظيف التعارض" : `روستر شهر ${monthNum}`;
+        let updateMsg = (scope === 'daily') ? "اليومية المحددة" : `روستر شهر ${monthNum}`;
         showToast(`🌐✅ تم تحديث واعتماد (${updateMsg}) للسحابة بنجاح!`, "success"); 
         
         document.getElementById('rawTextInput').value = '';
@@ -2722,4 +2859,3 @@ function applyManualAssignments() {
 </script>
 </body>
 </html>
-    
