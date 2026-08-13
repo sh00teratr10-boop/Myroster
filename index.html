@@ -1043,7 +1043,7 @@ function saveTripNote() {
 
 setInterval(() => { if (currentDriver && !isGhostMode && !document.getElementById('dashboard-page').classList.contains('hidden-section')) { renderDailyDetails(); } }, 10000);
 
-// ⭐ دالة الرادار (الميني) المضافة حديثاً لتتبع قطار الاستلام
+// ⭐ دالة الرادار (الميني) لتتبع الزميل المسلم ⭐
 function updateLiveRadars() {
     const radars = document.querySelectorAll('.live-radar-station');
     if(radars.length === 0) return;
@@ -1998,7 +1998,7 @@ function buildDashboardData(driver, showLoading = true) {
     for(let i = 0; i < 7; i++) {
         let targetDay = todayNum + i;
         if(targetDay > 31) break;
-        let code = driverRoster[targetDay] || 'راحة';
+        let code = driverRoster[targetDay] || 'R';
         let isRest = isRestDay(code);
         let colorClass = isRest ? 'bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400' : 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400';
         let isToday = i === 0 ? 'border-2 border-green-500 shadow-md transform scale-[1.02]' : 'border border-gray-100 dark:border-gray-700 shadow-sm';
@@ -2015,7 +2015,7 @@ function renderDailyDetails() {
     const selectedDateVal = document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
     const dayNum = parseInt(selectedDateVal.split('-')[2], 10);
     let driverRoster = getDriverRosterForDate(currentDriver.serviceId, selectedDateVal);
-    let shiftCode = driverRoster[dayNum] || 'راحة';
+    let shiftCode = driverRoster[dayNum] || 'R';
 
     const todayEl = document.getElementById('todayShiftCode');
     todayEl.textContent = shiftCode; 
@@ -2037,7 +2037,7 @@ function renderFullMonth(driver) {
     let html = '', currentMonthName = getMonthNameAr(dateVal);
 
     for (let d = 1; d <= 31; d++) {
-        let shiftCode = driverRoster[d] || 'راحة';
+        let shiftCode = driverRoster[d] || 'R';
         let scheduleRaw = getSmartScheduleName(dateVal, d); 
         let isRest = isRestDay(shiftCode);
         let btnColor = isRest ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50' : 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800';
@@ -2151,7 +2151,7 @@ function compareDailySwaps() {
     if (!targetDriver) { resultBox.innerHTML = '<div class="text-center text-red-500 py-4 font-bold text-sm">❌ لم يتم العثور على القائد.</div>'; return; }
 
     let myRoster = getDriverRosterForDate(currentDriver.serviceId, dateVal); let targetRoster = getDriverRosterForDate(targetDriver.serviceId, dateVal);
-    let myShift = myRoster[dayNum] || 'راحة'; let targetShift = targetRoster[dayNum] || 'راحة';
+    let myShift = myRoster[dayNum] || 'R'; let targetShift = targetRoster[dayNum] || 'R';
     const swapText = `السلام عليكم، طلب مبادلة يومية:\n- مقدم الطلب: ${currentDriver.name} (${currentDriver.rawServiceId}) - وردية: ${myShift}\n- مع الزميل: ${targetDriver.name} (${targetDriver.rawServiceId}) - وردية: ${targetShift}\n- بتاريخ: ${dateVal}`;
     const encodedMsg = encodeURIComponent(swapText);
 
@@ -2248,7 +2248,7 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
                         <span class="font-black text-gray-900 dark:text-white text-sm">${d.name}</span>
                     </div>
                     <div class="text-[10px] bg-slate-50 dark:bg-gray-900 px-3 py-2 rounded-xl border dark:border-gray-700 font-mono flex gap-1 items-center flex-wrap shadow-inner">`;
-            for (let dNum = start; dNum <= end; dNum++) { let sh = dRoster[dNum] || 'راحة'; let badgeColor = isRestDay(sh) ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'; matchingHTML += `<span class="px-2 py-1 rounded-md text-[10px] font-black ${badgeColor}">${sh}</span>`; }
+            for (let dNum = start; dNum <= end; dNum++) { let sh = dRoster[dNum] || 'R'; let badgeColor = isRestDay(sh) ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'; matchingHTML += `<span class="px-2 py-1 rounded-md text-[10px] font-black ${badgeColor}">${sh}</span>`; }
             matchingHTML += `</div></div>
                 <div class="flex items-center gap-2 flex-wrap">`;
             if (phoneNum) { matchingHTML += `<a href="tel:${phoneNum}" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">📞 اتصال مباشر</a><a href="https://api.whatsapp.com/send?phone=${waPhone}&text=${msg}" target="_blank" class="bg-gradient-to-r from-emerald-400 to-green-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">💬 تواصل واتساب</a>`; }
@@ -2483,6 +2483,14 @@ function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
 
+    rawText = rawText.replace(/(?:[a-zA-Z+&]-?)?PTW-[a-fA-F0-9]{8}/gi, '');
+    rawText = rawText.replace(/RES(\d{1,2})-([MEN])/gi, '$2-RES$1');
+    rawText = rawText.replace(/([MEN])\.([A-Z0-9]+)/gi, '$1-$2'); 
+    rawText = rawText.replace(/[MEN]-\d{1,2}\s+(?:\d+\s+)?(?:رصيف|مؤقتا|وتخزينه|سكة)/gi, ' ');
+    rawText = rawText.replace(/\(\s*\d+\s*\)\s*[MEN]-\d{1,2}/gi, ' ');
+    rawText = rawText.replace(/\d+-[MEN]\s*\)\s*\d+/gi, ' ');
+    rawText = rawText.replace(/\([^)]+\)/g, ' ');
+
     rawText = rawText.replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
                      .replace(/Annual\s+leave/gi, 'AL')
                      .replace(/Sick\s+Leave/gi, 'SL')
@@ -2528,24 +2536,29 @@ function processRawTextInput() {
     function cleanShiftToken(t) {
         let upper = t.toUpperCase();
         
-        let matchDigits = upper.match(/^([MEN][-_]?\d{1,3})/);
+        let matchRES = upper.match(/([MEN][-_]?RES\d*)/);
+        if (matchRES) return matchRES[1];
+
+        let matchDigits = upper.match(/([MEN][-_]?\d{1,3})/);
         if (matchDigits) return matchDigits[1];
 
-        let matchPTW = upper.match(/^([MEN][-_]?PTW)/);
+        let matchPTW = upper.match(/([MEN][-_]?PTW)/);
         if (matchPTW) return matchPTW[1];
 
-        let matchDT = upper.match(/^([MEN][-_]?DT[A-Z]+)/);
+        let matchDT = upper.match(/([MEN][-_]?DT[A-Z]+)/);
         if (matchDT) return matchDT[1];
-
-        let matchRES = upper.match(/^([MEN][-_]?RES\d*)/);
-        if (matchRES) return matchRES[1];
         
-        let matchTRG = upper.match(/^(TRG[-_]?DRI[-_]?REF)/);
+        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]+)/);
         if (matchTRG) return matchTRG[1];
 
+        if (upper === 'PTW') return 'PTW';
+
+        let pureEnglish = upper.replace(/[^A-Z0-9-/]/g, '');
         const exact = ['R','REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV'];
-        if (exact.includes(upper)) return upper;
-        if (upper.includes('ورشة') || upper.includes('سكة')) return upper;
+        if (exact.includes(pureEnglish)) return pureEnglish;
+
+        if (upper.includes('تدوير')) return 'تدويرات';
+        if (upper.includes('ورش')) return 'ورشة';
 
         return null; 
     }
@@ -2554,8 +2567,9 @@ function processRawTextInput() {
         if (currentId && !processedIDs.has(currentId)) {
             processedIDs.add(currentId);
             if (isDailyMode) {
-                let finalShift = daysMap[1] || 'راحة';
-                extractedBatchRoster.push({ rdmcId: currentId, shift: finalShift, mode: 'daily', dayNum: targetDayNum });
+                if (daysMap[1]) {
+                    extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1], mode: 'daily', dayNum: targetDayNum });
+                }
             } else {
                 if (Object.keys(daysMap).length > 0) {
                     extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' });
@@ -2569,9 +2583,16 @@ function processRawTextInput() {
         
         if (rdmcPattern.test(rawToken)) {
             if (currentId) saveCurrentDriver(); 
-            currentId = rawToken.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
-            daysMap = {}; 
-            dayCount = 1; 
+            
+            let parsedId = rawToken.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
+            
+            if (processedIDs.has(parsedId)) {
+                currentId = null;
+            } else {
+                currentId = parsedId;
+                daysMap = {}; 
+                dayCount = 1; 
+            }
             continue; 
         }
         
@@ -2580,7 +2601,9 @@ function processRawTextInput() {
             if (cleanedToken) {
                 let finalToken = cleanedToken.replace(/_/g, ' '); 
                 if (isDailyMode) {
-                    daysMap[1] = finalToken; 
+                    if (!daysMap[1]) {
+                        daysMap[1] = finalToken; 
+                    }
                 } else {
                     if (dayCount <= 31) {
                         daysMap[dayCount] = finalToken;
