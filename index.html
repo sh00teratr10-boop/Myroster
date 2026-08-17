@@ -992,12 +992,13 @@ function getSmartScheduleName(dateVal, dayNum) {
     return schedulesByDay[day] || schedulesByDay[dayNum] || "WD-447-[SIWA]";
 }
 
-function saveUnitNumber(tNum) {
+// ⭐ التعديل: ربط حفظ رقم الوحدة بالتاريخ والرحلة معاً
+function saveUnitNumber(tNum, dateVal) {
     const unitInput = document.getElementById('unitInput_' + tNum);
     if (!unitInput) return;
     const unitVal = unitInput.value.trim();
     if(!unitVal) { showToast("يرجى كتابة رقم الوحدة أولاً!", "error"); return; }
-    localStorage.setItem('unit_' + tNum, unitVal);
+    localStorage.setItem('unit_' + dateVal + '_' + tNum, unitVal);
     showToast(`تم حفظ الوحدة (${unitVal}) بنجاح!`, "success");
 }
 
@@ -1043,7 +1044,7 @@ function saveTripNote() {
 
 setInterval(() => { if (currentDriver && !isGhostMode && !document.getElementById('dashboard-page').classList.contains('hidden-section')) { renderDailyDetails(); } }, 10000);
 
-// ⭐ دالة الرادار (الميني) لتتبع الزميل المسلم ⭐
+// ⭐ الرادار الحي المصغر لتتبع الزميل المستلم منه
 function updateLiveRadars() {
     const radars = document.querySelectorAll('.live-radar-station');
     if(radars.length === 0) return;
@@ -1386,7 +1387,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     loadAllData();
     setInterval(checkUpcomingTrainsAlarm, 2000);
-    setInterval(updateLiveRadars, 1000); // تشغيل الرادار الحي
+    setInterval(updateLiveRadars, 1000); 
 
     setTimeout(() => {
         let extractBtnContainer = document.querySelector('button[onclick="processRawTextInput()"]');
@@ -1744,6 +1745,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
+// ⭐ التعديل: ربط الوحدة والملاحظات بالتاريخ في الـ HTML ⭐
 function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ إجازة / ${shiftCodeRaw}</p></div>`;
@@ -1864,9 +1866,6 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 </div>`;
         }
 
-        // =========================================
-        // ⭐ إضافة الرادار الحي لتتبع "الزميل" المُسلِّم
-        // =========================================
         let radarHTML = '';
         if (receiveFromCode) {
             let colleagueShiftData = null;
@@ -1923,7 +1922,6 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
             }
         }
         receiveHTML += radarHTML + `</div>`; 
-        // =========================================
 
         let tripsHTML = '';
         myShiftData.tripNumbers.forEach((tNum, index) => {
@@ -1952,7 +1950,8 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 if (incMatch) incomingTime = incMatch.arrTime;
             } else if (incomingCode !== 'غير محدد') { incomingTime = 'تخزين / سكة'; }
 
-            let savedUnit = localStorage.getItem('unit_' + tNum) || '';
+            // حفظ واستدعاء الوحدة مرتبط بالتاريخ
+            let savedUnit = localStorage.getItem('unit_' + selectedDateVal + '_' + tNum) || '';
             let savedNote = localStorage.getItem('tripNote_' + selectedDateVal + '_' + tNum) || '';
             let penColorClass = savedNote ? 'from-amber-500 to-orange-600 animate-pulse ring-2 ring-orange-400' : 'from-gray-400 to-gray-500';
 
@@ -1965,7 +1964,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                     <label class="text-[11px] font-black text-gray-700 dark:text-gray-300 whitespace-nowrap">رقم الوحدة (Unit):</label>
                     <div class="flex gap-2 w-full sm:w-auto">
                         <input type="text" id="unitInput_${tNum}" value="${savedUnit}" class="w-full sm:w-28 px-3 py-1.5 text-sm font-black text-center border dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 focus:ring-2 focus:ring-green-500 shadow-sm transition-all" placeholder="">
-                        <button onclick="saveUnitNumber('${tNum}')" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md transition-transform hover:scale-105">حفظ</button>
+                        <button onclick="saveUnitNumber('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md transition-transform hover:scale-105">حفظ</button>
                         <button onclick="openTripNoteModal('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r ${penColorClass} text-white px-3 py-1.5 rounded-xl text-sm font-black shadow-md transition-transform hover:scale-105" title="ملاحظات السواق">📝</button>
                     </div>
                 </div>
@@ -2380,6 +2379,7 @@ function searchByTripCode() {
     }
 }
 
+// ⭐ التعديل: الخريطة الصباحية بتعكس على جدول إمبارح ⭐
 function updateLiveAdminMap() {
     if (document.getElementById('admin-page').classList.contains('hidden-section') || document.getElementById('adminMapSection').classList.contains('hidden-section')) return;
     const container = document.getElementById('lineMapStationsContainer'); const clockEl = document.getElementById('liveMapClock');
@@ -2390,13 +2390,6 @@ function updateLiveAdminMap() {
     if (currentH < 4) currentSecs += 24 * 3600; 
 
     const dateVal = getTodayYYYYMMDD(); const todayNum = parseInt(dateVal.split('-')[2], 10);
-    let scheduleRaw = getSmartScheduleName(dateVal, todayNum); let upperSch = scheduleRaw.toUpperCase();
-    let activeTripsMap = {}, activeShiftDataMap = {};
-    
-    if (upperSch.includes("LUXOR") || upperSch.includes("WE")) { activeTripsMap = luxorTripsMap; activeShiftDataMap = luxorDataMap; } 
-    else if (upperSch.includes("ALEX") || upperSch.includes("ST")) { activeTripsMap = alexTripsMap; activeShiftDataMap = alexDataMap; } 
-    else { activeTripsMap = siwaTripsMap; activeShiftDataMap = aswanDataMap; }
-
     const isBefore745 = currentH < 7 || (currentH === 7 && currentM < 45);
     
     let yesterdayD = new Date(); yesterdayD.setDate(yesterdayD.getDate() - 1);
@@ -2407,9 +2400,17 @@ function updateLiveAdminMap() {
     const tomorrowStr = `${tomorrowD.getFullYear()}-${String(tomorrowD.getMonth() + 1).padStart(2, '0')}-${String(tomorrowD.getDate()).padStart(2, '0')}`;
     const tomorrowNum = tomorrowD.getDate();
 
-    let todaySch = scheduleRaw;
+    let todaySch = getSmartScheduleName(dateVal, todayNum);
     let yesterdaySch = getSmartScheduleName(yStr, yNum);
     let tomorrowSch = getSmartScheduleName(tomorrowStr, tomorrowNum);
+
+    let activeMapSch = isBefore745 ? yesterdaySch : todaySch;
+    let upperSch = activeMapSch.toUpperCase();
+
+    let activeTripsMap = {}, activeShiftDataMap = {};
+    if (upperSch.includes("LUXOR") || upperSch.includes("WE")) { activeTripsMap = luxorTripsMap; activeShiftDataMap = luxorDataMap; } 
+    else if (upperSch.includes("ALEX") || upperSch.includes("ST")) { activeTripsMap = alexTripsMap; activeShiftDataMap = alexDataMap; } 
+    else { activeTripsMap = siwaTripsMap; activeShiftDataMap = aswanDataMap; }
 
     dailyShiftToDriver = {};
     driversData.forEach(d => {
@@ -2479,6 +2480,7 @@ function updateLiveAdminMap() {
 function renderLineMapStations() { updateLiveAdminMap(); }
 function toggleScopeUI() { document.getElementById('parseResultBox').classList.add('hidden-section'); }
 
+// ⭐ التعديل: فلتر سحري لليومية بيصطاد الورادي صح من وسط أي كلام ⭐
 function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
@@ -2536,19 +2538,20 @@ function processRawTextInput() {
     function cleanShiftToken(t) {
         let upper = t.toUpperCase();
         
-        let matchRES = upper.match(/([MEN][-_]?RES\d*)/);
+        // منع الكود من قراءة M أو N كوردية لو قبلهم حروف (زي ADM1, SLM1)
+        let matchRES = upper.match(/(?:^|[^A-Z])([MEN][-_]?RES\d*)/);
         if (matchRES) return matchRES[1];
 
-        let matchDigits = upper.match(/([MEN][-_]?\d{1,3})/);
+        let matchDigits = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3})/);
         if (matchDigits) return matchDigits[1];
 
-        let matchPTW = upper.match(/([MEN][-_]?PTW)/);
+        let matchPTW = upper.match(/(?:^|[^A-Z])([MEN][-_]?PTW)/);
         if (matchPTW) return matchPTW[1];
 
-        let matchDT = upper.match(/([MEN][-_]?DT[A-Z]+)/);
+        let matchDT = upper.match(/(?:^|[^A-Z])([MEN][-_]?DT[A-Z]+)/);
         if (matchDT) return matchDT[1];
         
-        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]+)/);
+        let matchTRG = upper.match(/(?:^|[^A-Z])(TRG[-_]?[A-Z-_]+)/);
         if (matchTRG) return matchTRG[1];
 
         if (upper === 'PTW') return 'PTW';
@@ -2567,6 +2570,7 @@ function processRawTextInput() {
         if (currentId && !processedIDs.has(currentId)) {
             processedIDs.add(currentId);
             if (isDailyMode) {
+                // مش هنحط راحة من دماغنا. لو مفيش وردية هنطيره خالص من التحديث
                 if (daysMap[1]) {
                     extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1], mode: 'daily', dayNum: targetDayNum });
                 }
@@ -2586,6 +2590,7 @@ function processRawTextInput() {
             
             let parsedId = rawToken.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
             
+            // قفل التكرار للسواق في نفس اليوم
             if (processedIDs.has(parsedId)) {
                 currentId = null;
             } else {
