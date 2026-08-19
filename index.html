@@ -2480,8 +2480,16 @@ function processRawTextInput() {
     if (!rawText.trim()) { alert("يرجى لصق البيانات من الإكسيل أولاً!"); return; }
 
     rawText = rawText.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, '-');
+    
+    // إعدام الأقواس تماماً زي ما طلبت عشان متخفيش الوردية جواها
+    rawText = rawText.replace(/[()]/g, ' ');
+
     rawText = rawText.replace(/(\+?PTW)-[a-fA-F0-9]{8}/gi, '$1');
     rawText = rawText.replace(/\+(?!PTW)[a-zA-Z0-9_]+/gi, ''); 
+    
+    // قلب الـ RES01-M لـ M-RES01
+    rawText = rawText.replace(/(RES\d{1,2})-([MEN])/gi, '$2-$1');
+
     rawText = rawText.replace(/([a-z\u0600-\u06FF])(TRG[-_]?[a-zA-Z-_]+)/g, '$1 $2'); 
     rawText = rawText.replace(/([a-z\u0600-\u06FF])([MENmen][-_]?\d{1,3}(?:\+PTW)?)/g, '$1 $2');
     rawText = rawText.replace(/([a-z\u0600-\u06FF])([MENmen][-_]?(?:RES|res)\d*)/g, '$1 $2');
@@ -2492,9 +2500,7 @@ function processRawTextInput() {
     rawText = rawText.replace(/RES(\d{1,2})-([MEN])/gi, '$2-RES$1');
     rawText = rawText.replace(/([MEN])\.([A-Z0-9]+)/gi, '$1-$2'); 
     rawText = rawText.replace(/[MEN]-\d{1,2}\s+(?:\d+\s+)?(?:رصيف|مؤقتا|وتخزينه|سكة)/gi, ' ');
-    rawText = rawText.replace(/\(\s*\d+\s*\)\s*[MEN]-\d{1,2}/gi, ' ');
     rawText = rawText.replace(/\d+-[MEN]\s*\)\s*\d+/gi, ' ');
-    rawText = rawText.replace(/\([^)]+\)/g, ' ');
 
     rawText = rawText.replace(/Pat\s*\.?\s*L(?:eave)?/gi, 'PATL')
                      .replace(/Com\s*\.?\s*L(?:eave)?/gi, 'COML')
@@ -2505,7 +2511,7 @@ function processRawTextInput() {
                      .replace(/Out\s+of\s+Operation/gi, 'OOO')
                      .replace(/Absunt|Abient/gi, 'ABSENT');
 
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])(R|r|AL|al|SL|sl|CL|cl|COML|PATL|OFF|Off|REST|Rest|ABSENT|Absent|OT|ot)\b/g, '$1 $2');
+    rawText = rawText.replace(/([a-z\u0600-\u06FF])(R|AL|SL|CL|COML|PATL|OFF|REST|ABSENT|OT)\b/g, '$1 $2');
 
     const scope = document.querySelector('input[name="updateScope"]:checked').value;
     const isDailyMode = (scope === 'daily'); 
@@ -2549,7 +2555,10 @@ function processRawTextInput() {
         if (matchRES) return matchRES[1];
 
         let matchShiftPTW = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3}\+PTW)/);
-        if (matchShiftPTW) return matchShiftPTW[1];
+        if (matchShiftPTW) {
+            if (isDailyMode) return null;
+            return matchShiftPTW[1];
+        }
 
         let matchDigits = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3})/);
         if (matchDigits) return matchDigits[1];
@@ -2561,19 +2570,28 @@ function processRawTextInput() {
         if (matchEXT) return matchEXT[1];
         
         let matchPTW = upper.match(/([MEN][-_]?PTW[-_A-Z0-9]*)/);
-        if (matchPTW) return matchPTW[1];
+        if (matchPTW) {
+            if (isDailyMode) return null;
+            return matchPTW[1];
+        }
 
         let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]+)/);
         if (matchTRG) return matchTRG[1];
 
-        if (upper === 'PTW') return 'PTW';
+        if (upper === 'PTW') {
+            if (isDailyMode) return null;
+            return 'PTW';
+        }
 
         let pureEnglish = upper.replace(/[^A-Z0-9-/]/g, '');
         const exact = ['R','REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV', 'OT', 'COML', 'PATL'];
         if (exact.includes(pureEnglish)) return pureEnglish;
 
         if (upper.includes('تدوير')) return 'تدويرات';
-        if (upper.includes('ورش')) return 'ورشة';
+        if (upper.includes('ورش')) {
+            if (isDailyMode) return null; 
+            return 'ورشة';
+        }
 
         return null; 
     }
@@ -2897,4 +2915,3 @@ function applyManualAssignments() {
 </script>
 </body>
 </html>
-    
