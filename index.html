@@ -6,7 +6,6 @@
 <title data-ar="نظام إدارة قائدي قطارات الخط الثالث" data-en="Green Line 3 Train Drivers Management">نظام إدارة قائدي قطارات الخط الثالث</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-<!-- مكتبة تحويل التقارير لـ PDF -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -301,7 +300,7 @@ body { font-family: 'Cairo', sans-serif; }
 
         <div class="pt-3 border-t dark:border-gray-700 flex flex-col sm:flex-row gap-3 shrink-0">
             <button onclick="printDriverReportPDF()" class="flex-1 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
-                <span>📥</span> <span data-ar="طباعة وتنزيل (PDF)" data-en="Print & Download (PDF)">طباعة وتنزيل (PDF)</span>
+                <span>📤</span> <span data-ar="مشاركة أو طباعة التقرير" data-en="Share or Print Report">مشاركة أو طباعة التقرير</span>
             </button>
             <button onclick="closeDriverReportsModal()" class="flex-1 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-black py-3 rounded-xl text-sm transition-colors hover:bg-gray-300 dark:hover:bg-gray-600" data-ar="إغلاق" data-en="Close">إغلاق</button>
         </div>
@@ -839,18 +838,15 @@ function applyLanguageToDOM() {
     document.documentElement.lang = currentLang;
     document.documentElement.dir = currentLang === 'en' ? 'ltr' : 'rtl';
     
-    // استثناء القائمة المنسدلة للإعدادات عشان الكلام يترص صح وماتتقصش
     const settingsMenu = document.getElementById('settingsMenu');
     if(settingsMenu) {
         settingsMenu.dir = currentLang === 'en' ? 'ltr' : 'rtl';
     }
     
-    // تغيير النصوص الثابتة
     document.querySelectorAll('[data-ar]').forEach(el => {
         el.innerHTML = currentLang === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-ar');
     });
     
-    // تغيير الـ Placeholders
     document.querySelectorAll('[data-ph-ar]').forEach(el => {
         el.placeholder = currentLang === 'en' ? el.getAttribute('data-ph-en') : el.getAttribute('data-ph-ar');
     });
@@ -881,11 +877,17 @@ measurementId: "G-ZF4GEWPG44"
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.database();
 
+// اللينكات الأساسية
 const dbURL = 'https://docs.google.com/spreadsheets/d/1W292oVl-gvwRP6MtRA5n8xq_gh0wJ_N249-pbYL6HHU/export?format=csv';
 
 const aswanShiftsURL = 'https://docs.google.com/spreadsheets/d/1PKOrSSHb80Ay-zHvloh6TiI12oWPN3GhqsRTilTxRKI/export?format=csv';
 const alexShiftsURL = 'https://docs.google.com/spreadsheets/d/1a05qIi7EXMYNGqZaDUl4MLtQaS4WCj7MNKklS7_yNe8/export?format=csv';
 const luxorShiftsURL = 'https://docs.google.com/spreadsheets/d/1xllMoNNXzYMnG20zBAw7hzu-saWOMbC3efcPrg7fBgQ/export?format=csv';
+
+// لينكات أليكس 403 الجديدة 🚀
+const alex403ShiftsURL = 'https://docs.google.com/spreadsheets/d/1hDAxDucJeqrB1TAGqnmlqiMb_GAzWjPlsN-eMv5uBvc/export?format=csv';
+const alex403CercrlURL = 'https://docs.google.com/spreadsheets/d/1B2BN-kaHAvJIBPrnVVRd53RgGLvwUVxi/export?format=csv';
+const alex403TripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1Kp4cj5_ko-Q7yg_4ReHJ1yVK98XsRNzg/export?format=csv';
 
 const siwaTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/13t7NS0cFYrkKYAq9IL4Nwn_QThhnRhV_mfXuAcP-jIU/export?format=csv';
 const siwaCercrlURL = 'https://docs.google.com/spreadsheets/d/1RXHF9kGmhJbI77C71bSL-il1nkTvfi9ZPA7mCQQjI9E/export?format=csv';
@@ -894,19 +896,21 @@ const luxorCercrlURL = 'https://docs.google.com/spreadsheets/d/1FAR2CV6mDM5Iq7gQ
 const alexTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1vs7X7cyBP2jJMJbl2Lan8CHgICno36N8bD3EL7FZZDM/export?format=csv';
 const alexCercrlURL = 'https://docs.google.com/spreadsheets/d/1pnK_P08R3vBY-R0cjCdrfjAaQ2hIBlc-BACbrvXr_kU/export?format=csv';
 
+// جداول التحويل
 const transitionSheetsURLs = {
     "WD-447_WE-341": "https://docs.google.com/spreadsheets/d/1WpE5jHo99M8ftBt8HHXbasPXJmAuQh5hCBql0qc_xLk/export?format=csv",
     "WE-341_ST-416": "https://docs.google.com/spreadsheets/d/1ckXEgeVcQdBdyLcNtBdkLK9FSpWJyVZdyxgYWj2WAas/export?format=csv",
-    "ST-416_WD-447": "https://docs.google.com/spreadsheets/d/1vreq2l4hCr8xQVeoUSukmc5o01wRavBUsXHhD9kBF0w/export?format=csv"
+    "ST-416_WD-447": "https://docs.google.com/spreadsheets/d/1vreq2l4hCr8xQVeoUSukmc5o01wRavBUsXHhD9kBF0w/export?format=csv",
+    "ST-403_WE-341": "https://docs.google.com/spreadsheets/d/1qgDYHzGFK3v5iPO780ygxBkW-HER_tIw/export?format=csv" // التحويل الجديد
 };
 
 const driverPrefsURL = 'https://docs.google.com/spreadsheets/d/1bwxDHamv7bJEpdfTG9brzjoBdu5go9YBcODBCQHG8Ko/export?format=csv';
 
 let transitionMatrix = {};
 let driversData = [], rosterDataMap = {}, schedulesDataMap = {};
-let aswanDataMap = {}, luxorDataMap = {}, alexDataMap = {}; 
-let siwaTripsMap = {}, luxorTripsMap = {}, alexTripsMap = {};
-let siwaIncomingMap = {}, luxorIncomingMap = {}, alexIncomingMap = {};
+let aswanDataMap = {}, luxorDataMap = {}, alexDataMap = {}, alex403DataMap = {}; 
+let siwaTripsMap = {}, luxorTripsMap = {}, alexTripsMap = {}, alex403TripsMap = {};
+let siwaIncomingMap = {}, luxorIncomingMap = {}, alexIncomingMap = {}, alex403IncomingMap = {};
 let driverPreferencesMap = {}; 
 let currentDriver = null, validShiftsSet = new Set(), extractedBatchRoster = [];
 let alarmInterval = null, alertedTripsToday = new Set();
@@ -1298,10 +1302,10 @@ async function loadAllData() {
         loadAllTransitionSheets(); 
         await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
         await fetchAndParseShifts(alexShiftsURL, alexDataMap);
+        await fetchAndParseShifts(alex403ShiftsURL, alex403DataMap); // جديد: Alex 403
         await fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
         await fetchDriverPreferences(); 
 
-        // سحب الاسم الإنجليزي من العمود 4 والعربي من العمود 5
         fetch(dbURL).then(res => res.text()).then(text => {
             const dbLines = parseCSVText(text);
             for(let i = 1; i < dbLines.length; i++) {
@@ -1316,7 +1320,7 @@ async function loadAllData() {
                     }
                     
                     let nameAr = cleanTxt(row[5]);
-                    let nameEn = cleanTxt(row[4]) || nameAr; // لو مفيش انجليزي هات العربي كبديل
+                    let nameEn = cleanTxt(row[4]) || nameAr;
                     
                     driversData.push({ 
                         radioId: smartNormalize(row[0]).replace(/-/g,''), 
@@ -1380,6 +1384,7 @@ async function loadAllData() {
         await fetchAndParseFullSchedule(siwaTripsScheduleURL, siwaTripsMap, false);
         await fetchAndParseFullSchedule(luxorTripsScheduleURL, luxorTripsMap, false);
         await fetchAndParseFullSchedule(alexTripsScheduleURL, alexTripsMap, true);
+        await fetchAndParseFullSchedule(alex403TripsScheduleURL, alex403TripsMap, true); // جديد: Alex 403
 
         const buildIncomingMap = async (url, targetMap) => {
             try {
@@ -1399,6 +1404,7 @@ async function loadAllData() {
         await buildIncomingMap(siwaCercrlURL, siwaIncomingMap);
         await buildIncomingMap(luxorCercrlURL, luxorIncomingMap);
         await buildIncomingMap(alexCercrlURL, alexIncomingMap);
+        await buildIncomingMap(alex403CercrlURL, alex403IncomingMap); // جديد: Alex 403
 
     } catch (error) {}
 }
@@ -1823,8 +1829,13 @@ function extractDriverReport() {
         let upperSch = sch.toUpperCase();
         let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
         let isSiwa = upperSch.includes("SIWA") || upperSch.includes("WD");
-        let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST");
-        let myShiftData = isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : (isSiwa ? aswanDataMap[smartNormalize(shiftCode)] : alexDataMap[smartNormalize(shiftCode)]);
+        let isAlex403 = upperSch.includes("403");
+        let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST-416");
+        
+        let myShiftData = isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : 
+                          (isSiwa ? aswanDataMap[smartNormalize(shiftCode)] : 
+                          (isAlex403 ? alex403DataMap[smartNormalize(shiftCode)] : 
+                          alexDataMap[smartNormalize(shiftCode)]));
 
         html += `<div class="mb-4 pb-3 border-b dark:border-gray-700 text-start">
             <h4 class="font-black text-rose-600 text-base">${t('تقرير يوم:', 'Report for:')} ${dateVal}</h4>
@@ -1839,7 +1850,6 @@ function extractDriverReport() {
                 <thead><tr class="bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200"><th class="p-2 border">${t('الرحلة', 'Trip')}</th><th class="p-2 border">${t('الوحدة', 'Unit')}</th><th class="p-2 border">${t('ملاحظات / أعطال', 'Notes / Faults')}</th></tr></thead>
                 <tbody>`;
             
-            // سحب النوتة من الفايربيس بدلاً من المتصفح فقط
             db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}`).once('value').then(snap => {
                 let dayNotes = snap.val() || {};
                 myShiftData.tripNumbers.forEach(tNum => {
@@ -1874,7 +1884,6 @@ function extractDriverReport() {
             let shiftCode = roster[d];
             if (!shiftCode || isRestDay(shiftCode)) continue;
             
-            // تجهيز طلب سحب النوتة لكل يوم فيه شغل
             promises.push(
                 db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}`).once('value').then(snap => {
                     return { dateVal, shiftCode, d, notes: snap.val() || {} };
@@ -1889,7 +1898,13 @@ function extractDriverReport() {
                 let upperSch = sch.toUpperCase();
                 let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
                 let isSiwa = upperSch.includes("SIWA") || upperSch.includes("WD");
-                let myShiftData = isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : (isSiwa ? aswanDataMap[smartNormalize(shiftCode)] : alexDataMap[smartNormalize(shiftCode)]);
+                let isAlex403 = upperSch.includes("403");
+                let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST-416");
+                
+                let myShiftData = isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : 
+                                  (isSiwa ? aswanDataMap[smartNormalize(shiftCode)] : 
+                                  (isAlex403 ? alex403DataMap[smartNormalize(shiftCode)] : 
+                                  alexDataMap[smartNormalize(shiftCode)]));
 
                 if (myShiftData && myShiftData.tripNumbers) {
                     myShiftData.tripNumbers.forEach(tNum => {
@@ -1925,15 +1940,43 @@ function printDriverReportPDF() {
         showToast(t("يرجى استخراج التقرير أولاً!", "Extract report first!"), "error");
         return;
     }
-    const opt = {
-        margin:       10,
-        filename:     `Driver_Report_${currentDriver ? currentDriver.rawServiceId : 'Report'}.pdf`,
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-    html2pdf().from(element).set(opt).save();
-    showToast(t("جاري تنزيل ملف الـ PDF بنجاح 📥", "Downloading PDF 📥"), "success");
+    
+    // سحر كودلر 🚀: تحويل التقرير لنص منسق (String) ومشاركته
+    if (window.AppInventor) {
+        let reportText = "";
+        let titleEl = element.querySelector("h4");
+        let infoEl = element.querySelector("p");
+        
+        if (titleEl) reportText += titleEl.innerText + "\n";
+        if (infoEl) reportText += infoEl.innerText + "\n\n";
+
+        let tableRows = element.querySelectorAll("tr");
+        if (tableRows.length > 0) {
+            tableRows.forEach(row => {
+                let cells = row.querySelectorAll("th, td");
+                let rowData = [];
+                cells.forEach(cell => rowData.push(cell.innerText.trim()));
+                reportText += rowData.join(" | ") + "\n";
+            });
+        } else {
+            let msgEl = element.querySelector("div");
+            if (msgEl) reportText += msgEl.innerText + "\n";
+        }
+
+        window.AppInventor.setWebViewString("PRINT_REPORT|" + reportText);
+        showToast(t("تم إرسال التقرير للمشاركة 📤", "Report sent for sharing 📤"), "success");
+    } else {
+        // لو فاتح من متصفح عادي هيطبع PDF
+        const opt = {
+            margin:       10,
+            filename:     `Driver_Report_${currentDriver ? currentDriver.rawServiceId : 'Report'}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().from(element).set(opt).save();
+        showToast(t("جاري تنزيل ملف الـ PDF بنجاح 📥", "Downloading PDF 📥"), "success");
+    }
 }
 // ------------------------------------------------------------------------
 
@@ -1957,11 +2000,13 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     let upperSch = (scheduleRaw || "").toUpperCase();
     let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
     let isSiwa = upperSch.includes("SIWA") || upperSch.includes("WD");
-    let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST");
+    let isAlex403 = upperSch.includes("403");
+    let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST-416");
 
     let myShiftData = null, scheduleTypeName = "", activeTripsMap = {}, activeIncomingMap = {}, activeDataMap = {};
     if (isLuxor) { myShiftData = luxorDataMap[normShift]; scheduleTypeName = t("الأقصر", "Luxor"); activeTripsMap = luxorTripsMap; activeIncomingMap = luxorIncomingMap; activeDataMap = luxorDataMap; } 
     else if (isSiwa) { myShiftData = aswanDataMap[normShift]; scheduleTypeName = t("سيوة", "Siwa"); activeTripsMap = siwaTripsMap; activeIncomingMap = siwaIncomingMap; activeDataMap = aswanDataMap; } 
+    else if (isAlex403) { myShiftData = alex403DataMap[normShift]; scheduleTypeName = t("الإسكندرية 403", "Alex 403"); activeTripsMap = alex403TripsMap; activeIncomingMap = alex403IncomingMap; activeDataMap = alex403DataMap; }
     else if (isAlex) { myShiftData = alexDataMap[normShift]; scheduleTypeName = t("الإسكندرية", "Alexandria"); activeTripsMap = alexTripsMap; activeIncomingMap = alexIncomingMap; activeDataMap = alexDataMap; }
 
     let isTransition = false; let transitionNotes = ""; let tomorrowTripsMap = {}; let tomorrowIncomingMap = {};
@@ -1988,9 +2033,11 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
             myShiftData = { tripNumbers: nightTransitionData.trips, handoverCode: nightTransitionData.handover ? smartNormalize(nightTransitionData.handover) : null };
             transitionNotes = nightTransitionData.notes || "";
             let tomorrowUpper = tomorrowScheduleRaw.toUpperCase();
+            
             if (tomorrowUpper.includes("LUXOR") || tomorrowUpper.includes("WE")) { tomorrowTripsMap = luxorTripsMap; tomorrowIncomingMap = luxorIncomingMap; } 
             else if (tomorrowUpper.includes("SIWA") || tomorrowUpper.includes("WD")) { tomorrowTripsMap = siwaTripsMap; tomorrowIncomingMap = siwaIncomingMap; } 
-            else if (tomorrowUpper.includes("ALEX") || tomorrowUpper.includes("ST")) { tomorrowTripsMap = alexTripsMap; tomorrowIncomingMap = alexIncomingMap; }
+            else if (tomorrowUpper.includes("403")) { tomorrowTripsMap = alex403TripsMap; tomorrowIncomingMap = alex403IncomingMap; }
+            else if (tomorrowUpper.includes("ALEX") || tomorrowUpper.includes("ST-416")) { tomorrowTripsMap = alexTripsMap; tomorrowIncomingMap = alexIncomingMap; }
         }
     }
 
@@ -2078,14 +2125,21 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 let nData = getNightShiftData(yesterdayScheduleRaw, scheduleRaw, receiveFromCode);
                 if (nData && nData.trips) {
                     colleagueShiftData = { tripNumbers: nData.trips };
-                    if (scheduleRaw.toUpperCase().includes("LUXOR") || scheduleRaw.toUpperCase().includes("WE")) { colleagueTripsMap = luxorTripsMap; } 
-                    else if (scheduleRaw.toUpperCase().includes("SIWA") || scheduleRaw.toUpperCase().includes("WD")) { colleagueTripsMap = siwaTripsMap; } 
-                    else if (scheduleRaw.toUpperCase().includes("ALEX") || scheduleRaw.toUpperCase().includes("ST")) { colleagueTripsMap = alexTripsMap; }
+                    let yTomUpper = scheduleRaw.toUpperCase();
+                    if (yTomUpper.includes("LUXOR") || yTomUpper.includes("WE")) { colleagueTripsMap = luxorTripsMap; } 
+                    else if (yTomUpper.includes("SIWA") || yTomUpper.includes("WD")) { colleagueTripsMap = siwaTripsMap; } 
+                    else if (yTomUpper.includes("403")) { colleagueTripsMap = alex403TripsMap; }
+                    else if (yTomUpper.includes("ALEX") || yTomUpper.includes("ST-416")) { colleagueTripsMap = alexTripsMap; }
                 } else {
                     let ySchUpper = yesterdayScheduleRaw.toUpperCase();
-                    let yDataMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorDataMap : ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexDataMap : aswanDataMap);
+                    let yDataMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorDataMap : 
+                                   (ySchUpper.includes("403") ? alex403DataMap : 
+                                   ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexDataMap : aswanDataMap));
+                    
                     colleagueShiftData = yDataMap[receiveFromCode];
-                    colleagueTripsMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorTripsMap : ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexTripsMap : siwaTripsMap);
+                    colleagueTripsMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorTripsMap : 
+                                        (ySchUpper.includes("403") ? alex403TripsMap : 
+                                        ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexTripsMap : siwaTripsMap));
                 }
             } else {
                 colleagueShiftData = activeDataMap[receiveFromCode];
@@ -2151,6 +2205,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 if (!incMatch) { 
                     if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode]; 
                     else if (luxorTripsMap[incomingCode]) incMatch = luxorTripsMap[incomingCode]; 
+                    else if (alex403TripsMap[incomingCode]) incMatch = alex403TripsMap[incomingCode];
                     else if (alexTripsMap[incomingCode]) incMatch = alexTripsMap[incomingCode]; 
                 }
                 if (incMatch) incomingTime = incMatch.arrTime;
@@ -2495,8 +2550,10 @@ function searchByTripCode() {
     let upperSch = scheduleRaw.toUpperCase();
     
     let isLuxorActive = upperSch.includes("LUXOR") || upperSch.includes("WE");
-    let isAlexActive = upperSch.includes("ALEX") || upperSch.includes("ST");
-    let activeDataMap = isLuxorActive ? luxorDataMap : (isAlexActive ? alexDataMap : aswanDataMap);
+    let isAlex403Active = upperSch.includes("403");
+    let isAlexActive = upperSch.includes("ALEX") || upperSch.includes("ST-416");
+    
+    let activeDataMap = isLuxorActive ? luxorDataMap : (isAlex403Active ? alex403DataMap : (isAlexActive ? alexDataMap : aswanDataMap));
     
     let targetShiftCode = normQuery;
     let shiftData = activeDataMap[targetShiftCode];
@@ -2504,6 +2561,7 @@ function searchByTripCode() {
     if (!shiftData && !/^\d{3,4}$/.test(normQuery)) {
         if (aswanDataMap[targetShiftCode]) { shiftData = aswanDataMap[targetShiftCode]; scheduleRaw = "WD-447-[SIWA]"; }
         else if (luxorDataMap[targetShiftCode]) { shiftData = luxorDataMap[targetShiftCode]; scheduleRaw = "WE-341-[LUXOR]"; }
+        else if (alex403DataMap[targetShiftCode]) { shiftData = alex403DataMap[targetShiftCode]; scheduleRaw = "ST-403-[ALEX]"; }
         else if (alexDataMap[targetShiftCode]) { shiftData = alexDataMap[targetShiftCode]; scheduleRaw = "ST-416-[ALEX_WFH]"; }
     }
 
@@ -2519,6 +2577,7 @@ function searchByTripCode() {
             let mapsConfigs = [
                 { map: aswanDataMap, sch: "WD-447-[SIWA]" },
                 { map: luxorDataMap, sch: "WE-341-[LUXOR]" },
+                { map: alex403DataMap, sch: "ST-403-[ALEX]" },
                 { map: alexDataMap, sch: "ST-416-[ALEX_WFH]" }
             ];
             for (let config of mapsConfigs) {
@@ -2615,6 +2674,7 @@ function updateLiveAdminMap() {
 
     let activeTripsMap = {}, activeShiftDataMap = {};
     if (upperSch.includes("LUXOR") || upperSch.includes("WE")) { activeTripsMap = luxorTripsMap; activeShiftDataMap = luxorDataMap; } 
+    else if (upperSch.includes("403")) { activeTripsMap = alex403TripsMap; activeShiftDataMap = alex403DataMap; }
     else if (upperSch.includes("ALEX") || upperSch.includes("ST")) { activeTripsMap = alexTripsMap; activeShiftDataMap = alexDataMap; } 
     else { activeTripsMap = siwaTripsMap; activeShiftDataMap = aswanDataMap; }
 
@@ -2638,7 +2698,9 @@ function updateLiveAdminMap() {
             if (nData && nData.trips) {
                 assignedTrips = nData.trips;
             } else {
-                let baseDataMap = (baseSch.toUpperCase().includes("LUXOR") || baseSch.toUpperCase().includes("WE")) ? luxorDataMap : ((baseSch.toUpperCase().includes("ALEX") || baseSch.toUpperCase().includes("ST")) ? alexDataMap : aswanDataMap);
+                let baseDataMap = (baseSch.toUpperCase().includes("LUXOR") || baseSch.toUpperCase().includes("WE")) ? luxorDataMap : 
+                                  (baseSch.toUpperCase().includes("403") ? alex403DataMap : 
+                                  ((baseSch.toUpperCase().includes("ALEX") || baseSch.toUpperCase().includes("ST")) ? alexDataMap : aswanDataMap));
                 if (baseDataMap[shiftCode] && baseDataMap[shiftCode].tripNumbers) { assignedTrips = baseDataMap[shiftCode].tripNumbers; }
             }
         } else {
