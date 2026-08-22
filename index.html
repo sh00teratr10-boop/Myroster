@@ -657,6 +657,8 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
+<!-- ========================================== -->
+<!-- نافذة النوتة السحرية المظبوطة 100% -->
 <div id="tripNoteModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-start transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -671,6 +673,7 @@ body { font-family: 'Cairo', sans-serif; }
         <button onclick="saveTripNote()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5" data-ar="حفظ الملاحظات" data-en="Save Notes">حفظ الملاحظات</button>
     </div>
 </div>
+<!-- ========================================== -->
 
 <div id="manualAssignModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-start transition-all flex flex-col max-h-[90vh]">
@@ -902,7 +905,7 @@ const transitionSheetsURLs = {
     "WE-341_ST-416": "https://docs.google.com/spreadsheets/d/1ckXEgeVcQdBdyLcNtBdkLK9FSpWJyVZdyxgYWj2WAas/export?format=csv",
     "ST-416_WD-447": "https://docs.google.com/spreadsheets/d/1vreq2l4hCr8xQVeoUSukmc5o01wRavBUsXHhD9kBF0w/export?format=csv",
     "ST-403_WE-341": "https://docs.google.com/spreadsheets/d/1qgDYHzGFK3v5iPO780ygxBkW-HER_tIw/export?format=csv",
-    "WD-447_ST-403": "https://docs.google.com/spreadsheets/d/1PpnMdoynGh2VlOTxsejswCBCMRcQqH8K/export?format=csv" // التحويلة الجديدة بتاعة سيوة لأليكس 403
+    "WD-447_ST-403": "https://docs.google.com/spreadsheets/d/1PpnMdoynGh2VlOTxsejswCBCMRcQqH8K/export?format=csv"
 };
 
 const driverPrefsURL = 'https://docs.google.com/spreadsheets/d/1bwxDHamv7bJEpdfTG9brzjoBdu5go9YBcODBCQHG8Ko/export?format=csv';
@@ -1049,23 +1052,41 @@ function isRestDay(code) {
     return ['راحة', 'R', 'OFF', 'REST', 'ABSENT', 'AB', '-', 'NULL', 'AL', 'SL', 'CL', 'AL-SV', 'OOO', 'SICK', 'CASUAL', 'ANNUAL', 'LEAVE', 'PH', 'TRG', 'SICK LEAVE', 'CASUAL LEAVE', 'ANNUAL LEAVE', 'ANNUAL LEAVE SV', 'OUT OF OPERATION'].includes(c) || c.includes('LEAVE');
 }
 
+// ============== النوتة الفورية المباشرة (مطابقة لكود 7 تماماً) ==============
 function openTripNoteModal(tNum, dateVal) {
-    document.getElementById('noteTripNumber').textContent = tNum;
-    document.getElementById('noteDateVal').value = dateVal;
+    const modal = document.getElementById('tripNoteModal');
+    if (!modal) return;
+    
+    const numEl = document.getElementById('noteTripNumber');
+    const dateEl = document.getElementById('noteDateVal');
+    const inputEl = document.getElementById('tripNoteInput');
+    
+    if (numEl) numEl.textContent = tNum;
+    if (dateEl) dateEl.value = dateVal;
+    
     let savedNote = localStorage.getItem('tripNote_' + dateVal + '_' + tNum) || '';
-    document.getElementById('tripNoteInput').value = savedNote;
-    document.getElementById('tripNoteModal').classList.remove('hidden-section');
+    if (inputEl) inputEl.value = savedNote;
+    
+    modal.classList.remove('hidden-section');
+    modal.style.setProperty('display', 'flex', 'important');
 }
+window.openTripNoteModal = openTripNoteModal;
 
 function closeTripNoteModal() {
-    document.getElementById('tripNoteModal').classList.add('hidden-section');
+    const modal = document.getElementById('tripNoteModal');
+    if (!modal) return;
+    modal.classList.add('hidden-section');
+    modal.style.setProperty('display', 'none', 'important');
 }
+window.closeTripNoteModal = closeTripNoteModal;
 
 function saveTripNote() {
-    let tNum = document.getElementById('noteTripNumber').textContent;
-    let dateVal = document.getElementById('noteDateVal').value;
-    let noteVal = document.getElementById('tripNoteInput').value.trim();
+    let tNum = document.getElementById('noteTripNumber')?.textContent;
+    let dateVal = document.getElementById('noteDateVal')?.value;
+    let noteVal = document.getElementById('tripNoteInput')?.value.trim() || '';
     
+    if (!tNum || !dateVal) return;
+
     localStorage.setItem('tripNote_' + dateVal + '_' + tNum, noteVal);
     
     if (currentDriver && noteVal !== "") {
@@ -1082,6 +1103,8 @@ function saveTripNote() {
     closeTripNoteModal();
     renderDailyDetails(); 
 }
+window.saveTripNote = saveTripNote;
+// =============================================================================
 
 setInterval(() => { if (currentDriver && !isGhostMode && !document.getElementById('dashboard-page').classList.contains('hidden-section')) { renderDailyDetails(); } }, 10000);
 
@@ -1303,7 +1326,7 @@ async function loadAllData() {
         loadAllTransitionSheets(); 
         await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
         await fetchAndParseShifts(alexShiftsURL, alexDataMap);
-        await fetchAndParseShifts(alex403ShiftsURL, alex403DataMap); // جديد: Alex 403
+        await fetchAndParseShifts(alex403ShiftsURL, alex403DataMap); 
         await fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
         await fetchDriverPreferences(); 
 
@@ -1385,7 +1408,7 @@ async function loadAllData() {
         await fetchAndParseFullSchedule(siwaTripsScheduleURL, siwaTripsMap, false);
         await fetchAndParseFullSchedule(luxorTripsScheduleURL, luxorTripsMap, false);
         await fetchAndParseFullSchedule(alexTripsScheduleURL, alexTripsMap, true);
-        await fetchAndParseFullSchedule(alex403TripsScheduleURL, alex403TripsMap, true); // جديد: Alex 403
+        await fetchAndParseFullSchedule(alex403TripsScheduleURL, alex403TripsMap, true); 
 
         const buildIncomingMap = async (url, targetMap) => {
             try {
@@ -1405,7 +1428,7 @@ async function loadAllData() {
         await buildIncomingMap(siwaCercrlURL, siwaIncomingMap);
         await buildIncomingMap(luxorCercrlURL, luxorIncomingMap);
         await buildIncomingMap(alexCercrlURL, alexIncomingMap);
-        await buildIncomingMap(alex403CercrlURL, alex403IncomingMap); // جديد: Alex 403
+        await buildIncomingMap(alex403CercrlURL, alex403IncomingMap); 
 
     } catch (error) {}
 }
@@ -1798,7 +1821,6 @@ function openDriverPreferencesModal(serviceId) {
 }
 function closeDriverPreferencesModal() { document.getElementById('driverPreferencesModal').classList.add('hidden-section'); }
 
-// --- برمجة تقارير قائد القطار واستخراج البيانات من Firebase ---
 function openDriverReportsModal() {
     toggleSettings();
     document.getElementById('driverReportsModal').classList.remove('hidden-section');
@@ -1942,7 +1964,6 @@ function printDriverReportPDF() {
         return;
     }
     
-    // سحر كودلر 🚀: تحويل التقرير لنص منسق (String) ومشاركته
     if (window.AppInventor) {
         let reportText = "";
         let titleEl = element.querySelector("h4");
@@ -1967,7 +1988,6 @@ function printDriverReportPDF() {
         window.AppInventor.setWebViewString("PRINT_REPORT|" + reportText);
         showToast(t("تم إرسال التقرير للمشاركة 📤", "Report sent for sharing 📤"), "success");
     } else {
-        // لو فاتح من متصفح عادي هيطبع PDF
         const opt = {
             margin:       10,
             filename:     `Driver_Report_${currentDriver ? currentDriver.rawServiceId : 'Report'}.pdf`,
@@ -2225,8 +2245,8 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                     <label class="text-[11px] font-black text-gray-700 dark:text-gray-300 whitespace-nowrap">${t('رقم الوحدة:', 'Unit No:')}</label>
                     <div class="flex gap-2 w-full sm:w-auto">
                         <input type="text" id="unitInput_${tNum}" value="${savedUnit}" class="w-full sm:w-28 px-3 py-1.5 text-sm font-black text-center border dark:border-gray-600 rounded-xl bg-white dark:bg-gray-800 text-blue-700 dark:text-blue-400 focus:ring-2 focus:ring-green-500 shadow-sm transition-all">
-                        <button onclick="saveUnitNumber('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md transition-transform hover:scale-105">${t('حفظ', 'Save')}</button>
-                        <button onclick="openTripNoteModal('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r ${penColorClass} text-white px-3 py-1.5 rounded-xl text-sm font-black shadow-md transition-transform hover:scale-105" title="${t('ملاحظات', 'Notes')}">📝</button>
+                        <button type="button" onclick="saveUnitNumber('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white px-4 py-1.5 rounded-xl text-xs font-black shadow-md transition-transform hover:scale-105">${t('حفظ', 'Save')}</button>
+                        <button type="button" onclick="openTripNoteModal('${tNum}', '${selectedDateVal}')" class="bg-gradient-to-r ${penColorClass} text-white px-3 py-1.5 rounded-xl text-sm font-black shadow-md transition-transform hover:scale-105" title="${t('ملاحظات', 'Notes')}">📝</button>
                     </div>
                 </div>
                 <div class="bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 p-3 rounded-2xl border border-amber-200 dark:border-amber-800/50 mb-4 flex justify-between items-center text-xs shadow-sm">
@@ -2301,7 +2321,7 @@ function renderFullMonth(driver) {
         let scheduleRaw = getSmartScheduleName(dateVal, d); 
         let isRest = isRestDay(shiftCode);
         let btnColor = isRest ? 'bg-gray-100 text-gray-400 cursor-not-allowed opacity-50' : 'bg-green-50 text-green-600 border border-green-200 hover:bg-green-100 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800';
-        let detailsBtn = isRest ? '' : `<button onclick="openShiftDetailsModal(${d}, '${shiftCode}', '${dateVal}')" class="text-xs font-black ${btnColor} px-4 py-2 rounded-xl shadow-sm transition-all">👁️ ${t('التفاصيل', 'Details')}</button>`;
+        let detailsBtn = isRest ? '' : `<button type="button" onclick="openShiftDetailsModal(${d}, '${shiftCode}', '${dateVal}')" class="text-xs font-black ${btnColor} px-4 py-2 rounded-xl shadow-sm transition-all">👁️ ${t('التفاصيل', 'Details')}</button>`;
 
         html += `<div class="p-5 rounded-3xl border bg-white dark:bg-gray-800 premium-shadow border-gray-100 dark:border-gray-700 hover:border-purple-300 transition-colors mb-3"><div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-gray-200 dark:border-gray-700 pb-3"><span class="text-base font-black text-transparent bg-clip-text bg-gradient-to-r from-green-600 to-emerald-600">📅 ${t('يوم', 'Day')} ${d} ${currentMonthName}</span><div class="flex gap-2 items-center flex-wrap"><span class="px-3 py-1.5 rounded-xl text-xs font-black ${isRest ? 'bg-red-100 text-red-600' : 'bg-blue-100 text-blue-700'} shadow-sm" dir="ltr">${t('وردية:', 'Shift:')} ${shiftCode}</span><span class="px-3 py-1.5 rounded-xl text-xs font-black bg-purple-100 text-purple-700 shadow-sm" dir="ltr">${t('الجدول:', 'Sch:')} ${scheduleRaw}</span>${detailsBtn}</div></div></div>`;
     }
@@ -2424,7 +2444,7 @@ function compareDailySwaps() {
         </div>
         <div class="p-4 bg-slate-50 dark:bg-slate-800 rounded-2xl border dark:border-gray-700 space-y-4 mt-3 shadow-sm">
             <textarea readonly rows="4" class="w-full p-3 text-xs font-mono font-bold bg-white dark:bg-gray-900 border dark:border-gray-700 rounded-xl text-gray-900 dark:text-gray-300 focus:outline-none shadow-inner" dir="auto">${swapText}</textarea>
-            <button onclick="openAdminWhatsappModal('${encodedMsg}')" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black py-3 rounded-xl text-xs flex justify-center items-center gap-2 shadow-sm hover:-translate-y-0.5 transition-transform mt-2">📤 ${t('إرسال طلب المبادلة للإدارة', 'Send Swap Request to Admin')}</button>
+            <button type="button" onclick="openAdminWhatsappModal('${encodedMsg}')" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black py-3 rounded-xl text-xs flex justify-center items-center gap-2 shadow-sm hover:-translate-y-0.5 transition-transform mt-2">📤 ${t('إرسال طلب المبادلة للإدارة', 'Send Swap Request to Admin')}</button>
         </div>
     `;
 }
@@ -2453,7 +2473,7 @@ function loadWeeklyBlockSwap() {
     let html = `<div class="mb-5 bg-white dark:bg-gray-800 p-2 rounded-2xl border dark:border-gray-700 shadow-sm overflow-x-auto hide-scrollbar"><div class="flex flex-nowrap sm:flex-wrap gap-2 w-max sm:w-full" id="blocksContainerBtn">`;
     blocks.forEach((b, idx) => {
         let activeClass = idx === 0 ? 'bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-md' : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300';
-        html += `<button onclick="selectWeeklyBlock(${b.start}, ${b.end}, ${b.startRestDay}, ${b.endRestDay}, this)" class="px-5 py-2.5 rounded-xl text-xs font-black transition-all whitespace-nowrap ${activeClass}">${t('البلوك', 'Block')} ${b.blockIndex} (${t('من', 'From')} ${b.start} ${t('إلى', 'To')} ${b.end})</button>`;
+        html += `<button type="button" onclick="selectWeeklyBlock(${b.start}, ${b.end}, ${b.startRestDay}, ${b.endRestDay}, this)" class="px-5 py-2.5 rounded-xl text-xs font-black transition-all whitespace-nowrap ${activeClass}">${t('البلوك', 'Block')} ${b.blockIndex} (${t('من', 'From')} ${b.start} ${t('إلى', 'To')} ${b.end})</button>`;
     });
     html += `</div></div><div id="blockDriversContent" class="space-y-4"></div>`;
     resultBox.innerHTML = html;
@@ -2515,10 +2535,10 @@ function selectWeeklyBlock(start, end, startRestDay, endRestDay, btnEl) {
                 <div class="flex items-center gap-2 flex-wrap">`;
             if (phoneNum) { matchingHTML += `<a href="tel:${phoneNum}" class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">📞 ${t('اتصال مباشر', 'Call')}</a><a href="https://api.whatsapp.com/send?phone=${waPhone}&text=${msg}" target="_blank" class="bg-gradient-to-r from-emerald-400 to-green-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm hover:-translate-y-0.5 transition-transform">💬 ${t('تواصل واتساب', 'WhatsApp')}</a>`; }
             
-            matchingHTML += `<button onclick="openDriverPreferencesModal('${d.rawServiceId}')" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">⭐ ${t('تفضيلات القائد', 'Preferences')}</button></div>
+            matchingHTML += `<button type="button" onclick="openDriverPreferencesModal('${d.rawServiceId}')" class="bg-gradient-to-r from-amber-500 to-orange-500 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">⭐ ${t('تفضيلات القائد', 'Preferences')}</button></div>
                 <div class="flex items-center gap-2 flex-wrap pt-3 border-t dark:border-gray-700">
                     <span class="text-[11px] font-black text-purple-600 dark:text-purple-400 w-full sm:w-auto mb-2 sm:mb-0">${t('إرسال طلب البلوك للإدارة:', 'Send Block Request:')}</span>
-                    <button onclick="openAdminWhatsappModal('${encodedWeeklyMsg}')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">📤 ${t('إرسال للإدارة', 'Send to Admin')}</button>
+                    <button type="button" onclick="openAdminWhatsappModal('${encodedWeeklyMsg}')" class="bg-gradient-to-r from-emerald-500 to-green-600 text-white px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1.5 hover:-translate-y-0.5 transition-transform">📤 ${t('إرسال للإدارة', 'Send to Admin')}</button>
                 </div>
             </div>`;
         }
