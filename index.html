@@ -1999,9 +1999,13 @@ function printDriverReportPDF() {
         showToast(t("جاري تنزيل ملف الـ PDF بنجاح 📥", "Downloading PDF 📥"), "success");
     }
 }
-// ------------------------------------------------------------------------
-
-function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
+function toggleTheme() { 
+    document.documentElement.classList.toggle('dark');
+    const isDark = document.documentElement.classList.contains('dark');
+    const themeBtn = document.getElementById('themeToggleBtn');
+    if(themeBtn) { themeBtn.textContent = isDark ? t("الوضع النهاري ☀️", "Light Mode ☀️") : t("الوضع الليلي 🌙", "Dark Mode 🌙"); }
+}
+    function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     if (!todayScheduleStr || !tomorrowScheduleStr || !shiftCode) return null;
     let cleanToday = todayScheduleStr.split('[')[0].replace(/-$/, '').trim();
     let cleanTomorrow = tomorrowScheduleStr.split('[')[0].replace(/-$/, '').trim();
@@ -2339,12 +2343,6 @@ function openShiftDetailsModal(day, shiftCode, dateVal) {
 }
 function closeShiftDetailsModal() { document.getElementById('shiftDetailsModal').classList.add('hidden-section'); }
 function toggleSettings() { document.getElementById('settingsMenu').classList.toggle('hidden'); }
-function toggleTheme() { 
-    document.documentElement.classList.toggle('dark');
-    const isDark = document.documentElement.classList.contains('dark');
-    const themeBtn = document.getElementById('themeToggleBtn');
-    if(themeBtn) { themeBtn.textContent = isDark ? t("الوضع النهاري ☀️", "Light Mode ☀️") : t("الوضع الليلي 🌙", "Dark Mode 🌙"); }
-}
 
 function switchTab(tabId) {
     document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
@@ -2767,30 +2765,10 @@ function toggleScopeUI() { document.getElementById('parseResultBox').classList.a
 
 function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
-    if (!rawText.trim()) { alert(t("يرجى لصق البيانات من الإكسيل أولاً!", "Please paste data from Excel first!")); return; }
-
-    rawText = rawText.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, '-');
-    rawText = rawText.replace(/[()]/g, ' ');
-    rawText = rawText.replace(/(\+?PTW)-[a-fA-F0-9]{8}/gi, '$1');
-    rawText = rawText.replace(/\+(?!PTW)[a-zA-Z0-9_]+/gi, ''); 
-    rawText = rawText.replace(/(RES\d{1,2})-([MEN])/gi, '$2-$1');
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])(TRG[-_]?[a-zA-Z-_]+)/g, '$1 $2'); 
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])([MENmen][-_]?\d{1,3}(?:\+PTW)?)/g, '$1 $2');
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])([MENmen][-_]?(?:RES|res)\d*)/g, '$1 $2');
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])([MENmen][-_]?(?:DT|dt)[A-Za-z]+)/g, '$1 $2');
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])([MENmen][-_]?(?:EXT|ext))/g, '$1 $2');
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])([MENmen]?[-_]?(?:PTW|ptw)[A-Za-z0-9-_]*)/g, '$1 $2');
-    rawText = rawText.replace(/RES(\d{1,2})-([MEN])/gi, '$2-RES$1');
-    rawText = rawText.replace(/([MEN])\.([A-Z0-9]+)/gi, '$1-$2'); 
-    rawText = rawText.replace(/[MEN]-\d{1,2}\s+(?:\d+\s+)?(?:رصيف|مؤقتا|وتخزينه|سكة)/gi, ' ');
-    rawText = rawText.replace(/\d+-[MEN]\s*\)\s*\d+/gi, ' ');
-
-    rawText = rawText.replace(/Pat\s*\.?\s*L(?:eave)?/gi, 'PATL').replace(/Com\s*\.?\s*L(?:eave)?/gi, 'COML')
-                     .replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV').replace(/Annual\s+leave/gi, 'AL')
-                     .replace(/Sick\s+Leave/gi, 'SL').replace(/Casual\s+Leave|Caeual\s+Leave/gi, 'CL')
-                     .replace(/Out\s+of\s+Operation/gi, 'OOO').replace(/Absunt|Abient/gi, 'ABSENT');
-
-    rawText = rawText.replace(/([a-z\u0600-\u06FF])(R|AL|SL|CL|COML|PATL|OFF|REST|ABSENT|OT)\b/g, '$1 $2');
+    if (!rawText.trim()) { 
+        alert(t("يرجى لصق البيانات من الإكسيل أولاً!", "Please paste data from Excel first!")); 
+        return; 
+    }
 
     const scope = document.querySelector('input[name="updateScope"]:checked').value;
     const isDailyMode = (scope === 'daily'); 
@@ -2817,60 +2795,167 @@ function processRawTextInput() {
         return; 
     }
 
-    if (scope === 'daily') { document.getElementById('detectedDate').textContent = t('تاريخ اليومية المحدد: ', 'Selected Date: ') + adminDateVal; } 
-    else if (scope === 'rosterMonth') { document.getElementById('detectedDate').textContent = t('روستر لشهر: ', 'Roster for month: ') + monthPickerVal; } 
+    if (scope === 'daily') { 
+        document.getElementById('detectedDate').textContent = t('تاريخ اليومية المحدد: ', 'Selected Date: ') + adminDateVal; 
+    } else if (scope === 'rosterMonth') { 
+        document.getElementById('detectedDate').textContent = t('روستر لشهر: ', 'Roster for month: ') + monthPickerVal; 
+    } 
 
-    const tokens = rawText.trim().split(/\s+/);
+    // 1. تنظيف النص وحذف أكواد الهاش والزوائد
+    rawText = rawText.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, '-');
+    rawText = rawText.replace(/[()]/g, ' ');
+    rawText = rawText.replace(/(\+?PTW)[-\s]+[a-fA-F0-9]{6,12}/gi, '$1'); 
+    rawText = rawText.replace(/\+(?!PTW)[a-zA-Z0-9_]+/gi, ''); 
+    
+    // 2. توحيد مسميات الإجازات
+    rawText = rawText.replace(/Pat\s*\.?\s*L(?:eave)?/gi, 'PATL')
+                     .replace(/Com\s*\.?\s*L(?:eave)?/gi, 'COML')
+                     .replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
+                     .replace(/Annual\s+leave/gi, 'AL')
+                     .replace(/Sick\s+Leave/gi, 'SL')
+                     .replace(/Casual\s+Leave|Caeual\s+Leave/gi, 'CL')
+                     .replace(/Out\s+of\s+Operation/gi, 'OOO')
+                     .replace(/Absunt|Abient/gi, 'ABSENT');
+
     const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
-    let processedIDs = new Set(); let currentId = null, daysMap = {}, dayCount = 1; 
+    let processedIDs = new Set(); 
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
 
-    function cleanShiftToken(t) {
-        let upper = t.toUpperCase();
-        let matchRES = upper.match(/(?:^|[^A-Z])([MEN][-_]?RES\d*)/); if (matchRES) return matchRES[1];
-        let matchShiftPTW = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3}\+PTW)/); if (matchShiftPTW) return isDailyMode ? null : matchShiftPTW[1];
-        let matchDigits = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3})/); if (matchDigits) return matchDigits[1];
-        let matchDT = upper.match(/(?:^|[^A-Z])([MEN][-_]?DT[A-Z]+)/); if (matchDT) return matchDT[1];
-        let matchEXT = upper.match(/(?:^|[^A-Z])([MEN][-_]?EXT)/); if (matchEXT) return matchEXT[1];
-        let matchPTW = upper.match(/([MEN][-_]?PTW[-_A-Z0-9]*)/); if (matchPTW) return isDailyMode ? null : matchPTW[1];
-        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]+)/); if (matchTRG) return matchTRG[1];
+    // دالة الفلترة الشاملة
+    function cleanShiftToken(rawToken) {
+        let upper = rawToken.trim().toUpperCase();
+        if (!upper) return null;
+
+        // التعرف على تدريبات الدريل (Drill) بمختلف أشكالها
+        if (upper.includes('DRILL')) {
+            let matchDrill = upper.match(/^([MEN])[-_]?(.*DRILL.*)$/i);
+            if (matchDrill) {
+                return matchDrill[1] + '-' + matchDrill[2].replace(/[\s_]+/g, '-');
+            }
+            return upper.replace(/[\s_]+/g, '-');
+        }
+
+        // معالجة TestTrack و Medical Check
+        let matchShiftSpecial = upper.match(/^([MEN])[-_]?(TEST[\s_]?TRACK|TESTTRACK|TEST|TRACK|TT|MEDICAL|MED[-_]?CHK|MC)$/);
+        if (matchShiftSpecial) {
+            let prefix = matchShiftSpecial[1];
+            let suffix = matchShiftSpecial[2].replace(/[\s-_]/g, '');
+            if (['TESTTRACK', 'TEST', 'TRACK', 'TT'].includes(suffix)) return prefix + '-TEST TRACK';
+            if (['MEDICAL', 'MEDCHK', 'MC'].includes(suffix)) return prefix + '-MED-CHK';
+        }
+
+        let pureUpper = upper.replace(/[\s-_]/g, '');
+        if (['TESTTRACK', 'TEST', 'TRACK', 'TT'].includes(pureUpper)) return 'TEST TRACK';
+        if (['MEDICALCHECK', 'MEDICAL', 'MEDCHK', 'MC'].includes(pureUpper)) return 'MED-CHK';
+
+        // استبعاد أي اسم عادي فيه مسافات
+        if (upper.includes(' ') && 
+            !upper.includes('PTW') && 
+            !upper.includes('RES') && 
+            !upper.match(/[MEN][-]?\d/)) {
+            return null;
+        }
+        
+        let matchRES = upper.match(/(?:^|[^A-Z])([MEN][-_]?RES\d*)/); 
+        if (matchRES) return matchRES[1];
+        
+        let matchShiftPTW = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3}\+PTW)/); 
+        if (matchShiftPTW) return isDailyMode ? null : matchShiftPTW[1];
+        
+        let matchDigits = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3})/); 
+        if (matchDigits) return matchDigits[1];
+        
+        let matchDT = upper.match(/(?:^|[^A-Z])([MEN][-_]?DT[A-Z]+)/); 
+        if (matchDT) return matchDT[1];
+        
+        let matchEXT = upper.match(/(?:^|[^A-Z])([MEN][-_]?EXT)/); 
+        if (matchEXT) return matchEXT[1];
+        
+        let matchPTW = upper.match(/([MEN][-_]?PTW[-_A-Z0-9]*)/); 
+        if (matchPTW) return isDailyMode ? null : matchPTW[1];
+        
+        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]+)/); 
+        if (matchTRG) return matchTRG[1];
+        
         if (upper === 'PTW') return isDailyMode ? null : 'PTW';
+        
         let pureEnglish = upper.replace(/[^A-Z0-9-/]/g, '');
-        const exact = ['R','REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV', 'OT', 'COML', 'PATL'];
-        if (exact.includes(pureEnglish)) return pureEnglish;
-        if (upper.includes('تدوير')) return 'تدويرات';
-        if (upper.includes('ورش')) return isDailyMode ? null : 'ورشة';
+        const exact = ['R','REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV', 'OT', 'COML', 'PATL', 'MED-CHK'];
+        
+        if (exact.includes(pureEnglish)) {
+            const strictlyUppercaseCodes = ['AL', 'AB', 'R', 'SL', 'CL'];
+            if (strictlyUppercaseCodes.includes(pureEnglish)) {
+                if (rawToken !== rawToken.toUpperCase()) {
+                    return null; 
+                }
+            }
+            if (pureEnglish === 'REST' || pureEnglish === 'OFF') return 'R';
+            return pureEnglish;
+        }
+        
         return null; 
     }
 
-    function saveCurrentDriver() {
-        if (currentId && !processedIDs.has(currentId)) {
-            processedIDs.add(currentId);
-            if (isDailyMode) { if (daysMap[1]) extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1], mode: 'daily', dayNum: targetDayNum }); } 
-            else { if (Object.keys(daysMap).length > 0) extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); }
-        }
-    }
+    let lines = rawText.split(/[\n\r]+/);
+    let currentId = null;
+    let daysMap = {};
+    let dayCount = 1;
 
-    for (let i = 0; i < tokens.length; i++) {
-        let rawToken = tokens[i];
-        if (rdmcPattern.test(rawToken)) {
-            if (currentId) saveCurrentDriver(); 
-            let parsedId = rawToken.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
-            if (processedIDs.has(parsedId)) { currentId = null; } else { currentId = parsedId; daysMap = {}; dayCount = 1; }
-            continue; 
-        }
-        if (currentId) {
-            let cleanedToken = cleanShiftToken(rawToken); 
-            if (cleanedToken) {
-                let finalToken = cleanedToken.replace(/_/g, ' '); 
-                if (isDailyMode) { if (!daysMap[1]) daysMap[1] = finalToken; } 
-                else { if (dayCount <= 31) { daysMap[dayCount] = finalToken; dayCount++; } }
+    for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+        if (!line) continue;
+
+        let cells = line.includes('\t') ? line.split('\t') : line.split(/\s+/);
+        
+        for (let c = 0; c < cells.length; c++) {
+            let cellText = cells[c].trim();
+            if (!cellText) continue;
+
+            if (rdmcPattern.test(cellText)) {
+                if (currentId && !processedIDs.has(currentId)) {
+                    processedIDs.add(currentId);
+                    if (isDailyMode) { 
+                        if (daysMap[1]) extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1], mode: 'daily', dayNum: targetDayNum }); 
+                    } else { 
+                        if (Object.keys(daysMap).length > 0) extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); 
+                    }
+                }
+                currentId = cellText.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
+                daysMap = {};
+                dayCount = 1;
+                continue; 
+            }
+            
+            if (currentId) {
+                let cleanedToken = cleanShiftToken(cellText); 
+                if (cleanedToken) {
+                    let finalToken = cleanedToken.replace(/_/g, ' '); 
+                    if (isDailyMode) { 
+                        if (!daysMap[1]) {
+                            daysMap[1] = finalToken; 
+                        }
+                    } else { 
+                        if (dayCount <= 31) { 
+                            daysMap[dayCount] = finalToken; 
+                            dayCount++; 
+                        } 
+                    }
+                }
             }
         }
     }
-    if (currentId) saveCurrentDriver(); 
 
-    const tbody = document.getElementById('parsedRosterTable'); tbody.innerHTML = '';
+    if (currentId && !processedIDs.has(currentId)) {
+        processedIDs.add(currentId);
+        if (isDailyMode) { 
+            if (daysMap[1]) extractedBatchRoster.push({ rdmcId: currentId, shift: daysMap[1], mode: 'daily', dayNum: targetDayNum }); 
+        } else { 
+            if (Object.keys(daysMap).length > 0) extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); 
+        }
+    }
+
+    const tbody = document.getElementById('parsedRosterTable'); 
+    tbody.innerHTML = '';
     if(extractedBatchRoster.length === 0) {
         tbody.innerHTML = `<tr><td colspan="2" class="text-center p-4 text-red-500 font-bold">${t('لم يتم العثور على بيانات.', 'No data found.')}</td></tr>`;
     } else {
