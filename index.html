@@ -2648,7 +2648,7 @@ function searchByTripCode() {
         
         let searchedTripBadge = '';
         if (/^\d{3,4}$/.test(normQuery) && targetShiftCode !== normQuery) {
-            searchedTripBadge = `<div class="mb-4 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 p-3 rounded-xl border border-green-200 dark:border-green-800 text-sm font-black text-center">✅ ${t('الرحلة رقم (', 'Trip Number (')}${rawQuery}${t(') تابعة لوردية: ', ') belongs to shift: ')}${targetShiftCode}</div>`;
+            searchedTripBadge = `<div class="mb-4 bg-green-50 text-green-700 dark:text-green-900/30 dark:text-green-400 p-3 rounded-xl border border-green-200 dark:border-green-800 text-sm font-black text-center">✅ ${t('الرحلة رقم (', 'Trip Number (')}${rawQuery}${t(') تابعة لوردية: ', ') belongs to shift: ')}${targetShiftCode}</div>`;
         }
 
         resultBox.innerHTML = `
@@ -2801,13 +2801,12 @@ function processRawTextInput() {
         document.getElementById('detectedDate').textContent = t('روستر لشهر: ', 'Roster for month: ') + monthPickerVal; 
     } 
 
-    // 1. تنظيف النص وحذف أكواد الهاش والزوائد
     rawText = rawText.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, '-');
+    rawText = rawText.replace(/\d{1,2}:\d{2}\s*(to|-)\s*\d{1,2}:\d{2}/gi, '');
     rawText = rawText.replace(/[()]/g, ' ');
     rawText = rawText.replace(/(\+?PTW)[-\s]+[a-fA-F0-9]{6,12}/gi, '$1'); 
     rawText = rawText.replace(/\+(?!PTW)[a-zA-Z0-9_]+/gi, ''); 
     
-    // 2. توحيد مسميات الإجازات
     rawText = rawText.replace(/Pat\s*\.?\s*L(?:eave)?/gi, 'PATL')
                      .replace(/Com\s*\.?\s*L(?:eave)?/gi, 'COML')
                      .replace(/Annual\s+leave\s*-\s*SV/gi, 'AL-SV')
@@ -2815,18 +2814,25 @@ function processRawTextInput() {
                      .replace(/Sick\s+Leave/gi, 'SL')
                      .replace(/Casual\s+Leave|Caeual\s+Leave/gi, 'CL')
                      .replace(/Out\s+of\s+Operation/gi, 'OOO')
-                     .replace(/Absunt|Abient/gi, 'ABSENT');
+                     .replace(/Absunt|Abient|Absence/gi, 'ABSENT');
 
     const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
     let processedIDs = new Set(); 
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
 
-    // دالة الفلترة الشاملة
     function cleanShiftToken(rawToken) {
         let upper = rawToken.trim().toUpperCase();
         if (!upper) return null;
 
-        // التعرف على تدريبات الدريل (Drill) بمختلف أشكالها
+        if (isDailyMode) {
+            if (upper.includes('TRG') || upper.includes('PTW') || upper.includes('DTSLM') || upper.includes('DTABA')) {
+                return null; 
+            }
+        }
+
+        if (upper.match(/\b(REST\s*DAY|REST|OFF)\b/)) return 'R';
+        if (upper.match(/\b(ABSENT|ABSENCE|ABSUNT|ABIENT)\b/)) return 'ABSENT';
+
         if (upper.includes('DRILL')) {
             let matchDrill = upper.match(/^([MEN])[-_]?(.*DRILL.*)$/i);
             if (matchDrill) {
@@ -2835,7 +2841,6 @@ function processRawTextInput() {
             return upper.replace(/[\s_]+/g, '-');
         }
 
-        // معالجة TestTrack و Medical Check
         let matchShiftSpecial = upper.match(/^([MEN])[-_]?(TEST[\s_]?TRACK|TESTTRACK|TEST|TRACK|TT|MEDICAL|MED[-_]?CHK|MC)$/);
         if (matchShiftSpecial) {
             let prefix = matchShiftSpecial[1];
@@ -2848,7 +2853,6 @@ function processRawTextInput() {
         if (['TESTTRACK', 'TEST', 'TRACK', 'TT'].includes(pureUpper)) return 'TEST TRACK';
         if (['MEDICALCHECK', 'MEDICAL', 'MEDCHK', 'MC'].includes(pureUpper)) return 'MED-CHK';
 
-        // استبعاد أي اسم عادي فيه مسافات
         if (upper.includes(' ') && 
             !upper.includes('PTW') && 
             !upper.includes('RES') && 
@@ -2860,7 +2864,7 @@ function processRawTextInput() {
         if (matchRES) return matchRES[1];
         
         let matchShiftPTW = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3}\+PTW)/); 
-        if (matchShiftPTW) return isDailyMode ? null : matchShiftPTW[1];
+        if (matchShiftPTW) return matchShiftPTW[1];
         
         let matchDigits = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3})/); 
         if (matchDigits) return matchDigits[1];
@@ -2872,17 +2876,19 @@ function processRawTextInput() {
         if (matchEXT) return matchEXT[1];
         
         let matchPTW = upper.match(/([MEN][-_]?PTW[-_A-Z0-9]*)/); 
-        if (matchPTW) return isDailyMode ? null : matchPTW[1];
+        if (matchPTW) return matchPTW[1];
         
-        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]+)/); 
+        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]*)/); 
         if (matchTRG) return matchTRG[1];
         
-        if (upper === 'PTW') return isDailyMode ? null : 'PTW';
+        if (upper === 'PTW') return 'PTW';
         
         let pureEnglish = upper.replace(/[^A-Z0-9-/]/g, '');
-        const exact = ['R','REST','OFF','ABSENT','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV', 'OT', 'COML', 'PATL', 'MED-CHK'];
+        const exact = ['R','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV', 'OT', 'COML', 'PATL', 'MED-CHK', 'ABSENT'];
         
         if (exact.includes(pureEnglish)) {
+            if (pureEnglish === 'TRG' && isDailyMode) return null;
+            
             const strictlyUppercaseCodes = ['AL', 'AB', 'R', 'SL', 'CL'];
             if (strictlyUppercaseCodes.includes(pureEnglish)) {
                 if (rawToken !== rawToken.toUpperCase()) {
