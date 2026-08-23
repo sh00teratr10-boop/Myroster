@@ -2648,7 +2648,7 @@ function searchByTripCode() {
         
         let searchedTripBadge = '';
         if (/^\d{3,4}$/.test(normQuery) && targetShiftCode !== normQuery) {
-            searchedTripBadge = `<div class="mb-4 bg-green-50 text-green-700 dark:text-green-900/30 dark:text-green-400 p-3 rounded-xl border border-green-200 dark:border-green-800 text-sm font-black text-center">✅ ${t('الرحلة رقم (', 'Trip Number (')}${rawQuery}${t(') تابعة لوردية: ', ') belongs to shift: ')}${targetShiftCode}</div>`;
+            searchedTripBadge = `<div class="mb-4 bg-green-50 text-green-700 dark:bg-green-900/30 dark:text-green-400 p-3 rounded-xl border border-green-200 dark:border-green-800 text-sm font-black text-center">✅ ${t('الرحلة رقم (', 'Trip Number (')}${rawQuery}${t(') تابعة لوردية: ', ') belongs to shift: ')}${targetShiftCode}</div>`;
         }
 
         resultBox.innerHTML = `
@@ -2777,6 +2777,8 @@ function processRawTextInput() {
     let adminDateVal = document.getElementById('adminDailyDateInput').value || getTodayYYYYMMDD();
     let monthPickerVal = document.getElementById('adminMonthPicker').value || getTodayYYYYMMDD().slice(0,7); 
 
+    rawText = rawText.replace(/\*/g, ''); 
+
     if (scope === 'schedulesMonth') {
         let cleanedText = rawText.replace(/\s+/g, ''); 
         let tokens = cleanedText.split(']').filter(t => t.length > 2).map(t => t + ']');
@@ -2891,9 +2893,7 @@ function processRawTextInput() {
             
             const strictlyUppercaseCodes = ['AL', 'AB', 'R', 'SL', 'CL'];
             if (strictlyUppercaseCodes.includes(pureEnglish)) {
-                if (rawToken !== rawToken.toUpperCase()) {
-                    return null; 
-                }
+                if (rawToken !== rawToken.toUpperCase()) return null; 
             }
             if (pureEnglish === 'REST' || pureEnglish === 'OFF') return 'R';
             return pureEnglish;
@@ -2937,9 +2937,7 @@ function processRawTextInput() {
                 if (cleanedToken) {
                     let finalToken = cleanedToken.replace(/_/g, ' '); 
                     if (isDailyMode) { 
-                        if (!daysMap[1]) {
-                            daysMap[1] = finalToken; 
-                        }
+                        if (!daysMap[1]) daysMap[1] = finalToken; 
                     } else { 
                         if (dayCount <= 31) { 
                             daysMap[dayCount] = finalToken; 
