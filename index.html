@@ -2076,8 +2076,8 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     }
     return null;
 }
-
-function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
+                        
+        function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ ${t('إجازة', 'Day Off')} / ${shiftCodeRaw}</p></div>`;
     }
@@ -2092,6 +2092,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     let isAlex = upperSch.includes("ALEX") || upperSch.includes("416");
 
     let myShiftData = null, scheduleTypeName = "", activeTripsMap = {}, activeIncomingMap = {}, activeDataMap = {};
+    
     if (isCairo) { myShiftData = cairoDataMap[normShift]; scheduleTypeName = t("القاهرة", "Cairo"); activeTripsMap = cairoTripsMap; activeIncomingMap = cairoIncomingMap; activeDataMap = cairoDataMap; }
     else if (isArish) { myShiftData = arishDataMap[normShift]; scheduleTypeName = t("العريش", "Arish"); activeTripsMap = arishTripsMap; activeIncomingMap = arishIncomingMap; activeDataMap = arishDataMap; }
     else if (isAsyut) { myShiftData = asyutDataMap[normShift]; scheduleTypeName = t("أسيوط", "Asyut"); activeTripsMap = asyutTripsMap; activeIncomingMap = asyutIncomingMap; activeDataMap = asyutDataMap; }
@@ -2099,6 +2100,20 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     else if (isSiwa) { myShiftData = aswanDataMap[normShift]; scheduleTypeName = t("سيوة", "Siwa"); activeTripsMap = siwaTripsMap; activeIncomingMap = siwaIncomingMap; activeDataMap = aswanDataMap; } 
     else if (isAlex403) { myShiftData = alex403DataMap[normShift]; scheduleTypeName = t("الإسكندرية 403", "Alex 403"); activeTripsMap = alex403TripsMap; activeIncomingMap = alex403IncomingMap; activeDataMap = alex403DataMap; }
     else if (isAlex) { myShiftData = alexDataMap[normShift]; scheduleTypeName = t("الإسكندرية", "Alexandria"); activeTripsMap = alexTripsMap; activeIncomingMap = alexIncomingMap; activeDataMap = alexDataMap; }
+
+    // =========================================================
+    // التعديل السحري: البحث التلقائي لو الوردية مش في الجدول المتسجل
+    // =========================================================
+    if (!myShiftData || !myShiftData.tripNumbers || myShiftData.tripNumbers.length === 0) {
+        if (cairoDataMap[normShift]) { myShiftData = cairoDataMap[normShift]; activeTripsMap = cairoTripsMap; activeIncomingMap = cairoIncomingMap; activeDataMap = cairoDataMap; scheduleRaw = "WD-450-[CAIRO]"; }
+        else if (arishDataMap[normShift]) { myShiftData = arishDataMap[normShift]; activeTripsMap = arishTripsMap; activeIncomingMap = arishIncomingMap; activeDataMap = arishDataMap; scheduleRaw = "ST-407-[ARISH]"; }
+        else if (asyutDataMap[normShift]) { myShiftData = asyutDataMap[normShift]; activeTripsMap = asyutTripsMap; activeIncomingMap = asyutIncomingMap; activeDataMap = asyutDataMap; scheduleRaw = "FR-369-[ASYUT]"; }
+        else if (aswanDataMap[normShift]) { myShiftData = aswanDataMap[normShift]; activeTripsMap = siwaTripsMap; activeIncomingMap = siwaIncomingMap; activeDataMap = aswanDataMap; scheduleRaw = "WD-447-[SIWA]"; }
+        else if (luxorDataMap[normShift]) { myShiftData = luxorDataMap[normShift]; activeTripsMap = luxorTripsMap; activeIncomingMap = luxorIncomingMap; activeDataMap = luxorDataMap; scheduleRaw = "WE-341-[LUXOR]"; }
+        else if (alex403DataMap[normShift]) { myShiftData = alex403DataMap[normShift]; activeTripsMap = alex403TripsMap; activeIncomingMap = alex403IncomingMap; activeDataMap = alex403DataMap; scheduleRaw = "ST-403-[ALEX]"; }
+        else if (alexDataMap[normShift]) { myShiftData = alexDataMap[normShift]; activeTripsMap = alexTripsMap; activeIncomingMap = alexIncomingMap; activeDataMap = alexDataMap; scheduleRaw = "ST-416-[ALEX_WFH]"; }
+    }
+    // =========================================================
 
     let isTransition = false; let transitionNotes = ""; let tomorrowTripsMap = {}; let tomorrowIncomingMap = {};
     const selectedDateVal = dateValOverride || document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
@@ -2353,6 +2368,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
         return `<div class="text-center py-10 font-black bg-slate-100 dark:bg-gray-800 rounded-3xl border dark:border-gray-700 shadow-sm p-6"><p class="text-purple-600 dark:text-purple-400 text-lg mb-1">📋 ${t('البيان المسجل بالروستر:', 'Roster Record:')} (${shiftCodeRaw})</p><p class="text-gray-500 text-xs font-bold mt-2">${t('تطبيق / عمل مضاف بالروستر وليس له مسار رحلات معرّف حالياً.', 'Applied task without defined trips.')}</p></div>`;
     }
 }
+
 
 function buildDashboardData(driver, showLoading = true) {
     renderDailyDetails(); renderFullMonth(driver);
