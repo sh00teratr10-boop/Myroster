@@ -700,7 +700,7 @@ body { font-family: 'Cairo', sans-serif; }
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border border-gray-200 dark:border-gray-700 space-y-4">
                 <div class="flex flex-col md:flex-row gap-4 mb-4">
                     <div class="flex-1 bg-purple-50/50 dark:bg-purple-900/10 p-4 rounded-2xl border border-purple-100 dark:border-purple-800/30">
-                        <label class="block text-xs font-black text-purple-800 dark:text-purple-300 mb-2" data-ar="📆 تاريخ (تحديث اليومية فقط):" data-en="📆 Date (Daily Roster Only):">📆 تاريخ (تحديث اليومية فقط):</label>
+                        <label class="block text-xs font-black text-purple-800 dark:text-blue-300 mb-2" data-ar="📆 تاريخ (تحديث اليومية فقط):" data-en="📆 Date (Daily Roster Only):">📆 تاريخ (تحديث اليومية فقط):</label>
                         <input type="date" id="adminDailyDateInput" class="w-full px-4 py-2.5 bg-white dark:bg-gray-800 border-none rounded-xl font-black text-purple-600 shadow-sm focus:ring-2 focus:ring-purple-500 cursor-pointer">
                     </div>
                     <div class="flex-1 bg-blue-50/50 dark:bg-blue-900/10 p-4 rounded-2xl border border-blue-100 dark:border-blue-800/30">
@@ -890,19 +890,16 @@ const alexTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1vs7X7cyBP2
 const alexCercrlURL = 'https://docs.google.com/spreadsheets/d/1pnK_P08R3vBY-R0cjCdrfjAaQ2hIBlc-BACbrvXr_kU/export?format=csv';
 
 // الجداول الجديدة 
-// 1. كايرو
 const cairoShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRZRnzR5qBgveTRWcD4hprIH3oqT-EhDMQy8RHTgo-tb1bl_w9JgRYuZgxR5QGv5iKNdjxPNMJzuJl-/pub?output=csv';
 const cairoTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQvL6pE1ZMeNykpsuzjnr3uKQMDXtPqKXaACHPp8PB-7M1p5B8FXuBIZPSCyq1sVs4IUZi6L8ETnST/pub?output=csv';
 const cairoCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnrkvFE_Z_ElRU4fjh6M_9YkPrKswdSKRaAqq_3sY2hHMa26X7qdxrlZU7kgenERBCrvcakqly2wB1/pub?output=csv';
 
-// 2. أسيوط
 const asyutShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT0RGGGNdmbc4leJTFxaF1W-IfuZCPk54UKmA1VeYnCiWzVPD71tMjtCDsvFpTzX4eC5RCeREbR8KQ5/pub?output=csv';
 const asyutTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIb2vGZ5mUsd9VxVeT43MWX3wt5cQu0VtCROK9y7DkuiUlg8Sypot-EHOnbalzA-8nBCRitLX-7rVL/pub?output=csv';
 const asyutCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ03f0FrgE4tDzs5tvPHv8KoZmah9HrymN1x0K8Hw-k8xetoaZ5cVwDEMadfHlXBBq1SvPHeDpHy5aJ/pub?output=csv';
 
-// 3. العريش
 const arishShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTY0PpNdSMbqcMHXhTX9ikbPWvUbJXDWVGXHgZz8OVSAi5riBmZdfZ9B6G6ca7lpAM-owG-eN1t2InR/pub?output=csv';
-const arishTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1w2vE1XPcP7udIzax6ExZ6Y_bJvlT3cu-/export?format=csv'; // التايم تيبول الجديد المظبوط
+const arishTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1w2vE1XPcP7udIzax6ExZ6Y_bJvlT3cu-/export?format=csv'; 
 const arishCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRC0U8woQR8vRJY6ee_17OdbGe5-O33wnjeAOdAkrG5GW7H1FGl5qAKcOjAislZtsfX2oDOYsIOchCy/pub?output=csv';
 
 const transitionSheetsURLs = {
@@ -911,14 +908,13 @@ const transitionSheetsURLs = {
     "ST-416_WD-447": "https://docs.google.com/spreadsheets/d/1vreq2l4hCr8xQVeoUSukmc5o01wRavBUsXHhD9kBF0w/export?format=csv",
     "ST-403_WE-341": "https://docs.google.com/spreadsheets/d/1qgDYHzGFK3v5iPO780ygxBkW-HER_tIw/export?format=csv",
     "WD-447_ST-403": "https://docs.google.com/spreadsheets/d/1PpnMdoynGh2VlOTxsejswCBCMRcQqH8K/export?format=csv",
-    // تحويلات الجداول الجديدة
     "WD-450_FR-369": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2S9a9jea6fyuFyNN1AqRrpURWyqazbShpdmCjj4Gs-v-Kvo2AqBw3elevCemf-IH-CEicf3nRcF57/pub?output=csv",
     "FR-369_ST-407": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0w2ZtetxuwLgqqEJCbAbnHdXa54-yGXXa__F_NHNNycAKomkaT0k3BFz_fV-GXTimoUkXIdOpOXSv/pub?output=csv",
     "ST-407_WD-450": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZtRP57OEO5nenbJ3lizJ9-JHnP_o3lhn4jKsPhAQGh9yIydN7PHqk6gaZANu2Xkn_-Spb-C2dSc0U/pub?output=csv",
     "WD-447_WD-450": "https://docs.google.com/spreadsheets/d/1M7bCfrLy8JgDr4Cw_R3MBG46D-FgnNwSEvlewfovZeg/export?format=csv",
     "WD-450_ST-407": "https://docs.google.com/spreadsheets/d/1qnDG7vGKj8ch1-0ah_2H1c5JeW3PGZLq7RMNEVEto1Q/export?format=csv",
-    "ST-407_FR-369": "https://docs.google.com/spreadsheets/d/1kTdhgh3Cw07gNtNLQLRqpH4rMXJ-_Htxluo_0m5ToZ0/edit?usp=drivesdk",   
-}
+    "ST-407_FR-369": "https://docs.google.com/spreadsheets/d/1kTdhgh3Cw07gNtNLQLRqpH4rMXJ-_Htxluo_0m5ToZ0/edit?usp=drivesdk"
+};
 
 const driverPrefsURL = 'https://docs.google.com/spreadsheets/d/1bwxDHamv7bJEpdfTG9brzjoBdu5go9YBcODBCQHG8Ko/export?format=csv';
 
@@ -1070,17 +1066,13 @@ function isRestDay(code) {
 function openTripNoteModal(tNum, dateVal) {
     const modal = document.getElementById('tripNoteModal');
     if (!modal) return;
-    
     const numEl = document.getElementById('noteTripNumber');
     const dateEl = document.getElementById('noteDateVal');
     const inputEl = document.getElementById('tripNoteInput');
-    
     if (numEl) numEl.textContent = tNum;
     if (dateEl) dateEl.value = dateVal;
-    
     let savedNote = localStorage.getItem('tripNote_' + dateVal + '_' + tNum) || '';
     if (inputEl) inputEl.value = savedNote;
-    
     modal.classList.remove('hidden-section');
     modal.style.setProperty('display', 'flex', 'important');
 }
@@ -1098,21 +1090,13 @@ function saveTripNote() {
     let tNum = document.getElementById('noteTripNumber')?.textContent;
     let dateVal = document.getElementById('noteDateVal')?.value;
     let noteVal = document.getElementById('tripNoteInput')?.value.trim() || '';
-    
     if (!tNum || !dateVal) return;
-
     localStorage.setItem('tripNote_' + dateVal + '_' + tNum, noteVal);
-    
     if (currentDriver && noteVal !== "") {
-        db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}/${tNum}`).set({
-            note: noteVal,
-            timestamp: new Date().toLocaleString('ar-EG'),
-            driverName: currentDriver.name
-        });
+        db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}/${tNum}`).set({ note: noteVal, timestamp: new Date().toLocaleString('ar-EG'), driverName: currentDriver.name });
     } else if (noteVal === "" && currentDriver) {
         db.ref(`driver_notes/${dateVal}/${currentDriver.radioId}/${tNum}`).remove();
     }
-    
     showToast(t('تم حفظ الملاحظات بنجاح!', 'Notes saved successfully!'), 'success');
     closeTripNoteModal();
     renderDailyDetails(); 
@@ -1193,7 +1177,7 @@ function updateLiveRadars() {
     });
 }
 
-// 🛑 الدالة الجديدة للورادي (بفرامل لمنع دمج الرحلات) 🛑
+// 🛑 دالة الفرامل لعدم دمج الرحلات 🛑
 async function fetchAndParseShifts(url, targetMap) {
     try {
         const res = await fetch(url);
@@ -1211,7 +1195,6 @@ async function fetchAndParseShifts(url, targetMap) {
                 
                 let norm = smartNormalize(cellVal);
                 
-                // لو لقينا اسم وردية صريح (بدون أقواس التسليم)
                 if (/^[MEN][-]?\w+$/i.test(norm) && !cellVal.includes('RES') && !cellVal.includes('PTW') && !cellVal.includes('(')) {
                     let foundShift = norm;
                     validShiftsSet.add(foundShift); 
@@ -1225,7 +1208,6 @@ async function fetchAndParseShifts(url, targetMap) {
                         let nextCellNorm = smartNormalize(nextCell);
                         let isHandover = false;
                         
-                        // بندور على وردية تسليم
                         let shiftMatch = nextCell.match(/([MEN]{1,3})\s*[-_]?\s*([a-zA-Z0-9]{1,5})/i);
                         
                         if (shiftMatch && smartNormalize(shiftMatch[0]) !== foundShift) {
@@ -1235,18 +1217,11 @@ async function fetchAndParseShifts(url, targetMap) {
                             handoverNorm = nextCellNorm;
                             isHandover = true;
                         } else if (/^[MEN][-]?\w+$/i.test(nextCellNorm) && nextCellNorm !== foundShift && !nextCell.includes('(')) {
-                            // لو لقى وردية تانية خالص في نفس السطر (بدون أقواس) يقف
                             isHandover = true;
                         }
                         
-                        // الفرامل: يوقف السحب وميكملش
-                        if (isHandover) {
-                            break; 
-                        }
-                        
-                        if (/^\d{3,4}$/.test(nextCell)) { 
-                            if (!sequence.includes(nextCell)) sequence.push(nextCell); 
-                        }
+                        if (isHandover) break; 
+                        if (/^\d{3,4}$/.test(nextCell)) { if (!sequence.includes(nextCell)) sequence.push(nextCell); }
                     }
                     
                     if (!targetMap[foundShift]) { targetMap[foundShift] = { tripNumbers: [], handoverCode: null }; }
@@ -1282,7 +1257,8 @@ async function loadAllTransitionSheets() {
                     if (cleanV === '') return;
                     let isHandover = false;
                     
-                    let m = cleanV.match(/([MEN][-_]?\d{1,2})/i); 
+                    // 🛑 تصليح المقلب: الريجيكس هنا بيقرا لحد 3 أرقام عشان (M-10) تتظبط 🛑
+                    let m = cleanV.match(/([MEN][-_]?\d{1,3})/i); 
                     if (m && smartNormalize(m[1]) !== currentShift) { 
                         handover = m[1]; isHandover = true; 
                     } else if (cleanV.includes('RES')) { 
@@ -1366,7 +1342,8 @@ async function fetchDriverPreferences() {
         }
     } catch (e) { }
 }
-    let isInitialBroadcastLoad = true;
+
+let isInitialBroadcastLoad = true;
 let lastBroadcastText = "";
 
 async function loadAllData() {
@@ -1377,7 +1354,6 @@ async function loadAllData() {
 
         loadAllTransitionSheets(); 
         
-        // جلب الورادي (القديم والجديد)
         await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
         await fetchAndParseShifts(alexShiftsURL, alexDataMap);
         await fetchAndParseShifts(alex403ShiftsURL, alex403DataMap); 
@@ -1464,7 +1440,6 @@ async function loadAllData() {
             isInitialBroadcastLoad = false;
         });
 
-        // مواعيد الرحلات
         await fetchAndParseFullSchedule(siwaTripsScheduleURL, siwaTripsMap, false);
         await fetchAndParseFullSchedule(luxorTripsScheduleURL, luxorTripsMap, false);
         await fetchAndParseFullSchedule(alexTripsScheduleURL, alexTripsMap, true);
@@ -1503,10 +1478,15 @@ async function loadAllData() {
 
     } catch (error) {}
 }
-
-document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function() {
     applyLanguageToDOM(); 
     
+    // 🔥 شريط التحميل بيكمل هنا وبيدخلك على السيستم بعد 2.1 ثانية 🔥
+    setTimeout(() => {
+        const splashBar = document.getElementById('splash-bar');
+        if (splashBar) splashBar.style.width = '100%'; 
+    }, 100);
+
     setTimeout(() => {
         const splash = document.getElementById('splash-screen');
         splash.style.opacity = '0';
@@ -1514,7 +1494,7 @@ document.addEventListener('DOMContentLoaded', function() {
             splash.classList.add('hidden-section');
             if(!currentDriver && document.getElementById('admin-page').classList.contains('hidden-section')) { document.getElementById('auth-page').classList.remove('hidden-section'); }
         }, 700);
-    }, 2000);
+    }, 2100);
 
     var savedRadioId = localStorage.getItem('savedRadioId');
     var savedPassword = localStorage.getItem('savedPassword');
@@ -1548,6 +1528,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(checkUpcomingTrainsAlarm, 2000);
     setInterval(updateLiveRadars, 1000); 
 
+    // 🔥 بناء زرار تسكين الورش والـ PTW أوتوماتيكياً في لوحة الإدارة 🔥
     setTimeout(() => {
         let extractBtnContainer = document.querySelector('button[onclick="processRawTextInput()"]');
         if(extractBtnContainer && extractBtnContainer.parentElement && !document.getElementById('btnManualAssign')) {
@@ -1749,6 +1730,7 @@ function loadPasswordRequests() {
         });
     });
 }
+
 function deletePassReq(rId) { db.ref('password_requests/' + rId).remove(); showToast(t("تم حذف الطلب", "Request Deleted"), "success"); }
 
 function ghostLogin() {
@@ -2101,7 +2083,7 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     return null;
 }
 
-// 🛑 الدالة الذكية لليومي (البحث التلقائي عن الوردية في كل الجداول لو مش موجودة في الجدول الأساسي) 🛑
+// 🛑 التعديل السحري: البحث التلقائي للوردية لو مش في الجدول المتسجل 🛑
 function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ ${t('إجازة', 'Day Off')} / ${shiftCodeRaw}</p></div>`;
@@ -2125,9 +2107,7 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     else if (isAlex403) { myShiftData = alex403DataMap[normShift]; scheduleTypeName = t("الإسكندرية 403", "Alex 403"); activeTripsMap = alex403TripsMap; activeIncomingMap = alex403IncomingMap; activeDataMap = alex403DataMap; }
     else if (isAlex) { myShiftData = alexDataMap[normShift]; scheduleTypeName = t("الإسكندرية", "Alexandria"); activeTripsMap = alexTripsMap; activeIncomingMap = alexIncomingMap; activeDataMap = alexDataMap; }
 
-    // =========================================================
-    // التعديل السحري: البحث التلقائي لو الوردية مش في الجدول المتسجل
-    // =========================================================
+    // البحث في باقي الجداول لو الوردية مش موجودة في الجدول الأساسي المتسجل
     if (!myShiftData || !myShiftData.tripNumbers || myShiftData.tripNumbers.length === 0) {
         if (cairoDataMap[normShift]) { myShiftData = cairoDataMap[normShift]; activeTripsMap = cairoTripsMap; activeIncomingMap = cairoIncomingMap; activeDataMap = cairoDataMap; scheduleRaw = "WD-450-[CAIRO]"; }
         else if (arishDataMap[normShift]) { myShiftData = arishDataMap[normShift]; activeTripsMap = arishTripsMap; activeIncomingMap = arishIncomingMap; activeDataMap = arishDataMap; scheduleRaw = "ST-407-[ARISH]"; }
@@ -2137,7 +2117,6 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
         else if (alex403DataMap[normShift]) { myShiftData = alex403DataMap[normShift]; activeTripsMap = alex403TripsMap; activeIncomingMap = alex403IncomingMap; activeDataMap = alex403DataMap; scheduleRaw = "ST-403-[ALEX]"; }
         else if (alexDataMap[normShift]) { myShiftData = alexDataMap[normShift]; activeTripsMap = alexTripsMap; activeIncomingMap = alexIncomingMap; activeDataMap = alexDataMap; scheduleRaw = "ST-416-[ALEX_WFH]"; }
     }
-    // =========================================================
 
     let isTransition = false; let transitionNotes = ""; let tomorrowTripsMap = {}; let tomorrowIncomingMap = {};
     const selectedDateVal = dateValOverride || document.getElementById('dailyDatePicker').value || getTodayYYYYMMDD();
@@ -2905,6 +2884,7 @@ function updateLiveAdminMap() {
 function renderLineMapStations() { updateLiveAdminMap(); }
 function toggleScopeUI() { document.getElementById('parseResultBox').classList.add('hidden-section'); }
 
+// 🔥 الدالة السحرية للغسالة والمقص وتصليح M-10 🔥
 function processRawTextInput() {
     let rawText = document.getElementById('rawTextInput').value;
     if (!rawText.trim()) { 
@@ -2919,8 +2899,10 @@ function processRawTextInput() {
     let adminDateVal = document.getElementById('adminDailyDateInput').value || getTodayYYYYMMDD();
     let monthPickerVal = document.getElementById('adminMonthPicker').value || getTodayYYYYMMDD().slice(0,7); 
 
-    rawText = rawText.replace(/\*/g, ''); 
-
+    // تنظيف النص
+    rawText = rawText.replace(/\*/g, ' '); 
+    rawText = rawText.replace(/\+?PTW[-_a-zA-Z0-9]+/gi, ''); 
+    
     if (scope === 'schedulesMonth') {
         let cleanedText = rawText.replace(/\s+/g, ''); 
         let tokens = cleanedText.split(']').filter(t => t.length > 2).map(t => t + ']');
@@ -2948,8 +2930,6 @@ function processRawTextInput() {
     rawText = rawText.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, '-');
     rawText = rawText.replace(/\d{1,2}:\d{2}\s*(to|-)\s*\d{1,2}:\d{2}/gi, '');
     rawText = rawText.replace(/[()]/g, ' ');
-    rawText = rawText.replace(/(\+?PTW)[-\s]+[a-fA-F0-9]{6,12}/gi, '$1'); 
-    rawText = rawText.replace(/\+(?!PTW)[a-zA-Z0-9_]+/gi, ''); 
     
     rawText = rawText.replace(/Pat\s*\.?\s*L(?:eave)?/gi, 'PATL')
                      .replace(/Com\s*\.?\s*L(?:eave)?/gi, 'COML')
@@ -2960,7 +2940,7 @@ function processRawTextInput() {
                      .replace(/Out\s+of\s+Operation/gi, 'OOO')
                      .replace(/Absunt|Abient|Absence/gi, 'ABSENT');
 
-    const rdmcPattern = /^(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
+    const rdmcPattern = /^(?:-)?\s*(RDMC|ROMC|MC)[-_]?[A-Z0-9]+$/i;
     let processedIDs = new Set(); 
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
 
@@ -2968,20 +2948,36 @@ function processRawTextInput() {
         let upper = rawToken.trim().toUpperCase();
         if (!upper) return null;
 
-        if (isDailyMode) {
-            if (upper.includes('TRG') || upper.includes('PTW') || upper.includes('DTSLM') || upper.includes('DTABA') || upper.includes('DTIMB')) {
-                return null; 
-            }
-        }
-
         if (upper.match(/\b(REST\s*DAY|REST|OFF)\b/)) return 'R';
         if (upper.match(/\b(ABSENT|ABSENCE|ABSUNT|ABIENT)\b/)) return 'ABSENT';
 
+        if (isDailyMode) {
+            let resMatchRev = upper.match(/(?:^|[^A-Z])R(?:E)?S\s*[-_]?\s*(0?[1-9])\s*[-_]?\s*([MEN])(?:$|[^A-Z])/);
+            if (resMatchRev) {
+                let num = parseInt(resMatchRev[1], 10);
+                return resMatchRev[2] + '-RES' + (num < 10 ? '0' + num : num);
+            }
+            let resMatch = upper.match(/(?:^|[^A-Z])([MEN])\s*[-_]?\s*R(?:E)?S\s*[-_]?\s*(0?[1-9])(?:$|[^A-Z])/);
+            if (resMatch) {
+                let num = parseInt(resMatch[2], 10);
+                return resMatch[1] + '-RES' + (num < 10 ? '0' + num : num);
+            }
+
+            let cycleMatchRev = upper.match(/(?:^|[^A-Z0-9])(0?[1-9]|[1-9][0-9]|100)\s*[-_]?\s*([MEN])(?:$|[^A-Z])/);
+            if (cycleMatchRev && !upper.includes('RES') && !upper.includes('RS')) {
+                let num = parseInt(cycleMatchRev[1], 10);
+                return cycleMatchRev[2] + '-' + (num < 10 ? '0' + num : num);
+            }
+            let cycleMatch = upper.match(/(?:^|[^A-Z])([MEN])\s*[-_]?\s*(0?[1-9]|[1-9][0-9]|100)(?!\d)/);
+            if (cycleMatch && !upper.includes('RES') && !upper.includes('RS')) {
+                let num = parseInt(cycleMatch[2], 10);
+                return cycleMatch[1] + '-' + (num < 10 ? '0' + num : num);
+            }
+        }
+
         if (upper.includes('DRILL')) {
             let matchDrill = upper.match(/^([MEN])[-_]?(.*DRILL.*)$/i);
-            if (matchDrill) {
-                return matchDrill[1] + '-' + matchDrill[2].replace(/[\s_]+/g, '-');
-            }
+            if (matchDrill) { return matchDrill[1] + '-' + matchDrill[2].replace(/[\s_]+/g, '-'); }
             return upper.replace(/[\s_]+/g, '-');
         }
 
@@ -2997,33 +2993,14 @@ function processRawTextInput() {
         if (['TESTTRACK', 'TEST', 'TRACK', 'TT'].includes(pureUpper)) return 'TEST TRACK';
         if (['MEDICALCHECK', 'MEDICAL', 'MEDCHK', 'MC'].includes(pureUpper)) return 'MED-CHK';
 
-        if (upper.includes(' ') && 
-            !upper.includes('PTW') && 
-            !upper.includes('RES') && 
-            !upper.match(/[MEN][-]?\d/)) {
-            return null;
-        }
+        if (upper.includes(' ') && !upper.includes('PTW') && !upper.includes('RES') && !upper.match(/[MEN][-]?\d/)) return null;
         
-        let matchRES = upper.match(/(?:^|[^A-Z])([MEN][-_]?RES\d*)/); 
-        if (matchRES) return matchRES[1];
-        
-        let matchShiftPTW = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3}\+PTW)/); 
-        if (matchShiftPTW) return matchShiftPTW[1];
-        
-        let matchDigits = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3})/); 
-        if (matchDigits) return matchDigits[1];
-        
-        let matchDT = upper.match(/(?:^|[^A-Z])([MEN][-_]?DT[A-Z]+)/); 
-        if (matchDT) return matchDT[1];
-        
-        let matchEXT = upper.match(/(?:^|[^A-Z])([MEN][-_]?EXT)/); 
-        if (matchEXT) return matchEXT[1];
-        
-        let matchPTW = upper.match(/([MEN][-_]?PTW[-_A-Z0-9]*)/); 
-        if (matchPTW) return matchPTW[1];
-        
-        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]*)/); 
-        if (matchTRG) return matchTRG[1];
+        let matchRES = upper.match(/(?:^|[^A-Z])([MEN][-_]?RES\d*)/); if (matchRES) return matchRES[1];
+        let matchDigits = upper.match(/(?:^|[^A-Z])([MEN][-_]?\d{1,3})/); if (matchDigits) return matchDigits[1];
+        let matchDT = upper.match(/(?:^|[^A-Z])([MEN][-_]?DT[A-Z]+)/); if (matchDT) return matchDT[1];
+        let matchEXT = upper.match(/(?:^|[^A-Z])([MEN][-_]?EXT)/); if (matchEXT) return matchEXT[1];
+        let matchPTW = upper.match(/([MEN][-_]?PTW[-_A-Z0-9]*)/); if (matchPTW) return matchPTW[1];
+        let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]*)/); if (matchTRG) return matchTRG[1];
         
         if (upper === 'PTW') return 'PTW';
         
@@ -3032,7 +3009,6 @@ function processRawTextInput() {
         
         if (exact.includes(pureEnglish)) {
             if (pureEnglish === 'TRG' && isDailyMode) return null;
-            
             const strictlyUppercaseCodes = ['AL', 'AB', 'R', 'SL', 'CL'];
             if (strictlyUppercaseCodes.includes(pureEnglish)) {
                 if (rawToken !== rawToken.toUpperCase()) return null; 
@@ -3040,18 +3016,25 @@ function processRawTextInput() {
             if (pureEnglish === 'REST' || pureEnglish === 'OFF') return 'R';
             return pureEnglish;
         }
-        
         return null; 
     }
 
     let lines = rawText.split(/[\n\r]+/);
     let currentId = null;
+    let lineOfId = -1; 
     let daysMap = {};
     let dayCount = 1;
 
     for (let i = 0; i < lines.length; i++) {
         let line = lines[i].trim();
         if (!line) continue;
+
+        // 🔥 المقص: بيشتغل بس لو رفعت اليومية الكاملة 🔥
+        if (isDailyMode) {
+            let stopKeywords = ['Abbassia Workshop', 'العباسية ورشة', 'Al Salam Workshop', 'السالم ورشة', 'Imbaba Workshop', 'امبابه ورشة', 'Leaves', 'أجازات', 'تدويرات الوردية'];
+            let shouldStop = stopKeywords.some(kw => line.includes(kw));
+            if (shouldStop) { break; }
+        }
 
         let cells = line.includes('\t') ? line.split('\t') : line.split(/\s+/);
         
@@ -3068,18 +3051,25 @@ function processRawTextInput() {
                         if (Object.keys(daysMap).length > 0) extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); 
                     }
                 }
-                currentId = cellText.toUpperCase().replace('ROMC', 'RDMC').replace('-', '');
+                currentId = cellText.toUpperCase().replace('ROMC', 'RDMC').replace('-', '').replace(/\s/g,'');
+                lineOfId = i; 
                 daysMap = {};
                 dayCount = 1;
                 continue; 
             }
             
             if (currentId) {
+                if (isDailyMode && (i - lineOfId > 4)) {
+                    currentId = null;
+                    continue;
+                }
+
                 let cleanedToken = cleanShiftToken(cellText); 
                 if (cleanedToken) {
                     let finalToken = cleanedToken.replace(/_/g, ' '); 
                     if (isDailyMode) { 
-                        if (!daysMap[1]) daysMap[1] = finalToken; 
+                        // 🔥 القفل: الوردية اللي تتلقط الأول تقفل على كده! 🔥
+                        if (!daysMap[1]) { daysMap[1] = finalToken; }
                     } else { 
                         if (dayCount <= 31) { 
                             daysMap[dayCount] = finalToken; 
@@ -3098,6 +3088,29 @@ function processRawTextInput() {
         } else { 
             if (Object.keys(daysMap).length > 0) extractedBatchRoster.push({ rdmcId: currentId, shiftsMap: daysMap, mode: 'full' }); 
         }
+    }
+
+    if (isDailyMode) {
+        let finalDailyRoster = [];
+        let assignedLoops = new Set(); 
+
+        extractedBatchRoster.forEach(item => {
+            let shift = item.shift;
+            let isRes = /^[MEN][-]?(RES|RS)\d{1,2}$/.test(shift);
+            let isLoop = /^[MEN][-]?\d{1,3}$/.test(shift);
+
+            if (isRes) {
+                finalDailyRoster.push(item);
+            } else if (isLoop) {
+                if (!assignedLoops.has(shift)) {
+                    assignedLoops.add(shift);
+                    finalDailyRoster.push(item);
+                }
+            } else {
+                finalDailyRoster.push(item);
+            }
+        });
+        extractedBatchRoster = finalDailyRoster; 
     }
 
     const tbody = document.getElementById('parsedRosterTable'); 
