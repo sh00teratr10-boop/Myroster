@@ -96,7 +96,7 @@ body { font-family: 'Cairo', sans-serif; }
     </button>
 </div>
 </form>
-    
+
 <form id="registerSection" class="space-y-5 hidden-section" onsubmit="event.preventDefault();">
 <div>
 <label class="block text-xs font-black mb-1.5" data-ar="رقم الراديو" data-en="Radio ID">رقم الراديو</label>
@@ -889,9 +889,7 @@ const luxorCercrlURL = 'https://docs.google.com/spreadsheets/d/1FAR2CV6mDM5Iq7gQ
 const alexTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1vs7X7cyBP2jJMJbl2Lan8CHgICno36N8bD3EL7FZZDM/export?format=csv';
 const alexCercrlURL = 'https://docs.google.com/spreadsheets/d/1pnK_P08R3vBY-R0cjCdrfjAaQ2hIBlc-BACbrvXr_kU/export?format=csv';
 
-// ==========================================
 // الجداول الجديدة 
-// ==========================================
 // 1. كايرو
 const cairoShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRZRnzR5qBgveTRWcD4hprIH3oqT-EhDMQy8RHTgo-tb1bl_w9JgRYuZgxR5QGv5iKNdjxPNMJzuJl-/pub?output=csv';
 const cairoTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQvL6pE1ZMeNykpsuzjnr3uKQMDXtPqKXaACHPp8PB-7M1p5B8FXuBIZPSCyq1sVs4IUZi6L8ETnST/pub?output=csv';
@@ -902,9 +900,9 @@ const asyutShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT0RGGGN
 const asyutTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIb2vGZ5mUsd9VxVeT43MWX3wt5cQu0VtCROK9y7DkuiUlg8Sypot-EHOnbalzA-8nBCRitLX-7rVL/pub?output=csv';
 const asyutCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ03f0FrgE4tDzs5tvPHv8KoZmah9HrymN1x0K8Hw-k8xetoaZ5cVwDEMadfHlXBBq1SvPHeDpHy5aJ/pub?output=csv';
 
-// 3. العريش (تم وضع اللينك القديم للتايم تيبول)
+// 3. العريش
 const arishShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTY0PpNdSMbqcMHXhTX9ikbPWvUbJXDWVGXHgZz8OVSAi5riBmZdfZ9B6G6ca7lpAM-owG-eN1t2InR/pub?output=csv';
-const arishTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1w2vE1XPcP7udIzax6ExZ6Y_bJvlT3cu-/export?format=csv';
+const arishTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1w2vE1XPcP7udIzax6ExZ6Y_bJvlT3cu-/export?format=csv'; // التايم تيبول الجديد المظبوط
 const arishCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRC0U8woQR8vRJY6ee_17OdbGe5-O33wnjeAOdAkrG5GW7H1FGl5qAKcOjAislZtsfX2oDOYsIOchCy/pub?output=csv';
 
 const transitionSheetsURLs = {
@@ -1193,7 +1191,7 @@ function updateLiveRadars() {
     });
 }
 
-// ⚠️ دالة سحب الجداول الأصلية بتاعتك بدون أي تعديل (شغالة في سيوة والأقصر زي الأول بالظبط)
+// 🛑 الدالة الجديدة للورادي (بفرامل لمنع دمج الرحلات) 🛑
 async function fetchAndParseShifts(url, targetMap) {
     try {
         const res = await fetch(url);
@@ -1204,31 +1202,55 @@ async function fetchAndParseShifts(url, targetMap) {
         for (let i = 0; i < lines.length; i++) {
             let cols = parseCSVRow(lines[i]);
             if (cols.join('').trim() === '') continue;
-            let foundShift = null, foundShiftIndex = -1;
             
-            for (let c = 0; c < Math.min(8, cols.length); c++) {
-                let norm = smartNormalize(cols[c]);
-                if (/^[MEN][-]?\w+$/i.test(norm)) { foundShift = norm; foundShiftIndex = c; break; }
-            }
-            if (foundShift) {
-                validShiftsSet.add(foundShift); 
-                let sequence = [], handoverNorm = null;
-                for (let c = foundShiftIndex + 1; c < cols.length; c++) {
-                    let cell = cleanTxt(cols[c]);
-                    if (!cell) continue;
-                    let cellNorm = smartNormalize(cell);
-                    if (cellNorm === foundShift) continue;
-                    let isHandover = false;
-                    let shiftMatch = cell.match(/([a-zA-Z]{1,3})\s*[-_]?\s*([a-zA-Z0-9]{1,5})/);
-                    if (shiftMatch) {
-                        let potentialShift = smartNormalize(shiftMatch[0]);
-                        if (/^[MEN][-]?\w+$/i.test(potentialShift) && potentialShift !== foundShift) { handoverNorm = potentialShift; isHandover = true; }
-                    } else if (cellNorm.includes('RES')) { handoverNorm = cellNorm; isHandover = true; }
-                    if (!isHandover && /^\d{3,4}$/.test(cell)) { if (!sequence.includes(cell)) sequence.push(cell); }
+            for (let c = 0; c < cols.length; c++) {
+                let cellVal = cleanTxt(cols[c]);
+                if (!cellVal) continue;
+                
+                let norm = smartNormalize(cellVal);
+                
+                // لو لقينا اسم وردية صريح (بدون أقواس التسليم)
+                if (/^[MEN][-]?\w+$/i.test(norm) && !cellVal.includes('RES') && !cellVal.includes('PTW') && !cellVal.includes('(')) {
+                    let foundShift = norm;
+                    validShiftsSet.add(foundShift); 
+                    
+                    let sequence = [], handoverNorm = null;
+                    
+                    for (let k = c + 1; k < cols.length; k++) {
+                        let nextCell = cleanTxt(cols[k]);
+                        if (!nextCell) continue;
+                        
+                        let nextCellNorm = smartNormalize(nextCell);
+                        let isHandover = false;
+                        
+                        // بندور على وردية تسليم
+                        let shiftMatch = nextCell.match(/([MEN]{1,3})\s*[-_]?\s*([a-zA-Z0-9]{1,5})/i);
+                        
+                        if (shiftMatch && smartNormalize(shiftMatch[0]) !== foundShift) {
+                            handoverNorm = smartNormalize(shiftMatch[0]);
+                            isHandover = true;
+                        } else if (nextCellNorm.includes('RES')) {
+                            handoverNorm = nextCellNorm;
+                            isHandover = true;
+                        } else if (/^[MEN][-]?\w+$/i.test(nextCellNorm) && nextCellNorm !== foundShift && !nextCell.includes('(')) {
+                            // لو لقى وردية تانية خالص في نفس السطر (بدون أقواس) يقف
+                            isHandover = true;
+                        }
+                        
+                        // الفرامل: يوقف السحب وميكملش
+                        if (isHandover) {
+                            break; 
+                        }
+                        
+                        if (/^\d{3,4}$/.test(nextCell)) { 
+                            if (!sequence.includes(nextCell)) sequence.push(nextCell); 
+                        }
+                    }
+                    
+                    if (!targetMap[foundShift]) { targetMap[foundShift] = { tripNumbers: [], handoverCode: null }; }
+                    targetMap[foundShift].tripNumbers = sequence; 
+                    if (handoverNorm) { targetMap[foundShift].handoverCode = handoverNorm; }
                 }
-                if (!targetMap[foundShift]) { targetMap[foundShift] = { tripNumbers: [], handoverCode: null }; }
-                targetMap[foundShift].tripNumbers = sequence; 
-                if (handoverNorm) { targetMap[foundShift].handoverCode = handoverNorm; }
             }
         }
     } catch(e) {}
@@ -1440,7 +1462,7 @@ async function loadAllData() {
             isInitialBroadcastLoad = false;
         });
 
-        // مواعيد الرحلات (القديم والجديد)
+        // مواعيد الرحلات
         await fetchAndParseFullSchedule(siwaTripsScheduleURL, siwaTripsMap, false);
         await fetchAndParseFullSchedule(luxorTripsScheduleURL, luxorTripsMap, false);
         await fetchAndParseFullSchedule(alexTripsScheduleURL, alexTripsMap, true);
@@ -2076,8 +2098,9 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     }
     return null;
 }
-                        
-        function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
+
+// 🛑 الدالة الذكية لليومي (البحث التلقائي عن الوردية في كل الجداول لو مش موجودة في الجدول الأساسي) 🛑
+function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driverRoster, dateValOverride = null) {
     if (isRestDay(shiftCodeRaw)) {
         return `<div class="text-center py-8 font-black bg-gradient-to-r from-red-50 to-rose-50 dark:from-red-900/20 dark:to-rose-900/20 rounded-2xl border border-red-200 dark:border-red-800 shadow-sm"><p class="text-red-500 text-lg">🏖️ ${t('إجازة', 'Day Off')} / ${shiftCodeRaw}</p></div>`;
     }
@@ -2092,7 +2115,6 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     let isAlex = upperSch.includes("ALEX") || upperSch.includes("416");
 
     let myShiftData = null, scheduleTypeName = "", activeTripsMap = {}, activeIncomingMap = {}, activeDataMap = {};
-    
     if (isCairo) { myShiftData = cairoDataMap[normShift]; scheduleTypeName = t("القاهرة", "Cairo"); activeTripsMap = cairoTripsMap; activeIncomingMap = cairoIncomingMap; activeDataMap = cairoDataMap; }
     else if (isArish) { myShiftData = arishDataMap[normShift]; scheduleTypeName = t("العريش", "Arish"); activeTripsMap = arishTripsMap; activeIncomingMap = arishIncomingMap; activeDataMap = arishDataMap; }
     else if (isAsyut) { myShiftData = asyutDataMap[normShift]; scheduleTypeName = t("أسيوط", "Asyut"); activeTripsMap = asyutTripsMap; activeIncomingMap = asyutIncomingMap; activeDataMap = asyutDataMap; }
@@ -2368,7 +2390,6 @@ function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
         return `<div class="text-center py-10 font-black bg-slate-100 dark:bg-gray-800 rounded-3xl border dark:border-gray-700 shadow-sm p-6"><p class="text-purple-600 dark:text-purple-400 text-lg mb-1">📋 ${t('البيان المسجل بالروستر:', 'Roster Record:')} (${shiftCodeRaw})</p><p class="text-gray-500 text-xs font-bold mt-2">${t('تطبيق / عمل مضاف بالروستر وليس له مسار رحلات معرّف حالياً.', 'Applied task without defined trips.')}</p></div>`;
     }
 }
-
 
 function buildDashboardData(driver, showLoading = true) {
     renderDailyDetails(); renderFullMonth(driver);
@@ -3314,4 +3335,3 @@ function applyManualAssignments() {
 </script>
 </body>
 </html>
-    
