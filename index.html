@@ -96,7 +96,7 @@ body { font-family: 'Cairo', sans-serif; }
     </button>
 </div>
 </form>
-
+    
 <form id="registerSection" class="space-y-5 hidden-section" onsubmit="event.preventDefault();">
 <div>
 <label class="block text-xs font-black mb-1.5" data-ar="رقم الراديو" data-en="Radio ID">رقم الراديو</label>
@@ -118,9 +118,7 @@ body { font-family: 'Cairo', sans-serif; }
 </form>
 </div>
 </div>
-
-<div id="dashboard-page" class="hidden-section min-h-screen flex flex-col">
-<!-- الشريط العلوي للقائد بـ RTL ثابت -->
+    <div id="dashboard-page" class="hidden-section min-h-screen flex flex-col">
 <nav dir="rtl" class="glass-panel shadow-sm border-b dark:border-gray-700/50 p-3 z-40 sticky top-0">
 <div class="max-w-6xl mx-auto flex justify-between items-center">
 <div>
@@ -136,7 +134,6 @@ body { font-family: 'Cairo', sans-serif; }
         <button onclick="toggleSettings()" class="relative p-2 text-gray-500 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-all focus:outline-none flex items-center justify-center">
             <span class="text-xl leading-none drop-shadow-sm">⚙️</span>
         </button>
-        <!-- القائمة المنسدلة ثابتة left-0 عشان ماتتقصش -->
         <div id="settingsMenu" class="hidden absolute left-0 mt-2 w-56 glass-panel rounded-2xl premium-shadow overflow-hidden z-50 border dark:border-gray-700 text-start divide-y divide-gray-100/50 dark:divide-gray-700/50">
             <button onclick="toggleAppLanguage()" class="w-full text-start px-4 py-3.5 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 font-black text-cyan-600 text-xs transition-colors" data-ar="🌐 تغيير اللغة (English)" data-en="🌐 Change Language (عربي)">🌐 تغيير اللغة (English)</button>
             <button onclick="openDriverReportsModal()" class="w-full text-start px-4 py-3.5 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 font-black text-rose-600 text-xs transition-colors" data-ar="📊 تقارير قائد القطار" data-en="📊 Driver Reports">📊 تقارير قائد القطار</button>
@@ -237,7 +234,7 @@ body { font-family: 'Cairo', sans-serif; }
 </div>
 </main>
 </div>
-    <!-- النوافذ المنبثقة (Modals) -->
+
 <div id="passwordChangeModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-start transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -262,7 +259,6 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- الشاشة المنبثقة لتقارير قائد القطار الجديدة -->
 <div id="driverReportsModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-2xl max-h-[90vh] flex flex-col rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-start transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4 shrink-0">
@@ -657,8 +653,6 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- نافذة النوتة السحرية المظبوطة 100% -->
 <div id="tripNoteModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-sm rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-start transition-all">
         <div class="flex justify-between items-center border-b dark:border-gray-700 pb-4 mb-4">
@@ -673,7 +667,6 @@ body { font-family: 'Cairo', sans-serif; }
         <button onclick="saveTripNote()" class="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white font-black py-3 rounded-xl text-sm shadow-md transition-transform hover:-translate-y-0.5" data-ar="حفظ الملاحظات" data-en="Save Notes">حفظ الملاحظات</button>
     </div>
 </div>
-<!-- ========================================== -->
 
 <div id="manualAssignModal" class="hidden-section fixed inset-0 bg-black/60 backdrop-blur-md z-[99999] flex items-center justify-center p-4">
     <div class="bg-white dark:bg-gray-800 w-full max-w-lg rounded-3xl premium-shadow p-6 border border-gray-200 dark:border-gray-700 relative text-start transition-all flex flex-col max-h-[90vh]">
@@ -689,7 +682,6 @@ body { font-family: 'Cairo', sans-serif; }
 </div>
 
 <div id="admin-page" class="hidden-section min-h-screen flex flex-col bg-slate-50 dark:bg-slate-900">
-    <!-- الشريط العلوي للإدارة (ثابت دايما RTL) -->
     <nav dir="rtl" class="bg-gradient-to-r from-purple-800 to-indigo-900 text-white p-4 shadow-lg flex justify-between items-center relative overflow-hidden">
         <h1 class="text-xl font-black relative z-10 flex items-center gap-2"><span>👑</span> <span data-ar="لوحة الإدارة الشاملة" data-en="Admin Dashboard">لوحة الإدارة الشاملة</span></h1>
         <div class="flex items-center gap-2 relative z-10">
@@ -765,7 +757,6 @@ body { font-family: 'Cairo', sans-serif; }
                 <h3 class="text-lg font-black text-amber-800 dark:text-amber-400 mb-4 flex items-center gap-2" data-ar="🔑 طلبات استعادة كلمات المرور الواردة" data-en="🔑 Password Reset Requests">🔑 طلبات استعادة كلمات المرور الواردة</h3>
                 <div id="password-requests-list" class="space-y-3 max-h-96 overflow-y-auto hide-scrollbar"></div>
             </div>
-            <!-- مربع الإشعارات العامة للأدمن -->
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border-s-4 border-s-red-500 dark:border-gray-700">
                 <h3 class="text-lg font-black text-gray-800 dark:text-gray-200 mb-4 flex items-center gap-2">
                     <span class="text-2xl">📢</span> <span data-ar="إرسال تنبيه نصي لجميع القادة" data-en="Send Global Broadcast">إرسال تنبيه نصي لجميع القادة</span>
@@ -880,14 +871,13 @@ measurementId: "G-ZF4GEWPG44"
 if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
 const db = firebase.database();
 
-// اللينكات الأساسية
+// اللينكات الأساسية القديمة
 const dbURL = 'https://docs.google.com/spreadsheets/d/1W292oVl-gvwRP6MtRA5n8xq_gh0wJ_N249-pbYL6HHU/export?format=csv';
 
 const aswanShiftsURL = 'https://docs.google.com/spreadsheets/d/1PKOrSSHb80Ay-zHvloh6TiI12oWPN3GhqsRTilTxRKI/export?format=csv';
 const alexShiftsURL = 'https://docs.google.com/spreadsheets/d/1a05qIi7EXMYNGqZaDUl4MLtQaS4WCj7MNKklS7_yNe8/export?format=csv';
 const luxorShiftsURL = 'https://docs.google.com/spreadsheets/d/1xllMoNNXzYMnG20zBAw7hzu-saWOMbC3efcPrg7fBgQ/export?format=csv';
 
-// لينكات أليكس 403 الجديدة 🚀
 const alex403ShiftsURL = 'https://docs.google.com/spreadsheets/d/1hDAxDucJeqrB1TAGqnmlqiMb_GAzWjPlsN-eMv5uBvc/export?format=csv';
 const alex403CercrlURL = 'https://docs.google.com/spreadsheets/d/1B2BN-kaHAvJIBPrnVVRd53RgGLvwUVxi/export?format=csv';
 const alex403TripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1Kp4cj5_ko-Q7yg_4ReHJ1yVK98XsRNzg/export?format=csv';
@@ -899,13 +889,35 @@ const luxorCercrlURL = 'https://docs.google.com/spreadsheets/d/1FAR2CV6mDM5Iq7gQ
 const alexTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1vs7X7cyBP2jJMJbl2Lan8CHgICno36N8bD3EL7FZZDM/export?format=csv';
 const alexCercrlURL = 'https://docs.google.com/spreadsheets/d/1pnK_P08R3vBY-R0cjCdrfjAaQ2hIBlc-BACbrvXr_kU/export?format=csv';
 
-// جداول التحويل
+// ==========================================
+// الجداول الجديدة 
+// ==========================================
+// 1. كايرو
+const cairoShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRZRnzR5qBgveTRWcD4hprIH3oqT-EhDMQy8RHTgo-tb1bl_w9JgRYuZgxR5QGv5iKNdjxPNMJzuJl-/pub?output=csv';
+const cairoTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSQvL6pE1ZMeNykpsuzjnr3uKQMDXtPqKXaACHPp8PB-7M1p5B8FXuBIZPSCyq1sVs4IUZi6L8ETnST/pub?output=csv';
+const cairoCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTnrkvFE_Z_ElRU4fjh6M_9YkPrKswdSKRaAqq_3sY2hHMa26X7qdxrlZU7kgenERBCrvcakqly2wB1/pub?output=csv';
+
+// 2. أسيوط
+const asyutShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vT0RGGGNdmbc4leJTFxaF1W-IfuZCPk54UKmA1VeYnCiWzVPD71tMjtCDsvFpTzX4eC5RCeREbR8KQ5/pub?output=csv';
+const asyutTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRIb2vGZ5mUsd9VxVeT43MWX3wt5cQu0VtCROK9y7DkuiUlg8Sypot-EHOnbalzA-8nBCRitLX-7rVL/pub?output=csv';
+const asyutCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ03f0FrgE4tDzs5tvPHv8KoZmah9HrymN1x0K8Hw-k8xetoaZ5cVwDEMadfHlXBBq1SvPHeDpHy5aJ/pub?output=csv';
+
+// 3. العريش (تم وضع اللينك القديم للتايم تيبول)
+const arishShiftsURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTY0PpNdSMbqcMHXhTX9ikbPWvUbJXDWVGXHgZz8OVSAi5riBmZdfZ9B6G6ca7lpAM-owG-eN1t2InR/pub?output=csv';
+const arishTripsScheduleURL = 'https://docs.google.com/spreadsheets/d/1w2vE1XPcP7udIzax6ExZ6Y_bJvlT3cu-/export?format=csv';
+const arishCercrlURL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRC0U8woQR8vRJY6ee_17OdbGe5-O33wnjeAOdAkrG5GW7H1FGl5qAKcOjAislZtsfX2oDOYsIOchCy/pub?output=csv';
+
 const transitionSheetsURLs = {
     "WD-447_WE-341": "https://docs.google.com/spreadsheets/d/1WpE5jHo99M8ftBt8HHXbasPXJmAuQh5hCBql0qc_xLk/export?format=csv",
     "WE-341_ST-416": "https://docs.google.com/spreadsheets/d/1ckXEgeVcQdBdyLcNtBdkLK9FSpWJyVZdyxgYWj2WAas/export?format=csv",
     "ST-416_WD-447": "https://docs.google.com/spreadsheets/d/1vreq2l4hCr8xQVeoUSukmc5o01wRavBUsXHhD9kBF0w/export?format=csv",
     "ST-403_WE-341": "https://docs.google.com/spreadsheets/d/1qgDYHzGFK3v5iPO780ygxBkW-HER_tIw/export?format=csv",
-    "WD-447_ST-403": "https://docs.google.com/spreadsheets/d/1PpnMdoynGh2VlOTxsejswCBCMRcQqH8K/export?format=csv"
+    "WD-447_ST-403": "https://docs.google.com/spreadsheets/d/1PpnMdoynGh2VlOTxsejswCBCMRcQqH8K/export?format=csv",
+    // تحويلات الجداول الجديدة
+    "WD-450_FR-369": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2S9a9jea6fyuFyNN1AqRrpURWyqazbShpdmCjj4Gs-v-Kvo2AqBw3elevCemf-IH-CEicf3nRcF57/pub?output=csv",
+    "FR-369_ST-407": "https://docs.google.com/spreadsheets/d/e/2PACX-1vT0w2ZtetxuwLgqqEJCbAbnHdXa54-yGXXa__F_NHNNycAKomkaT0k3BFz_fV-GXTimoUkXIdOpOXSv/pub?output=csv",
+    "ST-407_WD-450": "https://docs.google.com/spreadsheets/d/e/2PACX-1vSZtRP57OEO5nenbJ3lizJ9-JHnP_o3lhn4jKsPhAQGh9yIydN7PHqk6gaZANu2Xkn_-Spb-C2dSc0U/pub?output=csv",
+    "WD-447_WD-450": "https://docs.google.com/spreadsheets/d/1M7bCfrLy8JgDr4Cw_R3MBG46D-FgnNwSEvlewfovZeg/export?format=csv"
 };
 
 const driverPrefsURL = 'https://docs.google.com/spreadsheets/d/1bwxDHamv7bJEpdfTG9brzjoBdu5go9YBcODBCQHG8Ko/export?format=csv';
@@ -913,8 +925,11 @@ const driverPrefsURL = 'https://docs.google.com/spreadsheets/d/1bwxDHamv7bJEpdfT
 let transitionMatrix = {};
 let driversData = [], rosterDataMap = {}, schedulesDataMap = {};
 let aswanDataMap = {}, luxorDataMap = {}, alexDataMap = {}, alex403DataMap = {}; 
+let cairoDataMap = {}, arishDataMap = {}, asyutDataMap = {}; 
 let siwaTripsMap = {}, luxorTripsMap = {}, alexTripsMap = {}, alex403TripsMap = {};
+let cairoTripsMap = {}, arishTripsMap = {}, asyutTripsMap = {};
 let siwaIncomingMap = {}, luxorIncomingMap = {}, alexIncomingMap = {}, alex403IncomingMap = {};
+let cairoIncomingMap = {}, arishIncomingMap = {}, asyutIncomingMap = {};
 let driverPreferencesMap = {}; 
 let currentDriver = null, validShiftsSet = new Set(), extractedBatchRoster = [];
 let alarmInterval = null, alertedTripsToday = new Set();
@@ -1052,7 +1067,6 @@ function isRestDay(code) {
     return ['راحة', 'R', 'OFF', 'REST', 'ABSENT', 'AB', '-', 'NULL', 'AL', 'SL', 'CL', 'AL-SV', 'OOO', 'SICK', 'CASUAL', 'ANNUAL', 'LEAVE', 'PH', 'TRG', 'SICK LEAVE', 'CASUAL LEAVE', 'ANNUAL LEAVE', 'ANNUAL LEAVE SV', 'OUT OF OPERATION'].includes(c) || c.includes('LEAVE');
 }
 
-// ============== النوتة الفورية المباشرة (مطابقة لكود 7 تماماً) ==============
 function openTripNoteModal(tNum, dateVal) {
     const modal = document.getElementById('tripNoteModal');
     if (!modal) return;
@@ -1104,7 +1118,6 @@ function saveTripNote() {
     renderDailyDetails(); 
 }
 window.saveTripNote = saveTripNote;
-// =============================================================================
 
 setInterval(() => { if (currentDriver && !isGhostMode && !document.getElementById('dashboard-page').classList.contains('hidden-section')) { renderDailyDetails(); } }, 10000);
 
@@ -1180,15 +1193,20 @@ function updateLiveRadars() {
     });
 }
 
+// ⚠️ دالة سحب الجداول الأصلية بتاعتك بدون أي تعديل (شغالة في سيوة والأقصر زي الأول بالظبط)
 async function fetchAndParseShifts(url, targetMap) {
     try {
         const res = await fetch(url);
-        const lines = parseCSVText(await res.text());
+        const text = await res.text();
+        if (text.trim().toLowerCase().startsWith('<!doctype html>')) return;
+
+        const lines = parseCSVText(text);
         for (let i = 0; i < lines.length; i++) {
             let cols = parseCSVRow(lines[i]);
             if (cols.join('').trim() === '') continue;
             let foundShift = null, foundShiftIndex = -1;
-            for (let c = 0; c < Math.min(cols.length, 8); c++) {
+            
+            for (let c = 0; c < Math.min(8, cols.length); c++) {
                 let norm = smartNormalize(cols[c]);
                 if (/^[MEN][-]?\w+$/i.test(norm)) { foundShift = norm; foundShiftIndex = c; break; }
             }
@@ -1219,7 +1237,11 @@ async function fetchAndParseShifts(url, targetMap) {
 async function loadAllTransitionSheets() {
     for (let key in transitionSheetsURLs) {
         try {
-            let lines = parseCSVText(await (await fetch(transitionSheetsURLs[key])).text());
+            let res = await fetch(transitionSheetsURLs[key]);
+            let text = await res.text();
+            if (text.trim().toLowerCase().startsWith('<!doctype html>')) continue;
+
+            let lines = parseCSVText(text);
             let matrixForPair = {};
             let currentShift = null, currentSequence = [], storageLoc = "", sweepCode = "", handover = "", notes = "";
             for (let i = 1; i < lines.length; i++) {
@@ -1259,7 +1281,11 @@ async function loadAllTransitionSheets() {
 
 async function fetchAndParseFullSchedule(url, tripsMapTarget, isAlex = false) {
     try {
-        const lines = parseCSVText(await (await fetch(url)).text());
+        let res = await fetch(url);
+        let text = await res.text();
+        if (text.trim().toLowerCase().startsWith('<!doctype html>')) return;
+
+        const lines = parseCSVText(text);
         let headers = parseCSVRow(lines[0]).map(h => cleanTxt(h));
         for(let i = 1; i < lines.length; i++) {
             let cols = parseCSVRow(lines[i]);
@@ -1295,8 +1321,11 @@ async function fetchAndParseFullSchedule(url, tripsMapTarget, isAlex = false) {
 
 async function fetchDriverPreferences() {
     try {
-        const res = await fetch(driverPrefsURL);
-        const lines = parseCSVText(await res.text());
+        let res = await fetch(driverPrefsURL);
+        let text = await res.text();
+        if (text.trim().toLowerCase().startsWith('<!doctype html>')) return;
+
+        const lines = parseCSVText(text);
         for (let i = 1; i < lines.length; i++) {
             let cols = parseCSVRow(lines[i]);
             if (cols.length < 21) continue;
@@ -1313,8 +1342,7 @@ async function fetchDriverPreferences() {
         }
     } catch (e) { }
 }
-
-let isInitialBroadcastLoad = true;
+    let isInitialBroadcastLoad = true;
 let lastBroadcastText = "";
 
 async function loadAllData() {
@@ -1324,13 +1352,20 @@ async function loadAllData() {
         });
 
         loadAllTransitionSheets(); 
+        
+        // جلب الورادي (القديم والجديد)
         await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
         await fetchAndParseShifts(alexShiftsURL, alexDataMap);
         await fetchAndParseShifts(alex403ShiftsURL, alex403DataMap); 
         await fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
+        await fetchAndParseShifts(cairoShiftsURL, cairoDataMap);
+        await fetchAndParseShifts(arishShiftsURL, arishDataMap);
+        await fetchAndParseShifts(asyutShiftsURL, asyutDataMap);
+
         await fetchDriverPreferences(); 
 
         fetch(dbURL).then(res => res.text()).then(text => {
+            if (text.trim().toLowerCase().startsWith('<!doctype html>')) return;
             const dbLines = parseCSVText(text);
             for(let i = 1; i < dbLines.length; i++) {
                 const row = parseCSVRow(dbLines[i]);
@@ -1405,14 +1440,22 @@ async function loadAllData() {
             isInitialBroadcastLoad = false;
         });
 
+        // مواعيد الرحلات (القديم والجديد)
         await fetchAndParseFullSchedule(siwaTripsScheduleURL, siwaTripsMap, false);
         await fetchAndParseFullSchedule(luxorTripsScheduleURL, luxorTripsMap, false);
         await fetchAndParseFullSchedule(alexTripsScheduleURL, alexTripsMap, true);
         await fetchAndParseFullSchedule(alex403TripsScheduleURL, alex403TripsMap, true); 
+        await fetchAndParseFullSchedule(cairoTripsScheduleURL, cairoTripsMap, false);
+        await fetchAndParseFullSchedule(arishTripsScheduleURL, arishTripsMap, false);
+        await fetchAndParseFullSchedule(asyutTripsScheduleURL, asyutTripsMap, false);
 
         const buildIncomingMap = async (url, targetMap) => {
             try {
-                const rows = parseCSVText(await (await fetch(url)).text()).map(row => parseCSVRow(row));
+                let res = await fetch(url);
+                let text = await res.text();
+                if (text.trim().toLowerCase().startsWith('<!doctype html>')) return;
+                
+                const rows = parseCSVText(text).map(row => parseCSVRow(row));
                 for (let col = 0; col < (rows[0] ? rows[0].length : 0); col++) {
                     let prevCell = null;
                     for (let row = 0; row < rows.length; row++) {
@@ -1425,10 +1468,14 @@ async function loadAllData() {
                 }
             } catch(e) {}
         };
+        
         await buildIncomingMap(siwaCercrlURL, siwaIncomingMap);
         await buildIncomingMap(luxorCercrlURL, luxorIncomingMap);
         await buildIncomingMap(alexCercrlURL, alexIncomingMap);
         await buildIncomingMap(alex403CercrlURL, alex403IncomingMap); 
+        await buildIncomingMap(cairoCercrlURL, cairoIncomingMap);
+        await buildIncomingMap(arishCercrlURL, arishIncomingMap);
+        await buildIncomingMap(asyutCercrlURL, asyutIncomingMap);
 
     } catch (error) {}
 }
@@ -1850,15 +1897,21 @@ function extractDriverReport() {
         let sch = getSmartScheduleName(dateVal, dayNum);
 
         let upperSch = sch.toUpperCase();
-        let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
-        let isSiwa = upperSch.includes("SIWA") || upperSch.includes("WD");
+        let isCairo = upperSch.includes("CAIRO") || upperSch.includes("450");
+        let isArish = upperSch.includes("ARISH") || upperSch.includes("407");
+        let isAsyut = upperSch.includes("ASYUT") || upperSch.includes("369");
+        let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("341");
+        let isSiwa = upperSch.includes("SIWA") || upperSch.includes("447");
         let isAlex403 = upperSch.includes("403");
-        let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST-416");
+        let isAlex = upperSch.includes("ALEX") || upperSch.includes("416");
         
-        let myShiftData = isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : 
+        let myShiftData = isCairo ? cairoDataMap[smartNormalize(shiftCode)] :
+                          (isArish ? arishDataMap[smartNormalize(shiftCode)] :
+                          (isAsyut ? asyutDataMap[smartNormalize(shiftCode)] :
+                          (isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : 
                           (isSiwa ? aswanDataMap[smartNormalize(shiftCode)] : 
                           (isAlex403 ? alex403DataMap[smartNormalize(shiftCode)] : 
-                          alexDataMap[smartNormalize(shiftCode)]));
+                          alexDataMap[smartNormalize(shiftCode)])))));
 
         html += `<div class="mb-4 pb-3 border-b dark:border-gray-700 text-start">
             <h4 class="font-black text-rose-600 text-base">${t('تقرير يوم:', 'Report for:')} ${dateVal}</h4>
@@ -1919,15 +1972,21 @@ function extractDriverReport() {
                 let { dateVal, shiftCode, d, notes } = res;
                 let sch = getSmartScheduleName(dateVal, d);
                 let upperSch = sch.toUpperCase();
-                let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
-                let isSiwa = upperSch.includes("SIWA") || upperSch.includes("WD");
+                let isCairo = upperSch.includes("CAIRO") || upperSch.includes("450");
+                let isArish = upperSch.includes("ARISH") || upperSch.includes("407");
+                let isAsyut = upperSch.includes("ASYUT") || upperSch.includes("369");
+                let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("341");
+                let isSiwa = upperSch.includes("SIWA") || upperSch.includes("447");
                 let isAlex403 = upperSch.includes("403");
-                let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST-416");
+                let isAlex = upperSch.includes("ALEX") || upperSch.includes("416");
                 
-                let myShiftData = isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : 
+                let myShiftData = isCairo ? cairoDataMap[smartNormalize(shiftCode)] :
+                                  (isArish ? arishDataMap[smartNormalize(shiftCode)] :
+                                  (isAsyut ? asyutDataMap[smartNormalize(shiftCode)] :
+                                  (isLuxor ? luxorDataMap[smartNormalize(shiftCode)] : 
                                   (isSiwa ? aswanDataMap[smartNormalize(shiftCode)] : 
                                   (isAlex403 ? alex403DataMap[smartNormalize(shiftCode)] : 
-                                  alexDataMap[smartNormalize(shiftCode)]));
+                                  alexDataMap[smartNormalize(shiftCode)])))));
 
                 if (myShiftData && myShiftData.tripNumbers) {
                     myShiftData.tripNumbers.forEach(tNum => {
@@ -2005,7 +2064,8 @@ function toggleTheme() {
     const themeBtn = document.getElementById('themeToggleBtn');
     if(themeBtn) { themeBtn.textContent = isDark ? t("الوضع النهاري ☀️", "Light Mode ☀️") : t("الوضع الليلي 🌙", "Dark Mode 🌙"); }
 }
-    function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
+
+function getNightShiftData(todayScheduleStr, tomorrowScheduleStr, shiftCode) {
     if (!todayScheduleStr || !tomorrowScheduleStr || !shiftCode) return null;
     let cleanToday = todayScheduleStr.split('[')[0].replace(/-$/, '').trim();
     let cleanTomorrow = tomorrowScheduleStr.split('[')[0].replace(/-$/, '').trim();
@@ -2023,13 +2083,19 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
     }
 
     let upperSch = (scheduleRaw || "").toUpperCase();
-    let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("WE");
-    let isSiwa = upperSch.includes("SIWA") || upperSch.includes("WD");
+    let isCairo = upperSch.includes("CAIRO") || upperSch.includes("450");
+    let isArish = upperSch.includes("ARISH") || upperSch.includes("407");
+    let isAsyut = upperSch.includes("ASYUT") || upperSch.includes("369");
+    let isLuxor = upperSch.includes("LUXOR") || upperSch.includes("341");
+    let isSiwa = upperSch.includes("SIWA") || upperSch.includes("447");
     let isAlex403 = upperSch.includes("403");
-    let isAlex = upperSch.includes("ALEX") || upperSch.includes("ST-416");
+    let isAlex = upperSch.includes("ALEX") || upperSch.includes("416");
 
     let myShiftData = null, scheduleTypeName = "", activeTripsMap = {}, activeIncomingMap = {}, activeDataMap = {};
-    if (isLuxor) { myShiftData = luxorDataMap[normShift]; scheduleTypeName = t("الأقصر", "Luxor"); activeTripsMap = luxorTripsMap; activeIncomingMap = luxorIncomingMap; activeDataMap = luxorDataMap; } 
+    if (isCairo) { myShiftData = cairoDataMap[normShift]; scheduleTypeName = t("القاهرة", "Cairo"); activeTripsMap = cairoTripsMap; activeIncomingMap = cairoIncomingMap; activeDataMap = cairoDataMap; }
+    else if (isArish) { myShiftData = arishDataMap[normShift]; scheduleTypeName = t("العريش", "Arish"); activeTripsMap = arishTripsMap; activeIncomingMap = arishIncomingMap; activeDataMap = arishDataMap; }
+    else if (isAsyut) { myShiftData = asyutDataMap[normShift]; scheduleTypeName = t("أسيوط", "Asyut"); activeTripsMap = asyutTripsMap; activeIncomingMap = asyutIncomingMap; activeDataMap = asyutDataMap; }
+    else if (isLuxor) { myShiftData = luxorDataMap[normShift]; scheduleTypeName = t("الأقصر", "Luxor"); activeTripsMap = luxorTripsMap; activeIncomingMap = luxorIncomingMap; activeDataMap = luxorDataMap; } 
     else if (isSiwa) { myShiftData = aswanDataMap[normShift]; scheduleTypeName = t("سيوة", "Siwa"); activeTripsMap = siwaTripsMap; activeIncomingMap = siwaIncomingMap; activeDataMap = aswanDataMap; } 
     else if (isAlex403) { myShiftData = alex403DataMap[normShift]; scheduleTypeName = t("الإسكندرية 403", "Alex 403"); activeTripsMap = alex403TripsMap; activeIncomingMap = alex403IncomingMap; activeDataMap = alex403DataMap; }
     else if (isAlex) { myShiftData = alexDataMap[normShift]; scheduleTypeName = t("الإسكندرية", "Alexandria"); activeTripsMap = alexTripsMap; activeIncomingMap = alexIncomingMap; activeDataMap = alexDataMap; }
@@ -2059,7 +2125,10 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
             transitionNotes = nightTransitionData.notes || "";
             let tomorrowUpper = tomorrowScheduleRaw.toUpperCase();
             
-            if (tomorrowUpper.includes("LUXOR") || tomorrowUpper.includes("WE")) { tomorrowTripsMap = luxorTripsMap; tomorrowIncomingMap = luxorIncomingMap; } 
+            if (tomorrowUpper.includes("CAIRO") || tomorrowUpper.includes("450")) { tomorrowTripsMap = cairoTripsMap; tomorrowIncomingMap = cairoIncomingMap; }
+            else if (tomorrowUpper.includes("ARISH") || tomorrowUpper.includes("407")) { tomorrowTripsMap = arishTripsMap; tomorrowIncomingMap = arishIncomingMap; }
+            else if (tomorrowUpper.includes("ASYUT") || tomorrowUpper.includes("369")) { tomorrowTripsMap = asyutTripsMap; tomorrowIncomingMap = asyutIncomingMap; }
+            else if (tomorrowUpper.includes("LUXOR") || tomorrowUpper.includes("WE")) { tomorrowTripsMap = luxorTripsMap; tomorrowIncomingMap = luxorIncomingMap; } 
             else if (tomorrowUpper.includes("SIWA") || tomorrowUpper.includes("WD")) { tomorrowTripsMap = siwaTripsMap; tomorrowIncomingMap = siwaIncomingMap; } 
             else if (tomorrowUpper.includes("403")) { tomorrowTripsMap = alex403TripsMap; tomorrowIncomingMap = alex403IncomingMap; }
             else if (tomorrowUpper.includes("ALEX") || tomorrowUpper.includes("ST-416")) { tomorrowTripsMap = alexTripsMap; tomorrowIncomingMap = alexIncomingMap; }
@@ -2151,20 +2220,29 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                 if (nData && nData.trips) {
                     colleagueShiftData = { tripNumbers: nData.trips };
                     let yTomUpper = scheduleRaw.toUpperCase();
-                    if (yTomUpper.includes("LUXOR") || yTomUpper.includes("WE")) { colleagueTripsMap = luxorTripsMap; } 
+                    if (yTomUpper.includes("CAIRO") || yTomUpper.includes("450")) { colleagueTripsMap = cairoTripsMap; }
+                    else if (yTomUpper.includes("ARISH") || yTomUpper.includes("407")) { colleagueTripsMap = arishTripsMap; }
+                    else if (yTomUpper.includes("ASYUT") || yTomUpper.includes("369")) { colleagueTripsMap = asyutTripsMap; }
+                    else if (yTomUpper.includes("LUXOR") || yTomUpper.includes("WE")) { colleagueTripsMap = luxorTripsMap; } 
                     else if (yTomUpper.includes("SIWA") || yTomUpper.includes("WD")) { colleagueTripsMap = siwaTripsMap; } 
                     else if (yTomUpper.includes("403")) { colleagueTripsMap = alex403TripsMap; }
                     else if (yTomUpper.includes("ALEX") || yTomUpper.includes("ST-416")) { colleagueTripsMap = alexTripsMap; }
                 } else {
                     let ySchUpper = yesterdayScheduleRaw.toUpperCase();
-                    let yDataMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorDataMap : 
+                    let yDataMap = (ySchUpper.includes("CAIRO") || ySchUpper.includes("450")) ? cairoDataMap :
+                                   (ySchUpper.includes("ARISH") || ySchUpper.includes("407") ? arishDataMap :
+                                   (ySchUpper.includes("ASYUT") || ySchUpper.includes("369") ? asyutDataMap :
+                                   (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorDataMap : 
                                    (ySchUpper.includes("403") ? alex403DataMap : 
-                                   ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexDataMap : aswanDataMap));
+                                   ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexDataMap : aswanDataMap))));
                     
                     colleagueShiftData = yDataMap[receiveFromCode];
-                    colleagueTripsMap = (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorTripsMap : 
+                    colleagueTripsMap = (ySchUpper.includes("CAIRO") || ySchUpper.includes("450")) ? cairoTripsMap :
+                                        (ySchUpper.includes("ARISH") || ySchUpper.includes("407") ? arishTripsMap :
+                                        (ySchUpper.includes("ASYUT") || ySchUpper.includes("369") ? asyutTripsMap :
+                                        (ySchUpper.includes("LUXOR") || ySchUpper.includes("WE")) ? luxorTripsMap : 
                                         (ySchUpper.includes("403") ? alex403TripsMap : 
-                                        ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexTripsMap : siwaTripsMap));
+                                        ((ySchUpper.includes("ALEX") || ySchUpper.includes("ST")) ? alexTripsMap : siwaTripsMap))));
                 }
             } else {
                 colleagueShiftData = activeDataMap[receiveFromCode];
@@ -2228,7 +2306,10 @@ function generateDayTripsHTML(dayNum, shiftCodeRaw, normShift, scheduleRaw, driv
                     else { incMatch = activeTripsMap[incNumInt] || tomorrowTripsMap[incNumInt]; } 
                 } else { incMatch = activeTripsMap[incomingCode]; }
                 if (!incMatch) { 
-                    if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode]; 
+                    if (cairoTripsMap[incomingCode]) incMatch = cairoTripsMap[incomingCode];
+                    else if (arishTripsMap[incomingCode]) incMatch = arishTripsMap[incomingCode];
+                    else if (asyutTripsMap[incomingCode]) incMatch = asyutTripsMap[incomingCode];
+                    else if (siwaTripsMap[incomingCode]) incMatch = siwaTripsMap[incomingCode]; 
                     else if (luxorTripsMap[incomingCode]) incMatch = luxorTripsMap[incomingCode]; 
                     else if (alex403TripsMap[incomingCode]) incMatch = alex403TripsMap[incomingCode];
                     else if (alexTripsMap[incomingCode]) incMatch = alexTripsMap[incomingCode]; 
@@ -2568,17 +2649,28 @@ function searchByTripCode() {
     let scheduleRaw = getSmartScheduleName(dateVal, dayNum);
     let upperSch = scheduleRaw.toUpperCase();
     
-    let isLuxorActive = upperSch.includes("LUXOR") || upperSch.includes("WE");
+    let isCairoActive = upperSch.includes("CAIRO") || upperSch.includes("450");
+    let isArishActive = upperSch.includes("ARISH") || upperSch.includes("407");
+    let isAsyutActive = upperSch.includes("ASYUT") || upperSch.includes("369");
+    let isLuxorActive = upperSch.includes("LUXOR") || upperSch.includes("341");
     let isAlex403Active = upperSch.includes("403");
-    let isAlexActive = upperSch.includes("ALEX") || upperSch.includes("ST-416");
+    let isAlexActive = upperSch.includes("ALEX") || upperSch.includes("416");
     
-    let activeDataMap = isLuxorActive ? luxorDataMap : (isAlex403Active ? alex403DataMap : (isAlexActive ? alexDataMap : aswanDataMap));
+    let activeDataMap = isCairoActive ? cairoDataMap : 
+                        (isArishActive ? arishDataMap : 
+                        (isAsyutActive ? asyutDataMap : 
+                        (isLuxorActive ? luxorDataMap : 
+                        (isAlex403Active ? alex403DataMap : 
+                        (isAlexActive ? alexDataMap : aswanDataMap)))));
     
     let targetShiftCode = normQuery;
     let shiftData = activeDataMap[targetShiftCode];
 
     if (!shiftData && !/^\d{3,4}$/.test(normQuery)) {
-        if (aswanDataMap[targetShiftCode]) { shiftData = aswanDataMap[targetShiftCode]; scheduleRaw = "WD-447-[SIWA]"; }
+        if (cairoDataMap[targetShiftCode]) { shiftData = cairoDataMap[targetShiftCode]; scheduleRaw = "WD-450-[CAIRO]"; }
+        else if (arishDataMap[targetShiftCode]) { shiftData = arishDataMap[targetShiftCode]; scheduleRaw = "ST-407-[ARISH]"; }
+        else if (asyutDataMap[targetShiftCode]) { shiftData = asyutDataMap[targetShiftCode]; scheduleRaw = "FR-369-[ASYUT]"; }
+        else if (aswanDataMap[targetShiftCode]) { shiftData = aswanDataMap[targetShiftCode]; scheduleRaw = "WD-447-[SIWA]"; }
         else if (luxorDataMap[targetShiftCode]) { shiftData = luxorDataMap[targetShiftCode]; scheduleRaw = "WE-341-[LUXOR]"; }
         else if (alex403DataMap[targetShiftCode]) { shiftData = alex403DataMap[targetShiftCode]; scheduleRaw = "ST-403-[ALEX]"; }
         else if (alexDataMap[targetShiftCode]) { shiftData = alexDataMap[targetShiftCode]; scheduleRaw = "ST-416-[ALEX_WFH]"; }
@@ -2594,6 +2686,9 @@ function searchByTripCode() {
         }
         if (!shiftData) {
             let mapsConfigs = [
+                { map: cairoDataMap, sch: "WD-450-[CAIRO]" },
+                { map: arishDataMap, sch: "ST-407-[ARISH]" },
+                { map: asyutDataMap, sch: "FR-369-[ASYUT]" },
                 { map: aswanDataMap, sch: "WD-447-[SIWA]" },
                 { map: luxorDataMap, sch: "WE-341-[LUXOR]" },
                 { map: alex403DataMap, sch: "ST-403-[ALEX]" },
@@ -2692,9 +2787,12 @@ function updateLiveAdminMap() {
     let upperSch = activeMapSch.toUpperCase();
 
     let activeTripsMap = {}, activeShiftDataMap = {};
-    if (upperSch.includes("LUXOR") || upperSch.includes("WE")) { activeTripsMap = luxorTripsMap; activeShiftDataMap = luxorDataMap; } 
+    if (upperSch.includes("CAIRO") || upperSch.includes("450")) { activeTripsMap = cairoTripsMap; activeShiftDataMap = cairoDataMap; }
+    else if (upperSch.includes("ARISH") || upperSch.includes("407")) { activeTripsMap = arishTripsMap; activeShiftDataMap = arishDataMap; }
+    else if (upperSch.includes("ASYUT") || upperSch.includes("369")) { activeTripsMap = asyutTripsMap; activeShiftDataMap = asyutDataMap; }
+    else if (upperSch.includes("LUXOR") || upperSch.includes("341")) { activeTripsMap = luxorTripsMap; activeShiftDataMap = luxorDataMap; } 
     else if (upperSch.includes("403")) { activeTripsMap = alex403TripsMap; activeShiftDataMap = alex403DataMap; }
-    else if (upperSch.includes("ALEX") || upperSch.includes("ST")) { activeTripsMap = alexTripsMap; activeShiftDataMap = alexDataMap; } 
+    else if (upperSch.includes("ALEX") || upperSch.includes("416")) { activeTripsMap = alexTripsMap; activeShiftDataMap = alexDataMap; } 
     else { activeTripsMap = siwaTripsMap; activeShiftDataMap = aswanDataMap; }
 
     dailyShiftToDriver = {};
@@ -2717,9 +2815,14 @@ function updateLiveAdminMap() {
             if (nData && nData.trips) {
                 assignedTrips = nData.trips;
             } else {
-                let baseDataMap = (baseSch.toUpperCase().includes("LUXOR") || baseSch.toUpperCase().includes("WE")) ? luxorDataMap : 
-                                  (baseSch.toUpperCase().includes("403") ? alex403DataMap : 
-                                  ((baseSch.toUpperCase().includes("ALEX") || baseSch.toUpperCase().includes("ST")) ? alexDataMap : aswanDataMap));
+                let baseUpper = baseSch.toUpperCase();
+                let baseDataMap = (baseUpper.includes("CAIRO") || baseUpper.includes("450")) ? cairoDataMap :
+                                  (baseUpper.includes("ARISH") || baseUpper.includes("407")) ? arishDataMap :
+                                  (baseUpper.includes("ASYUT") || baseUpper.includes("369")) ? asyutDataMap :
+                                  (baseUpper.includes("LUXOR") || baseUpper.includes("341")) ? luxorDataMap : 
+                                  (baseUpper.includes("403") ? alex403DataMap : 
+                                  ((baseUpper.includes("ALEX") || baseUpper.includes("416")) ? alexDataMap : aswanDataMap));
+                                  
                 if (baseDataMap[shiftCode] && baseDataMap[shiftCode].tripNumbers) { assignedTrips = baseDataMap[shiftCode].tripNumbers; }
             }
         } else {
@@ -2827,7 +2930,7 @@ function processRawTextInput() {
         if (!upper) return null;
 
         if (isDailyMode) {
-            if (upper.includes('TRG') || upper.includes('PTW') || upper.includes('DTSLM') || upper.includes('DTABA')) {
+            if (upper.includes('TRG') || upper.includes('PTW') || upper.includes('DTSLM') || upper.includes('DTABA') || upper.includes('DTIMB')) {
                 return null; 
             }
         }
@@ -3136,6 +3239,7 @@ function openManualAssignModal() {
     container.innerHTML = '';
     const trickyShiftsList = [
         "M-DTABA", "E-DTABA", "N-DTABA", "M-DTSLM", "E-DTSLM", "N-DTSLM", 
+        "M-DTIMB", "E-DTIMB", "N-DTIMB",
         "M-RES01", "M-RES02", "M-RES03", "E-RES01", "E-RES02", "E-RES03", 
         "N-RES01", "N-RES02", "N-RES03", "M-PTW", "E-PTW", "N-PTW"
     ];
@@ -3160,6 +3264,7 @@ function applyManualAssignments() {
 
     const trickyShiftsList = [
         "M-DTABA", "E-DTABA", "N-DTABA", "M-DTSLM", "E-DTSLM", "N-DTSLM", 
+        "M-DTIMB", "E-DTIMB", "N-DTIMB",
         "M-RES01", "M-RES02", "M-RES03", "E-RES01", "E-RES02", "E-RES03", 
         "N-RES01", "N-RES02", "N-RES03", "M-PTW", "E-PTW", "N-PTW"
     ];
@@ -3193,3 +3298,4 @@ function applyManualAssignments() {
 </script>
 </body>
 </html>
+    
