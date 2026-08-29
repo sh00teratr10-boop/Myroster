@@ -3367,19 +3367,42 @@ function applyManualAssignments() {
         // ==========================================
 // 3. الدالة الرئيسية لتجميع الإحصائيات (النسخة النهائية المضمونة 100%)
 // ==========================================
+// ==========================================
+// 1. دالة قفل شاشة الإحصائيات
+// ==========================================
+function closeDriverStatsModal() {
+    document.getElementById('driverStatsModal').classList.add('hidden-section');
+}
+
+// ==========================================
+// 2. دالة حساب عدد الرحلات حسب اسم الوردية
+// ==========================================
+function getTripsCountForShift(shift) {
+    if (!shift) return 0;
+    let upperShift = shift.toUpperCase();
+    
+    // لو الوردية عبارة عن حلقة (زي M-01, E-12)
+    if (/^[MEN][-]?\d{1,3}$/.test(upperShift)) {
+        return 5; // عدد الرحلات الافتراضي للحلقة
+    }
+    return 0;
+}
+
+// ==========================================
+// 3. الدالة الرئيسية اللي بتفتح الشاشة وتجمع الإحصائيات (النسخة المدرعة ضد أخطاء السيرفر)
+// ==========================================
 async function openDriverStatsModal() {
     if (!currentDriver) { 
         alert("لا يوجد مستخدم مسجل الدخول!"); 
         return; 
     }
 
-    // استخدام رقم التشغيل السليم المنسق (Service ID)
     let myServiceId = currentDriver.serviceId || currentDriver.rawServiceId;
     let normId = smartNormalize(myServiceId).replace(/-/g, '');
     let myName = currentDriver.name;
 
-    // إظهار الشاشة وعرض رسالة التحميل
-    document.getElementById('driverStatsModal').classList.remove('hidden');
+    // إظهار الشاشة (باستخدام الكلاس المظبوط)
+    document.getElementById('driverStatsModal').classList.remove('hidden-section');
     document.getElementById('statsDriverName').textContent = myName + " (" + myServiceId + ")";
     document.getElementById('driverStatsContent').innerHTML = '<div class="col-span-full text-center py-8"><span class="text-blue-500 font-bold text-lg animate-pulse">جاري جلب إحصائيات السحابة... ⏳</span></div>';
 
@@ -3392,93 +3415,95 @@ async function openDriverStatsModal() {
     const allLeaves = ['CL', 'SL', 'AL', 'COML', 'PATL', 'AL-SV'];
 
     try {
-        // سحب بيانات الـ 12 شهر من الفايربيز برقم التشغيل السليم
-        let promises = [];
+        // هنجيب الشهور واحد ورا التاني عشان لو شهر مش موجود ميبوظش الباقي
         for (let m = 1; m <= 12; m++) {
-            promises.push(db.ref(`roster${m}/${normId}`).once('value'));
-        }
-        
-        let snapshots = await Promise.all(promises);
+            try {
+                let snap = await db.ref(`roster${m}/${normId}`).once('value');
+                let monthData = snap.val();
+                let isCurrentMonth = (m === currentMonth);
 
-        snapshots.forEach((snap, index) => {
-            let m = index + 1;
-            let monthData = snap.val();
-            let isCurrentMonth = (m === currentMonth);
+                if (monthData) {
+                    for (let day = 1; day <= 31; day++) {
+                        let shift = monthData[day];
+                        if (!shift) continue;
+                        let upperShift = shift.toString().toUpperCase().trim();
 
-            if (monthData) {
-                for (let day = 1; day <= 31; day++) {
-                    let shift = monthData[day];
-                    if (!shift) continue;
-                    let upperShift = shift.toString().toUpperCase().trim();
-
-                    if (allLeaves.includes(upperShift)) {
-                        stats.year.leaves++;
-                        if (isCurrentMonth) stats.month.leaves++;
-                        if (upperShift === 'CL') { stats.year.cl++; if (isCurrentMonth) stats.month.cl++; }
-                        if (upperShift === 'SL') { stats.year.sl++; if (isCurrentMonth) stats.month.sl++; }
-                    }
-                    else if (upperShift === 'ABSENT' || upperShift === 'AB') {
-                        stats.year.absent++;
-                        if (isCurrentMonth) stats.month.absent++;
-                    }
-                    else if (/^[MEN][-_]?(RES|RS)\d{1,2}/i.test(upperShift)) {
-                        stats.year.res++;
-                        if (isCurrentMonth) stats.month.res++;
-                    }
-                    else {
-                        let tripsCount = getTripsCountForShift(upperShift);
-                        if (tripsCount > 0) {
-                            stats.year.trips += tripsCount;
-                            if (isCurrentMonth) stats.month.trips += tripsCount;
+                        if (allLeaves.includes(upperShift)) {
+                            stats.year.leaves++;
+                            if (isCurrentMonth) stats.month.leaves++;
+                            if (upperShift === 'CL') { stats.year.cl++; if (isCurrentMonth) stats.month.cl++; }
+                            if (upperShift === 'SL') { stats.year.sl++; if (isCurrentMonth) stats.month.sl++; }
+                        }
+                        else if (upperShift === 'ABSENT' || upperShift === 'AB') {
+                            stats.year.absent++;
+                            if (isCurrentMonth) stats.month.absent++;
+                        }
+                        else if (/^[MEN][-_]?(RES|RS)\d{1,2}/i.test(upperShift)) {
+                            stats.year.res++;
+                            if (isCurrentMonth) stats.month.res++;
+                        }
+                        else {
+                            let tripsCount = getTripsCountForShift(upperShift);
+                            if (tripsCount > 0) {
+                                stats.year.trips += tripsCount;
+                                if (isCurrentMonth) stats.month.trips += tripsCount;
+                            }
                         }
                     }
                 }
+            } catch (monthError) {
+                // لو السيرفر وقع في شهر معين، تجاهله وكمل عادي
+                console.warn(`تخطي الشهر ${m} بسبب خطأ في السحابة.`);
             }
-        });
+        }
 
+        // رسم البطايق
         let html = `
-            <div class="bg-blue-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-blue-500 text-right">
+            <div class="bg-blue-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-blue-500 text-right hover:scale-105 transition-transform">
                 <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">إجمالي الرحلات 🚂</h4>
-                <p class="text-sm">الشهر الحالي: <span class="font-black text-blue-600 text-lg">${stats.month.trips}</span> رحلة</p>
-                <p class="text-sm">طوال العام: <span class="font-black text-blue-600 text-lg">${stats.year.trips}</span> رحلة</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">الشهر الحالي: <span class="font-black text-blue-600 dark:text-blue-400 text-lg mx-1">${stats.month.trips}</span> رحلة</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">طوال العام: <span class="font-black text-blue-600 dark:text-blue-400 text-lg mx-1">${stats.year.trips}</span> رحلة</p>
             </div>
 
-            <div class="bg-indigo-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-indigo-500 text-right">
+            <div class="bg-indigo-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-indigo-500 text-right hover:scale-105 transition-transform">
                 <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">أيام التدويرات (RES) 🔄</h4>
-                <p class="text-sm">الشهر الحالي: <span class="font-black text-indigo-600 text-lg">${stats.month.res}</span> يوم</p>
-                <p class="text-sm">طوال العام: <span class="font-black text-indigo-600 text-lg">${stats.year.res}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">الشهر الحالي: <span class="font-black text-indigo-600 dark:text-indigo-400 text-lg mx-1">${stats.month.res}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">طوال العام: <span class="font-black text-indigo-600 dark:text-indigo-400 text-lg mx-1">${stats.year.res}</span> يوم</p>
             </div>
 
-            <div class="bg-green-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-green-500 text-right">
+            <div class="bg-green-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-green-500 text-right hover:scale-105 transition-transform">
                 <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">إجمالي الإجازات (شاملة) 🏖️</h4>
-                <p class="text-sm">الشهر الحالي: <span class="font-black text-green-600 text-lg">${stats.month.leaves}</span> يوم</p>
-                <p class="text-sm">طوال العام: <span class="font-black text-green-600 text-lg">${stats.year.leaves}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">الشهر الحالي: <span class="font-black text-green-600 dark:text-green-400 text-lg mx-1">${stats.month.leaves}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">طوال العام: <span class="font-black text-green-600 dark:text-green-400 text-lg mx-1">${stats.year.leaves}</span> يوم</p>
             </div>
 
-            <div class="bg-yellow-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-yellow-500 text-right">
+            <div class="bg-yellow-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-yellow-500 text-right hover:scale-105 transition-transform">
                 <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">إجازات العرض (CL) ⚠️</h4>
-                <p class="text-sm">الشهر الحالي: <span class="font-black text-yellow-600 text-lg">${stats.month.cl}</span> يوم</p>
-                <p class="text-sm">طوال العام: <span class="font-black text-yellow-600 text-lg">${stats.year.cl}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">الشهر الحالي: <span class="font-black text-yellow-600 dark:text-yellow-400 text-lg mx-1">${stats.month.cl}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">طوال العام: <span class="font-black text-yellow-600 dark:text-yellow-400 text-lg mx-1">${stats.year.cl}</span> يوم</p>
             </div>
 
-            <div class="bg-orange-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-orange-500 text-right">
+            <div class="bg-orange-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-orange-500 text-right hover:scale-105 transition-transform">
                 <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">الإجازات المرضية (SL) 🏥</h4>
-                <p class="text-sm">الشهر الحالي: <span class="font-black text-orange-600 text-lg">${stats.month.sl}</span> يوم</p>
-                <p class="text-sm">طوال العام: <span class="font-black text-orange-600 text-lg">${stats.year.sl}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">الشهر الحالي: <span class="font-black text-orange-600 dark:text-orange-400 text-lg mx-1">${stats.month.sl}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">طوال العام: <span class="font-black text-orange-600 dark:text-orange-400 text-lg mx-1">${stats.year.sl}</span> يوم</p>
             </div>
 
-            <div class="bg-red-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-red-500 text-right">
+            <div class="bg-red-50 dark:bg-gray-700 p-4 rounded-lg shadow border-r-4 border-red-500 text-right hover:scale-105 transition-transform">
                 <h4 class="font-bold text-gray-700 dark:text-gray-200 mb-2">أيام الغياب ❌</h4>
-                <p class="text-sm">الشهر الحالي: <span class="font-black text-red-600 text-lg">${stats.month.absent}</span> يوم</p>
-                <p class="text-sm">طوال العام: <span class="font-black text-red-600 text-lg">${stats.year.absent}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">الشهر الحالي: <span class="font-black text-red-600 dark:text-red-400 text-lg mx-1">${stats.month.absent}</span> يوم</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">طوال العام: <span class="font-black text-red-600 dark:text-red-400 text-lg mx-1">${stats.year.absent}</span> يوم</p>
             </div>
         `;
 
         document.getElementById('driverStatsContent').innerHTML = html;
 
     } catch (error) {
-        document.getElementById('driverStatsContent').innerHTML = '<div class="col-span-full text-center py-8 text-red-500 font-bold">حدث خطأ أثناء جلب البيانات من السيرفر.</div>';
-        console.error("Error fetching stats:", error);
+        document.getElementById('driverStatsContent').innerHTML = '<div class="col-span-full text-center py-8 text-red-500 font-bold">حدث خطأ عام أثناء جلب البيانات.</div>';
+        console.error("Error:", error);
+    }
+}
+
     }
 }
 
@@ -3486,7 +3511,7 @@ async function openDriverStatsModal() {
     <!-- ========================================== -->
 <!-- شاشة إحصائيات القائد (مخفية افتراضياً) -->
 <!-- ========================================== -->
-<div id="driverStatsModal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
+<div id="driverStatsModal" class="hidden-section fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-[100] backdrop-blur-sm transition-opacity">
     <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl w-11/12 md:w-3/4 lg:w-1/2 max-w-3xl p-6 relative max-h-[90vh] overflow-y-auto">
         <!-- زرار الإغلاق -->
         <button onclick="closeDriverStatsModal()" class="absolute top-4 right-4 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-500 transition-colors">
