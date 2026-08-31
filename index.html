@@ -1221,7 +1221,7 @@ async function fetchAndParseShifts(url, targetMap) {
                             isHandover = true;
                         }
                         
-                        if (isHandover) break; 
+                        if (isHandover && !foundShift.toUpperCase().startsWith('N')) break; 
                         if (/^\d{3,4}$/.test(nextCell)) { if (!sequence.includes(nextCell)) sequence.push(nextCell); }
                     }
                     
@@ -1234,74 +1234,238 @@ async function fetchAndParseShifts(url, targetMap) {
     } catch(e) {}
 }
 
-async function loadAllTransitionSheets() {
+
+
+                            async function loadAllTransitionSheets() {
+
+    transitionMatrix = {};
+
     for (let key in transitionSheetsURLs) {
+
         try {
-            let res = await fetch(transitionSheetsURLs[key]);
-            let text = await res.text();
-            if (text.trim().toLowerCase().startsWith('<!doctype html>')) continue;
-            let lines = parseCSVText(text);
-            let matrixForPair = {};
-            
-            let currentShift = null, currentSequence = [], storageLoc = "", sweepCode = "", notes = "";
-            let colleagueCode = null; // اعتمدنا على كود الزميل فقط وتم إلغاء الـ RES
+
+            const res = await fetch(transitionSheetsURLs[key]);
+            const text = await res.text();
+
+            if (!text || text.trim().toLowerCase().startsWith('<!doctype html>')) {
+                console.error("Transition sheet failed:", key);
+                continue;
+            }
+
+            const lines = parseCSVText(text);
+            const matrixForPair = {};
+
+            let currentShift = null;
+            let currentTrips = [];
+            let currentHandover = null;
+            let currentReserve = null;
+            let currentLocation = "";
+            let currentSweep = "";
+            let currentNotes = "";
+
+
+            // حفظ النايت الحالي
+            function saveShift() {
+
+                if (!currentShift) return;
+
+                matrixForPair[currentShift] = {
+                    trips: [...currentTrips],
+
+                    // نخلي tripNumbers موجودة أيضاً
+                    tripNumbers: [...currentTrips],
+
+                    handover: currentHandover,
+                    handoverCode: currentHandover,
+
+                    reserve: currentReserve,
+                    storageLoc: currentLocation,
+
+                    sweep: Boolean(currentSweep),
+                    sweepCode: currentSweep || null,
+
+                    notes: currentNotes || null
+                };
+            }
+
 
             for (let i = 1; i < lines.length; i++) {
-                let cols = parseCSVRow(lines[i]);
-                if (cols.length === 0 || cols.join('').trim() === '') continue;
-                
-                let c0 = cleanTxt(cols[0]).toUpperCase();
-                let normC0 = smartNormalize(c0);
-                
-                if (normC0.startsWith('N') && normC0.length <= 6) {
-                    if (currentShift) { 
-                        matrixForPair[currentShift] = { trips: currentSequence, storageLoc, sweep: Boolean(sweepCode), sweepCode: sweepCode || null, notes: notes || null, handover: colleagueCode || null }; 
-                    }
-                    currentShift = normC0; currentSequence = []; storageLoc = ""; sweepCode = ""; notes = "";
-                    colleagueCode = null;
+
+                const cols = parseCSVRow(lines[i]);
+
+                if (!cols || !cols.length) continue;
+
+
+                // نبحث في أول خلية عن N22 أو N-22
+                const firstCell = cleanTxt(cols[0]);
+
+                const shiftMatch =
+                    firstCell.match(/^N[\s-]*(\d{1,3})$/i);
+
+
+                if (shiftMatch) {
+
+                    // احفظ النايت السابق
+                    saveShift();
+
+                    // N-22 أو N22 = N22
+                    currentShift = "N" + shiftMatch[1];
+
+                    currentTrips = [];
+                    currentHandover = null;
+                    currentReserve = null;
+                    currentLocation = "";
+                    currentSweep = "";
+                    currentNotes = "";
                 }
-                
-                cols.forEach(val => {
-                    let cleanV = cleanTxt(val).replace(/\.0$/, '');
-                    if (cleanV === '') return;
-                    
-                    let isHandoverToken = false;
 
-                    let tripMatch = cleanV.match(/\((\d{3,4})\)/);
-                    if (tripMatch && !currentSequence.includes(tripMatch[1])) {
-                        currentSequence.push(tripMatch[1]);
+
+                if (!currentShift) continue;
+
+
+                // قراءة كل الأعمدة في الصف
+                cols.forEach(value => {
+
+                    const cell =
+                        cleanTxt(value)
+                            .replace(/\u00A0/g, ' ')
+                            .replace(/\.0$/, '')
+                            .trim();
+
+                    if (!cell) return;
+
+
+                    const upper = cell.toUpperCase();
+
+
+                    // ============================
+                    // N-RES01
+                    // ============================
+
+                    if (/^N[\s-]*RES\d+$/i.test(cell)) {
+
+                        currentReserve =
+                            smartNormalize(cell);
+
+                        return;
                     }
 
-                    let normalTripMatch = cleanV.match(/^(\d{3,4})$/);
-                    if (normalTripMatch && !currentSequence.includes(normalTripMatch[1])) {
-                        currentSequence.push(normalTripMatch[1]);
+
+                    // ============================
+                    // أرقام الرحلات
+                    // مثال 126 / 131
+                    // ============================
+
+                    if (/^\d{3,4}$/.test(cell)) {
+
+                        if (!currentTrips.includes(cell)) {
+                            currentTrips.push(cell);
+                        }
+
+                        return;
                     }
 
-                    let cleanV_Eng = cleanV.replace(/م/g, 'M').replace(/ا/g, 'E').replace(/ن/g, 'N');
-                    let m = cleanV_Eng.match(/([MEN][-_ ]?\d{1,3})/i);
-                    
-                    // اصطياد رمز التسليم الحقيقي فقط (زي M-30) وتجاهل الـ RES نهائياً
-                    if (m && smartNormalize(m[1]) !== currentShift && !cleanV.toUpperCase().includes('RES')) {
-                        colleagueCode = m[1].replace(/\s/g, ''); 
-                        isHandoverToken = true;
+
+                    // ============================
+                    // SWP
+                    // ============================
+
+                    if (
+                        upper.includes("SWP") ||
+                        upper.includes("SWEEP")
+                    ) {
+
+                        currentSweep = cell;
+
+                        return;
                     }
 
-                    if (!isHandoverToken) {
-                        if (cleanV.includes("SWP")) sweepCode = cleanV;
-                        else if (cleanV.includes("ورشة") || cleanV.includes("سكة")) storageLoc = cleanV;
-                        else if (cleanV.includes("إخراج") || cleanV.includes("تدويرات")) notes = cleanV;
+
+                    // ============================
+                    // مكان الاحتياطي
+                    // إمبابة / السلام
+                    // ============================
+
+                    if (
+                        cell.includes("إمبابة") ||
+                        cell.includes("امبابة") ||
+                        cell.includes("السلام") ||
+                        cell.includes("ورشة") ||
+                        cell.includes("سكة")
+                    ) {
+
+                        currentLocation = cell;
+
+                        return;
                     }
+
+
+                    // ============================
+                    // التسليم M-32 / M-21
+                    // ============================
+
+                    if (/^M[\s-]*\d{1,3}$/i.test(cell)) {
+
+                        currentHandover =
+                            smartNormalize(cell);
+
+                        return;
+                    }
+
+
+                    // ============================
+                    // ملاحظات
+                    // ============================
+
+                    if (
+                        cell.includes("إخراج") ||
+                        cell.includes("تدويرات")
+                    ) {
+
+                        currentNotes = cell;
+                    }
+
                 });
-            }
-            
-            if (currentShift) { 
-                matrixForPair[currentShift] = { trips: currentSequence, storageLoc, sweep: Boolean(sweepCode), sweepCode: sweepCode || null, notes: notes || null, handover: colleagueCode || null }; 
-            }
-            transitionMatrix[key] = matrixForPair;
-        } catch(e) {}
-    }
-}
 
+            }
+
+
+            // مهم جداً: حفظ آخر N23
+            saveShift();
+
+            transitionMatrix[key] = matrixForPair;
+
+
+            console.log(
+                "✅ Transition Loaded:",
+                key,
+                Object.keys(matrixForPair)
+            );
+
+            console.log(
+                "N22:",
+                matrixForPair["N22"]
+            );
+
+            console.log(
+                "N23:",
+                matrixForPair["N23"]
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                "❌ Transition Error:",
+                key,
+                error
+            );
+
+        }
+
+    }
+
+}
 
 async function fetchAndParseFullSchedule(url, tripsMapTarget, isAlex = false) {
     try {
@@ -1376,7 +1540,7 @@ async function loadAllData() {
             if(snap.val()) adminPassword = snap.val();
         });
 
-        loadAllTransitionSheets(); 
+        loadAllTransitionSheets();
         
         await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
         await fetchAndParseShifts(alexShiftsURL, alexDataMap);
@@ -2725,6 +2889,105 @@ function searchByTripCode() {
     
     let targetShiftCode = normQuery;
     let shiftData = activeDataMap[targetShiftCode];
+    // ==========================================
+// البحث في تحويلة اليوم -> بكرة أولاً
+// مهم جداً للـ N22 / N23
+// ==========================================
+
+if (!shiftData && /^N\d+$/.test(targetShiftCode)) {
+
+    let tomorrowDate = new Date(dateVal);
+    tomorrowDate.setDate(tomorrowDate.getDate() + 1);
+
+    let tomorrowDateVal =
+        `${tomorrowDate.getFullYear()}-${String(tomorrowDate.getMonth() + 1).padStart(2, '0')}-${String(tomorrowDate.getDate()).padStart(2, '0')}`;
+
+    let tomorrowDayNum =
+        tomorrowDate.getDate();
+
+    let tomorrowScheduleRaw =
+        getSmartScheduleName(
+            tomorrowDateVal,
+            tomorrowDayNum
+        );
+
+
+    let cleanToday =
+        scheduleRaw
+            .split('[')[0]
+            .replace(/-$/, '')
+            .trim();
+
+
+    let cleanTomorrow =
+        tomorrowScheduleRaw
+            .split('[')[0]
+            .replace(/-$/, '')
+            .trim();
+
+
+    let exactTransitionKey =
+        `${cleanToday}_${cleanTomorrow}`;
+
+
+    console.log(
+        "🔍 Searching transition:",
+        exactTransitionKey,
+        targetShiftCode
+    );
+
+
+    if (
+        transitionMatrix[exactTransitionKey] &&
+        transitionMatrix[exactTransitionKey][targetShiftCode]
+    ) {
+
+        const trans =
+            transitionMatrix[exactTransitionKey][targetShiftCode];
+
+
+        // نحول بيانات التحويلة لنفس شكل باقي البرنامج
+        shiftData = {
+
+            tripNumbers:
+                trans.tripNumbers ||
+                trans.trips ||
+                [],
+
+            handoverCode:
+                trans.handoverCode ||
+                trans.handover ||
+                null,
+
+            reserve:
+                trans.reserve ||
+                null,
+
+            storageLoc:
+                trans.storageLoc ||
+                "",
+
+            sweep:
+                trans.sweep ||
+                false,
+
+            sweepCode:
+                trans.sweepCode ||
+                null,
+
+            notes:
+                trans.notes ||
+                null
+        };
+
+
+        console.log(
+            "✅ Found exact transition shift:",
+            targetShiftCode,
+            shiftData
+        );
+    }
+}
 
     // 1. تحديد السواق عشان نعرف هو شغال إيه بكرة!
     let assignedDriver = null;
