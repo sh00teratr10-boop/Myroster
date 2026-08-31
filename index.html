@@ -1536,69 +1536,12 @@ let lastBroadcastText = "";
 
 async function loadAllData() {
     try {
+        // 1. جلب كلمة سر الإدارة (سريعة جداً)
         db.ref('accounts/admin/password').on('value', snap => {
             if(snap.val()) adminPassword = snap.val();
         });
 
-        loadAllTransitionSheets();
-        
-        await fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
-        await fetchAndParseShifts(alexShiftsURL, alexDataMap);
-        await fetchAndParseShifts(alex403ShiftsURL, alex403DataMap); 
-        await fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
-        await fetchAndParseShifts(cairoShiftsURL, cairoDataMap);
-        await fetchAndParseShifts(arishShiftsURL, arishDataMap);
-        await fetchAndParseShifts(asyutShiftsURL, asyutDataMap);
-
-        await fetchDriverPreferences(); 
-
-        fetch(dbURL).then(res => res.text()).then(text => {
-            if (text.trim().toLowerCase().startsWith('<!doctype html>')) return;
-            const dbLines = parseCSVText(text);
-            for(let i = 1; i < dbLines.length; i++) {
-                const row = parseCSVRow(dbLines[i]);
-                if(row.length > 5) {
-                    let rawPhone = cleanTxt(row[3]), formattedPhone = t('غير متوفر', 'N/A');
-                    if (rawPhone) {
-                        let cleanP = rawPhone.replace(/\D/g, '');
-                        if (cleanP.length === 10 && cleanP.startsWith('1')) { formattedPhone = '0' + cleanP; } 
-                        else if (cleanP.length === 11 && cleanP.startsWith('0')) { formattedPhone = cleanP; } 
-                        else { formattedPhone = rawPhone; }
-                    }
-                    
-                    let nameAr = cleanTxt(row[5]);
-                    let nameEn = cleanTxt(row[4]) || nameAr;
-                    
-                    driversData.push({ 
-                        radioId: smartNormalize(row[0]).replace(/-/g,''), 
-                        serviceId: smartNormalize(row[1]).replace(/-/g,''), 
-                        rawServiceId: cleanTxt(row[1]), 
-                        nameAr: nameAr,
-                        nameEn: nameEn,
-                        get name() { return currentLang === 'en' ? this.nameEn : this.nameAr; },
-                        phone: formattedPhone 
-                    });
-                }
-            }
-        });
-
-        for (let m = 1; m <= 12; m++) {
-            db.ref('roster' + m).on('value', (snapshot) => { 
-                const cloudData = snapshot.val(); 
-                if (cloudData) { 
-                    rosterDataMap[m] = cloudData; 
-                    if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); 
-                } 
-            });
-            db.ref('schedules' + m).on('value', (snapshot) => { 
-                const cloudData = snapshot.val(); 
-                if (cloudData) { 
-                    schedulesDataMap[m] = cloudData; 
-                    if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); 
-                } 
-            });
-        }
-
+        // 2. جلب الإشعارات
         db.ref('broadcasts').limitToLast(50).on('value', (snapshot) => {
             const data = snapshot.val();
             const container = document.getElementById('notifHistoryContainer');
@@ -1628,14 +1571,24 @@ async function loadAllData() {
             isInitialBroadcastLoad = false;
         });
 
-        await fetchAndParseFullSchedule(siwaTripsScheduleURL, siwaTripsMap, false);
-        await fetchAndParseFullSchedule(luxorTripsScheduleURL, luxorTripsMap, false);
-        await fetchAndParseFullSchedule(alexTripsScheduleURL, alexTripsMap, true);
-        await fetchAndParseFullSchedule(alex403TripsScheduleURL, alex403TripsMap, true); 
-        await fetchAndParseFullSchedule(cairoTripsScheduleURL, cairoTripsMap, false);
-        await fetchAndParseFullSchedule(arishTripsScheduleURL, arishTripsMap, false);
-        await fetchAndParseFullSchedule(asyutTripsScheduleURL, asyutTripsMap, false);
+        // 3. جلب الروستر بتاع "الشهر الحالي فقط" لتسريع الفتح
+        let currentMonth = new Date().getMonth() + 1;
+        db.ref('roster' + currentMonth).on('value', (snapshot) => { 
+            const cloudData = snapshot.val(); 
+            if (cloudData) { 
+                rosterDataMap[currentMonth] = cloudData; 
+                if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); 
+            } 
+        });
+        db.ref('schedules' + currentMonth).on('value', (snapshot) => { 
+            const cloudData = snapshot.val(); 
+            if (cloudData) { 
+                schedulesDataMap[currentMonth] = cloudData; 
+                if (currentDriver && !isGhostMode) buildDashboardData(currentDriver, false); 
+            } 
+        });
 
+        // دالة مساعدة لخرائط الوصول
         const buildIncomingMap = async (url, targetMap) => {
             try {
                 let res = await fetch(url);
@@ -1655,17 +1608,88 @@ async function loadAllData() {
                 }
             } catch(e) {}
         };
-        
-        await buildIncomingMap(siwaCercrlURL, siwaIncomingMap);
-        await buildIncomingMap(luxorCercrlURL, luxorIncomingMap);
-        await buildIncomingMap(alexCercrlURL, alexIncomingMap);
-        await buildIncomingMap(alex403CercrlURL, alex403IncomingMap); 
-        await buildIncomingMap(cairoCercrlURL, cairoIncomingMap);
-        await buildIncomingMap(arishCercrlURL, arishIncomingMap);
-        await buildIncomingMap(asyutCercrlURL, asyutIncomingMap);
 
-    } catch (error) {}
+        // 4. (البيانات الحرجة): هنستنى بيانات السواقين وجدول كايرو بس
+        let driversPromise = fetch(dbURL).then(res => res.text()).then(text => {
+            if (text.trim().toLowerCase().startsWith('<!doctype html>')) return;
+            const dbLines = parseCSVText(text);
+            for(let i = 1; i < dbLines.length; i++) {
+                const row = parseCSVRow(dbLines[i]);
+                if(row.length > 5) {
+                    let rawPhone = cleanTxt(row[3]), formattedPhone = t('غير متوفر', 'N/A');
+                    if (rawPhone) {
+                        let cleanP = rawPhone.replace(/\D/g, '');
+                        if (cleanP.length === 10 && cleanP.startsWith('1')) { formattedPhone = '0' + cleanP; } 
+                        else if (cleanP.length === 11 && cleanP.startsWith('0')) { formattedPhone = cleanP; } 
+                        else { formattedPhone = rawPhone; }
+                    }
+                    let nameAr = cleanTxt(row[5]);
+                    let nameEn = cleanTxt(row[4]) || nameAr;
+                    driversData.push({ 
+                        radioId: smartNormalize(row[0]).replace(/-/g,''), 
+                        serviceId: smartNormalize(row[1]).replace(/-/g,''), 
+                        rawServiceId: cleanTxt(row[1]), 
+                        nameAr: nameAr,
+                        nameEn: nameEn,
+                        get name() { return currentLang === 'en' ? this.nameEn : this.nameAr; },
+                        phone: formattedPhone 
+                    });
+                }
+            }
+        });
+
+        // هنا الكود هيقف ثانية واحدة لحد ما كايرو والسواقين يخلصوا
+        await Promise.all([
+            driversPromise,
+            fetchAndParseShifts(cairoShiftsURL, cairoDataMap),
+            fetchAndParseFullSchedule(cairoTripsScheduleURL, cairoTripsMap, false),
+            buildIncomingMap(cairoCercrlURL, cairoIncomingMap)
+        ]);
+
+        // 5. تحميل كل باقي الملفات في الخلفية (في صمت) عشان شاشة التحميل تختفي فوراً
+        setTimeout(() => {
+            // باقي الشهور من فايربيز
+            for (let m = 1; m <= 12; m++) {
+                if (m === currentMonth) continue;
+                db.ref('roster' + m).on('value', (snapshot) => { 
+                    const cloudData = snapshot.val(); 
+                    if (cloudData) { rosterDataMap[m] = cloudData; } 
+                });
+                db.ref('schedules' + m).on('value', (snapshot) => { 
+                    const cloudData = snapshot.val(); 
+                    if (cloudData) { schedulesDataMap[m] = cloudData; } 
+                });
+            }
+
+            // جداول باقي الخطوط والتحويلات
+            loadAllTransitionSheets();
+            fetchDriverPreferences();
+            
+            fetchAndParseShifts(aswanShiftsURL, aswanDataMap);
+            fetchAndParseShifts(alexShiftsURL, alexDataMap);
+            fetchAndParseShifts(alex403ShiftsURL, alex403DataMap); 
+            fetchAndParseShifts(luxorShiftsURL, luxorDataMap);
+            fetchAndParseShifts(arishShiftsURL, arishDataMap);
+            fetchAndParseShifts(asyutShiftsURL, asyutDataMap);
+
+            fetchAndParseFullSchedule(siwaTripsScheduleURL, siwaTripsMap, false);
+            fetchAndParseFullSchedule(luxorTripsScheduleURL, luxorTripsMap, false);
+            fetchAndParseFullSchedule(alexTripsScheduleURL, alexTripsMap, true);
+            fetchAndParseFullSchedule(alex403TripsScheduleURL, alex403TripsMap, true); 
+            fetchAndParseFullSchedule(arishTripsScheduleURL, arishTripsMap, false);
+            fetchAndParseFullSchedule(asyutTripsScheduleURL, asyutTripsMap, false);
+
+            buildIncomingMap(siwaCercrlURL, siwaIncomingMap);
+            buildIncomingMap(luxorCercrlURL, luxorIncomingMap);
+            buildIncomingMap(alexCercrlURL, alexIncomingMap);
+            buildIncomingMap(alex403CercrlURL, alex403IncomingMap); 
+            buildIncomingMap(arishCercrlURL, arishIncomingMap);
+            buildIncomingMap(asyutCercrlURL, asyutIncomingMap);
+        }, 100); // 100 ملي ثانية تأخير بس
+
+    } catch (error) { console.error(error); }
 }
+
     document.addEventListener('DOMContentLoaded', function() {
     applyLanguageToDOM(); 
     
