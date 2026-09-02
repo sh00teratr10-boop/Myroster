@@ -751,7 +751,7 @@ body { font-family: 'Cairo', sans-serif; }
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border border-indigo-200 dark:border-indigo-900/50">
                 <h3 class="text-lg font-black text-indigo-800 dark:text-indigo-400 mb-4 flex items-center gap-2" data-ar="🕵️‍♂️ وضع المشاهدة (تصفح كقائد قطار)" data-en="🕵️‍♂️ Ghost Mode (Browse as Driver)">🕵️‍♂️ وضع المشاهدة (تصفح كقائد قطار)</h3>
                 <div class="flex flex-col md:flex-row gap-3">
-                    <input type="text" id="ghost-radio-input" class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded-xl text-base font-bold shadow-inner focus:ring-2 focus:ring-indigo-500">
+                    <input type="text" id="ghost-radio-input" class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded-xl text-base font-bold shadow-inner focus:ring-2 focus:ring-indigo-500" placeholder="رقم الراديو، RDMC، ADMINSP...">
                     <button onclick="ghostLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-8 py-3 rounded-xl shadow-md transition-all text-sm" data-ar="دخول وتصفح" data-en="Login & Browse">دخول وتصفح</button>
                 </div>
                 </div>
@@ -2051,9 +2051,23 @@ function loadPasswordRequests() {
 function deletePassReq(rId) { db.ref('password_requests/' + rId).remove(); showToast(t("تم حذف الطلب", "Request Deleted"), "success"); }
 
 function ghostLogin() {
-    const rId = smartNormalize(document.getElementById('ghost-radio-input').value.trim()).replace(/-/g,'');
-    if(!rId) { showToast(t("أدخل رقم الراديو أولاً!", "Enter Radio ID first!"), "error"); return; }
-    const driver = driversData.find(d => d.radioId === rId);
+    // 1. بناخد القيمة اللي الأدمن كتبها
+    const rawInput = document.getElementById('ghost-radio-input').value.trim().toUpperCase();
+    const rId = smartNormalize(rawInput).replace(/-/g,'');
+    
+    if(!rId) { showToast(t("أدخل رقم التشغيل أو الراديو أولاً!", "Enter ID first!"), "error"); return; }
+
+    // 2. الكوبري السري: لو لقى حروف خدمة العملاء بيفتح الرابط التاني في تاب جديد
+    if (rawInput.startsWith('RDMC') || rawInput.startsWith('ROMC') || rawInput.startsWith('MC') || rawInput === 'ADMINSP' || rawInput === 'ADMINZM') {
+        const csUrl = `https://sh00teratr10-boop.github.io/Roor/?ghost=${rawInput.replace(/[^A-Z0-9]/g, '')}&token=SuperAdmin2026`;
+        window.open(csUrl, '_blank'); 
+        showToast(t("تم التحويل لبوابة خدمة العملاء بنجاح 🚀", "Redirected to CS Portal 🚀"), "success");
+        document.getElementById('ghost-radio-input').value = '';
+        return;
+    }
+
+    // 3. لو ملقاش الحروف دي بيكمل تصفح عادي جداً كنظام سواقين
+    const driver = driversData.find(d => d.radioId === rId || smartNormalize(d.rawServiceId).replace(/-/g,'') === rId);
     if(driver) {
         isGhostMode = true; currentDriver = driver;
         document.getElementById('admin-page').classList.add('hidden-section');
@@ -2063,8 +2077,12 @@ function ghostLogin() {
         document.getElementById('dailyDatePicker').value = getTodayYYYYMMDD();
         buildDashboardData(driver);
         showToast(t(`تم التخفي وتصفح حساب قائد قطار ${driver.name}`, `Ghost mode active for ${driver.name}`), "success");
-    } else { showToast(t("رقم الراديو غير موجود!", "Radio ID not found!"), "error"); }
+        document.getElementById('ghost-radio-input').value = '';
+    } else { 
+        showToast(t("رقم التشغيل أو الراديو غير موجود!", "ID not found!"), "error"); 
+    }
 }
+
 
 function returnToAdmin() {
     isGhostMode = false; currentDriver = null;
