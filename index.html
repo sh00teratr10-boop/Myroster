@@ -2059,29 +2059,37 @@ function loadPasswordRequests() {
 function deletePassReq(rId) { db.ref('password_requests/' + rId).remove(); showToast(t("تم حذف الطلب", "Request Deleted"), "success"); }
 
 function ghostLogin() {
-    // 1. بناخد القيمة اللي الأدمن كتبها
+function ghostLogin() {
+    // 1. ناخد القيمة وننظفها من أي مسافات نهائياً
     const rawInput = document.getElementById('ghost-radio-input').value.trim().toUpperCase();
-    const rId = smartNormalize(rawInput).replace(/-/g,'');
-    
-    if(!rId) { showToast(t("أدخل رقم التشغيل أو الراديو أولاً!", "Enter ID first!"), "error"); return; }
+    const cleanInput = rawInput.replace(/\s+/g, ''); // قاهر المسافات
 
-      // 2. الكوبري السري: لو لقى حروف خدمة العملاء
-    if (rawInput.startsWith('RDMC') || rawInput.startsWith('ROMC') || rawInput.startsWith('MC') || rawInput === 'ADMINSP' || rawInput === 'ADMINZM') {
-        const csUrl = `https://sh00teratr10-boop.github.io/Roor/?ghost=${rawInput.replace(/[^A-Z0-9]/g, '')}&token=SuperAdmin2026`;
-        
-        // التعديل هنا: يفتح في نفس الشاشة جوه تطبيق Kodular
-        window.location.href = csUrl; 
-        
-        showToast(t("تم التحويل لبوابة خدمة العملاء بنجاح 🚀", "Redirected to CS Portal 🚀"), "success");
-        document.getElementById('ghost-radio-input').value = '';
-        return;
+    if(!cleanInput) { 
+        showToast(t("أدخل رقم التشغيل أو الراديو أولاً!", "Enter ID first!"), "error"); 
+        return; 
     }
 
+    // 2. المقص: لو الكلمة تبع خدمة العملاء أو الأدمن، بنهرب على طول للرابط ومبندورش
+    if (cleanInput.startsWith('RDMC') || cleanInput.startsWith('ROMC') || cleanInput.startsWith('MC') || cleanInput === 'ADMINSP' || cleanInput === 'ADMINZM') {
+        
+        // بنجهز الرابط السري بتاع خدمة العملاء
+        const csUrl = `https://sh00teratr10-boop.github.io/Roor/?ghost=${cleanInput.replace(/[^A-Z0-9]/g, '')}&token=SuperAdmin2026`;
+        
+        // استخدام replace عشان كوديلر ميفتحش متصفح خارجي
+        window.location.replace(csUrl); 
+        
+        showToast(t("جاري التحويل لخدمة العملاء... 🚀", "Redirecting... 🚀"), "success");
+        document.getElementById('ghost-radio-input').value = '';
+        return; // دي الفرامل اللي بتمنع رسالة "رقم التشغيل خطأ"
+    }
 
-    // 3. لو ملقاش الحروف دي بيكمل تصفح عادي جداً كنظام سواقين
+    // 3. لو الكلمة مش تبع خدمة العملاء (أرقام راديو)، الكود هيكمل هنا ويدور في السواقين
+    const rId = smartNormalize(rawInput).replace(/-/g,'');
     const driver = driversData.find(d => d.radioId === rId || smartNormalize(d.rawServiceId).replace(/-/g,'') === rId);
+    
     if(driver) {
-        isGhostMode = true; currentDriver = driver;
+        isGhostMode = true; 
+        currentDriver = driver;
         document.getElementById('admin-page').classList.add('hidden-section');
         document.getElementById('dashboard-page').classList.remove('hidden-section');
         document.getElementById('ghost-banner').classList.remove('hidden-section');
@@ -2094,6 +2102,7 @@ function ghostLogin() {
         showToast(t("رقم التشغيل أو الراديو غير موجود!", "ID not found!"), "error"); 
     }
 }
+
 
 
 function returnToAdmin() {
