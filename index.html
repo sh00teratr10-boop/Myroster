@@ -2059,7 +2059,6 @@ function loadPasswordRequests() {
 function deletePassReq(rId) { db.ref('password_requests/' + rId).remove(); showToast(t("تم حذف الطلب", "Request Deleted"), "success"); }
 
 function ghostLogin() {
-function ghostLogin() {
     // 1. ناخد القيمة وننظفها من أي مسافات نهائياً
     const rawInput = document.getElementById('ghost-radio-input').value.trim().toUpperCase();
     const cleanInput = rawInput.replace(/\s+/g, ''); // قاهر المسافات
