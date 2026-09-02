@@ -147,6 +147,7 @@ body { font-family: 'Cairo', sans-serif; }
             <button onclick="openDriverStatsModal()" class="w-full text-start px-4 py-3.5 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 font-black text-blue-600 dark:text-blue-400 text-xs transition-colors" data-ar="📊 إحصائياتي (ملف القائد)" data-en="📊 My Stats (Driver Profile)">📊 إحصائياتي (ملف القائد)</button>
             <button onclick="toggleTheme()" id="themeToggleBtn" class="w-full text-start px-4 py-3.5 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 text-xs font-bold transition-colors" data-ar="الوضع النهاري ☀️" data-en="Light Mode ☀️">الوضع النهاري ☀️</button>
             <button onclick="openTechSupportModal()" class="w-full text-start px-4 py-3.5 hover:bg-gray-50/50 dark:hover:bg-gray-700/50 font-black text-amber-600 text-xs transition-colors" data-ar="🛠️ الدعم الفني" data-en="🛠️ Tech Support">🛠️ الدعم الفني</button>
+            <button id="btnDynamicAdminAccess" onclick="switchToDynamicAdmin()" class="hidden-section w-full text-start px-4 py-3.5 hover:bg-red-50/80 dark:hover:bg-red-900/20 font-black text-red-600 text-xs transition-colors border-t border-gray-100 dark:border-gray-700">👑 الدخول للإدارة</button>
             <button onclick="logout()" class="w-full text-start px-4 py-3.5 hover:bg-red-50/80 dark:hover:bg-red-900/20 text-red-600 font-black text-xs transition-colors" data-ar="تسجيل الخروج 🚪" data-en="Logout 🚪">تسجيل الخروج 🚪</button>
         </div>
     </div>
@@ -661,7 +662,7 @@ body { font-family: 'Cairo', sans-serif; }
             <button onclick="closeTripNoteModal()" class="text-gray-400 hover:text-red-500 font-bold text-2xl bg-gray-100 dark:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center leading-none">&times;</button>
         </div>
         <div class="space-y-4 mb-6">
-            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold" data-ar="رحلة رقم:" data-en="Trip No:">رحلة رقم: <span id="noteTripNumber" class="text-blue-600 dark:text-blue-400 font-mono text-lg font-black bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md"></span></p>
+            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold"><span data-ar="رحلة رقم:" data-en="Trip No:">رحلة رقم:</span> <span id="noteTripNumber" class="text-blue-600 dark:text-blue-400 font-mono text-lg font-black bg-blue-50 dark:bg-blue-900/30 px-2 py-0.5 rounded-md"></span></p>
             <textarea id="tripNoteInput" rows="4" class="w-full px-4 py-3 bg-slate-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold shadow-inner focus:ring-2 focus:ring-amber-500 transition-all"></textarea>
         </div>
         <input type="hidden" id="noteDateVal">
@@ -753,7 +754,49 @@ body { font-family: 'Cairo', sans-serif; }
                     <input type="text" id="ghost-radio-input" class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded-xl text-base font-bold shadow-inner focus:ring-2 focus:ring-indigo-500">
                     <button onclick="ghostLogin()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-black px-8 py-3 rounded-xl shadow-md transition-all text-sm" data-ar="دخول وتصفح" data-en="Login & Browse">دخول وتصفح</button>
                 </div>
+                </div>
+                                <!-- كارت إدارة صلاحيات المشرفين -->
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border border-emerald-200 dark:border-emerald-900/50 mt-6">
+                <h3 class="text-lg font-black text-emerald-800 dark:text-emerald-400 mb-4 flex items-center gap-2">
+                    <span class="text-2xl">🛡️</span> <span>إدارة صلاحيات المشرفين (المساعدين)</span>
+                </h3>
+                <div class="flex flex-col md:flex-row gap-3 mb-4">
+                    <input type="text" id="adminRoleTargetId" placeholder="رقم الراديو (مثال: 90 أو 168)" class="flex-1 px-4 py-3 bg-slate-50 dark:bg-slate-900 border border-gray-200 dark:border-gray-600 rounded-xl text-sm font-bold shadow-inner focus:ring-2 focus:ring-emerald-500">
+                    <button onclick="loadDriverRoles()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-black px-8 py-3 rounded-xl shadow-md transition-all text-sm">بحث 🔍</button>
+                </div>
+                
+                <!-- لوحة السويتشات المخفية لحد ما تبحث عن رقم -->
+                <div id="adminRolesControls" class="hidden-section space-y-4 bg-slate-50 dark:bg-slate-900 p-5 rounded-2xl border dark:border-gray-700 shadow-inner">
+                    <p id="roleDriverNameDisplay" class="font-black text-blue-600 dark:text-blue-400 text-sm mb-3 border-b dark:border-gray-700 pb-2"></p>
+                    
+                    <label class="flex items-center gap-3 cursor-pointer bg-white dark:bg-gray-800 p-3 rounded-xl shadow-sm border border-gray-200 dark:border-gray-600">
+                        <input type="checkbox" id="role_hasAccess" onchange="toggleSubRoles()" class="w-5 h-5 text-emerald-600 rounded focus:ring-emerald-500">
+                        <span class="font-black text-gray-800 dark:text-gray-200 text-sm">تفعيل زر "الدخول للإدارة" للقائد ده 👑</span>
+                    </label>
+                    
+                    <div id="subRolesContainer" class="ps-4 sm:ps-8 space-y-3 opacity-50 pointer-events-none transition-all duration-300">
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="role_updates" class="w-4 h-4 text-purple-600 rounded">
+                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300">رفع وتحديث اليوميات والروستر (التحديثات)</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="role_accounts" class="w-4 h-4 text-purple-600 rounded">
+                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300">إدارة الحسابات، طلبات الباسورد، التنبيهات</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="role_map" class="w-4 h-4 text-purple-600 rounded">
+                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300">مراقبة خريطة الخط الحية (Live Map)</span>
+                        </label>
+                        <label class="flex items-center gap-3 cursor-pointer">
+                            <input type="checkbox" id="role_docs" class="w-4 h-4 text-purple-600 rounded">
+                            <span class="text-xs font-bold text-gray-700 dark:text-gray-300">رفع المستندات وملفات الـ PDF</span>
+                        </label>
+                    </div>
+                    
+                    <button onclick="saveDriverRoles()" class="w-full bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-600 hover:to-green-700 text-white font-black py-3.5 rounded-xl shadow-md text-sm mt-4 transition-transform hover:-translate-y-0.5">حفظ الصلاحيات 🚀</button>
+                </div>
             </div>
+
             <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl premium-shadow border border-amber-200 dark:border-amber-900/50">
                 <h3 class="text-lg font-black text-amber-800 dark:text-amber-400 mb-4 flex items-center gap-2" data-ar="🔑 طلبات استعادة كلمات المرور الواردة" data-en="🔑 Password Reset Requests">🔑 طلبات استعادة كلمات المرور الواردة</h3>
                 <div id="password-requests-list" class="space-y-3 max-h-96 overflow-y-auto hide-scrollbar"></div>
@@ -820,6 +863,53 @@ body { font-family: 'Cairo', sans-serif; }
     </div>
 </div>
     <script>
+        let currentDriverAdminRoles = null;
+
+// الدالة دي بتشتغل أول ما السواق يعمل لوج إن عشان تشوف ليه صلاحية ولا لأ
+function checkDynamicAdminAccess(radioId) {
+    db.ref('admin_permissions/' + radioId).on('value', (snap) => {
+        const roles = snap.val();
+        const adminBtn = document.getElementById('btnDynamicAdminAccess');
+        if (roles && roles.hasAccess) {
+            currentDriverAdminRoles = roles; // بنحفظ صلاحياته
+            if(adminBtn) adminBtn.classList.remove('hidden-section');
+        } else {
+            currentDriverAdminRoles = null;
+            if(adminBtn) adminBtn.classList.add('hidden-section');
+        }
+    });
+}
+
+// الدالة اللي بتنقله للأدمن وتخفي اللي ملوش صلاحية فيه
+function switchToDynamicAdmin() {
+    toggleSettings();
+    document.getElementById('dashboard-page').classList.add('hidden-section');
+    document.getElementById('admin-page').classList.remove('hidden-section');
+    
+    // إخفاء زراير الأدمن الأساسية (الباسورد والخروج) ونحط زرار "رجوع" 
+    document.querySelector('#admin-page nav div').innerHTML = `
+        <button onclick="returnToDriverDashboard()" class="bg-red-500/80 hover:bg-red-500 px-4 py-1.5 rounded-xl font-black text-xs shadow-sm backdrop-blur-sm transition-colors">🔙 رجوع للداشبورد</button>
+    `;
+
+    // التحكم في التابات حسب الصلاحيات اللي متسجلة في فايربيز
+    document.getElementById('tab-btn-updates').style.display = currentDriverAdminRoles.updates ? 'block' : 'none';
+    document.getElementById('tab-btn-accounts').style.display = currentDriverAdminRoles.accounts ? 'block' : 'none';
+    document.getElementById('tab-btn-map').style.display = currentDriverAdminRoles.map ? 'block' : 'none';
+    document.getElementById('tab-btn-docs').style.display = currentDriverAdminRoles.docs ? 'block' : 'none';
+
+    // نفتح أول تابة مسموحاله
+    if(currentDriverAdminRoles.updates) switchAdminSection('updatesSection');
+    else if(currentDriverAdminRoles.accounts) switchAdminSection('accountsSection');
+    else if(currentDriverAdminRoles.map) switchAdminSection('mapSection');
+    else if(currentDriverAdminRoles.docs) switchAdminSection('docsSection');
+}
+
+// دالة الرجوع للداشبورد العادية بتاعته
+function returnToDriverDashboard() {
+    document.getElementById('admin-page').classList.add('hidden-section');
+    document.getElementById('dashboard-page').classList.remove('hidden-section');
+}
+
 // ==========================================
 // 🌐 نظام الترجمة الديناميكي (i18n System)
 // ==========================================
@@ -1874,6 +1964,7 @@ function login() {
         }
         document.getElementById('dailyDatePicker').value = initialDateStr;
         buildDashboardData(driver);
+        checkDynamicAdminAccess(rId);
         showToast(t(`أهلاً بك يا قائد قطار ${driver.name}`, `Welcome, Driver ${driver.name}`), 'success');
     } else { showToast(t('رقم الراديو غير مسجل بالنظام!', 'Radio ID not registered!'), 'error'); }
 }
@@ -3900,6 +3991,67 @@ async function openDriverStatsModal() {
         document.getElementById('driverStatsContent').innerHTML = '<div class="col-span-full text-center py-8 text-red-500 font-bold">حدث خطأ أثناء جلب البيانات من السيرفر.</div>';
         console.error("Error fetching stats:", error);
     }
+}
+// جلب الصلاحيات الحالية للسواق اللي بتبحث عنه
+function loadDriverRoles() {
+    let rId = document.getElementById('adminRoleTargetId').value.trim();
+    if (!rId) { showToast(t("أدخل رقم الراديو أولاً", "Enter Radio ID first"), "error"); return; }
+    
+    let normId = smartNormalize(rId).replace(/-/g,'');
+    let driver = driversData.find(d => d.radioId === normId);
+    let dName = driver ? driver.name : (t("قائد قطار ", "Driver ") + normId + t(" (غير مسجل)", " (Unregistered)"));
+    
+    document.getElementById('roleDriverNameDisplay').textContent = t("⚙️ إعدادات صلاحيات: ", "⚙️ Permissions for: ") + dName;
+    
+    // سحب من السحابة
+    db.ref('admin_permissions/' + normId).once('value', snap => {
+        let roles = snap.val() || { hasAccess: false, updates: false, accounts: false, map: false, docs: false };
+        
+        document.getElementById('role_hasAccess').checked = roles.hasAccess || false;
+        document.getElementById('role_updates').checked = roles.updates || false;
+        document.getElementById('role_accounts').checked = roles.accounts || false;
+        document.getElementById('role_map').checked = roles.map || false;
+        document.getElementById('role_docs').checked = roles.docs || false;
+        
+        document.getElementById('adminRolesControls').classList.remove('hidden-section');
+        toggleSubRoles(); // عشان يشغل الأوبشنز الفرعية أو يقفلها
+    });
+}
+
+// دالة تفاعلية لفتح وقفل الأوبشنز الفرعية
+function toggleSubRoles() {
+    let hasAccess = document.getElementById('role_hasAccess').checked;
+    let container = document.getElementById('subRolesContainer');
+    if(hasAccess) {
+        container.classList.remove('opacity-50', 'pointer-events-none');
+    } else {
+        container.classList.add('opacity-50', 'pointer-events-none');
+        // بنقفل الباقي أوتوماتيك لو الزرار الرئيسي مقفول
+        document.getElementById('role_updates').checked = false;
+        document.getElementById('role_accounts').checked = false;
+        document.getElementById('role_map').checked = false;
+        document.getElementById('role_docs').checked = false;
+    }
+}
+
+// دالة حفظ الصلاحيات ورفعها للسحابة
+function saveDriverRoles() {
+    let rId = document.getElementById('adminRoleTargetId').value.trim();
+    let normId = smartNormalize(rId).replace(/-/g,'');
+    
+    let roles = {
+        hasAccess: document.getElementById('role_hasAccess').checked,
+        updates: document.getElementById('role_updates').checked,
+        accounts: document.getElementById('role_accounts').checked,
+        map: document.getElementById('role_map').checked,
+        docs: document.getElementById('role_docs').checked
+    };
+    
+    db.ref('admin_permissions/' + normId).set(roles).then(() => {
+        showToast(t("✅ تم تحديث صلاحيات القائد بنجاح!", "✅ Driver permissions updated!"), "success");
+    }).catch(err => {
+        showToast(t("⚠️ خطأ في الحفظ: ", "⚠️ Save error: ") + err.message, "error");
+    });
 }
 
 
