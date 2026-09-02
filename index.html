@@ -897,12 +897,20 @@ function switchToDynamicAdmin() {
     document.getElementById('tab-btn-map').style.display = currentDriverAdminRoles.map ? 'block' : 'none';
     document.getElementById('tab-btn-docs').style.display = currentDriverAdminRoles.docs ? 'block' : 'none';
 
+    // 👇 التعديل هنا: تحميل الطلبات وتشغيل الخريطة لايف للمساعدين لو ليهم صلاحية
+    if(currentDriverAdminRoles.accounts) loadPasswordRequests();
+    if(currentDriverAdminRoles.map) {
+        updateLiveAdminMap();
+        if(!liveMapInterval) liveMapInterval = setInterval(updateLiveAdminMap, 3000);
+    }
+
     // نفتح أول تابة مسموحاله
     if(currentDriverAdminRoles.updates) switchAdminSection('updatesSection');
     else if(currentDriverAdminRoles.accounts) switchAdminSection('accountsSection');
     else if(currentDriverAdminRoles.map) switchAdminSection('mapSection');
     else if(currentDriverAdminRoles.docs) switchAdminSection('docsSection');
 }
+
 
 // دالة الرجوع للداشبورد العادية بتاعته
 function returnToDriverDashboard() {
@@ -4067,10 +4075,21 @@ function saveDriverRoles() {
     
     db.ref('admin_permissions/' + normId).set(roles).then(() => {
         showToast(t("✅ تم تحديث صلاحيات القائد بنجاح!", "✅ Driver permissions updated!"), "success");
+        
+        // تصفير الخانات وإخفاء اللوحة بعد الاعتماد
+        document.getElementById('adminRoleTargetId').value = '';
+        document.getElementById('role_hasAccess').checked = false;
+        document.getElementById('role_updates').checked = false;
+        document.getElementById('role_accounts').checked = false;
+        document.getElementById('role_map').checked = false;
+        document.getElementById('role_docs').checked = false;
+        document.getElementById('adminRolesControls').classList.add('hidden-section');
+        
     }).catch(err => {
         showToast(t("⚠️ خطأ في الحفظ: ", "⚠️ Save error: ") + err.message, "error");
     });
 }
+
 
 
 
