@@ -2065,14 +2065,18 @@ function ghostLogin() {
     
     if(!rId) { showToast(t("أدخل رقم التشغيل أو الراديو أولاً!", "Enter ID first!"), "error"); return; }
 
-    // 2. الكوبري السري: لو لقى حروف خدمة العملاء بيفتح الرابط التاني في تاب جديد
+      // 2. الكوبري السري: لو لقى حروف خدمة العملاء
     if (rawInput.startsWith('RDMC') || rawInput.startsWith('ROMC') || rawInput.startsWith('MC') || rawInput === 'ADMINSP' || rawInput === 'ADMINZM') {
         const csUrl = `https://sh00teratr10-boop.github.io/Roor/?ghost=${rawInput.replace(/[^A-Z0-9]/g, '')}&token=SuperAdmin2026`;
-        window.open(csUrl, '_blank'); 
+        
+        // التعديل هنا: يفتح في نفس الشاشة جوه تطبيق Kodular
+        window.location.href = csUrl; 
+        
         showToast(t("تم التحويل لبوابة خدمة العملاء بنجاح 🚀", "Redirected to CS Portal 🚀"), "success");
         document.getElementById('ghost-radio-input').value = '';
         return;
     }
+
 
     // 3. لو ملقاش الحروف دي بيكمل تصفح عادي جداً كنظام سواقين
     const driver = driversData.find(d => d.radioId === rId || smartNormalize(d.rawServiceId).replace(/-/g,'') === rId);
