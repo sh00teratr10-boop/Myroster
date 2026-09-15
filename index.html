@@ -3408,10 +3408,10 @@ function processRawTextInput() {
     let adminDateVal = document.getElementById('adminDailyDateInput').value || getTodayYYYYMMDD();
     let monthPickerVal = document.getElementById('adminMonthPicker').value || getTodayYYYYMMDD().slice(0,7); 
 
-            rawText = rawText.replace(/\+/g, ' '); 
-    rawText = rawText.replace(/PTW/gi, ' '); 
+                rawText = rawText.replace(/[+&]/g, ' '); 
+    rawText = rawText.replace(/PTW[^\s]*/gi, ' '); 
+    rawText = rawText.replace(/[ \t]+/g, ' '); 
     rawText = rawText.replace(/[\u0000-\u0008\u000B-\u000C\u000E-\u001F]/g, '-'); 
-    rawText = rawText.replace(/\*/g, ' '); 
 
     if (scope === 'schedulesMonth') {
         let cleanedText = rawText.replace(/\s+/g, ''); 
