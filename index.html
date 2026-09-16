@@ -3457,80 +3457,64 @@ function processRawTextInput() {
     let processedIDs = new Set(); 
     let targetDayNum = parseInt(adminDateVal.split('-')[2], 10);
 
-    function cleanShiftToken(rawToken) {
+            function cleanShiftToken(rawToken) {
         let upper = rawToken.trim().toUpperCase();
         if (!upper) return null;
 
+        // 1. الإجازات والراحات (مهمة تفضل عشان السواق مايبقاش Not Assigned)
         if (upper.match(/\b(REST\s*DAY|REST|OFF)\b/)) return 'R';
         if (upper.match(/\b(ABSENT|ABSENCE|ABSUNT|ABIENT)\b/)) return 'ABSENT';
 
+        let pureEnglish = upper.replace(/[^A-Z0-9-/]/g, '');
+        const exact = ['R','AB','CL','AL','SL','PH','SV','N/A','OOO','AL-SV', 'COML', 'PATL', 'ABSENT', 'MRG'];
+        if (exact.includes(pureEnglish)) {
+            if (['AL', 'AB', 'R', 'SL', 'CL'].includes(pureEnglish) && rawToken !== rawToken.toUpperCase()) return null;
+            return pureEnglish;
+        }
+
+        // 2. الفلتر الحديدي (لليومية بس) -> بيقرا حلقات وتدويرات ومبيشوفش الورش
         if (isDailyMode) {
-            let resMatchRev = upper.match(/(?:^|[^A-Z])R(?:E)?S\s*[-_]?\s*(0?[1-9])\s*[-_]?\s*([MEN])(?:$|[^A-Z])/);
+            let resMatchRev = upper.match(/(?:^|[^A-Z])R(?:E)?S\s*[-_]?\s*(0?[1-3])\s*[-_]?\s*([MEND])(?:$|[^A-Z])/);
             if (resMatchRev) {
                 let num = parseInt(resMatchRev[1], 10);
                 return resMatchRev[2] + '-RES' + (num < 10 ? '0' + num : num);
             }
-            let resMatch = upper.match(/(?:^|[^A-Z])([MEN])\s*[-_]?\s*R(?:E)?S\s*[-_]?\s*(0?[1-9])(?:$|[^A-Z])/);
+            
+            let resMatch = upper.match(/(?:^|[^A-Z])([MEND])\s*[-_]?\s*R(?:E)?S\s*[-_]?\s*(0?[1-3])(?:$|[^A-Z])/);
             if (resMatch) {
                 let num = parseInt(resMatch[2], 10);
                 return resMatch[1] + '-RES' + (num < 10 ? '0' + num : num);
             }
 
-            let cycleMatchRev = upper.match(/(?:^|[^A-Z0-9])(0?[1-9]|[1-9][0-9]|100)\s*[-_]?\s*([MEN])(?:$|[^A-Z])/);
-            if (cycleMatchRev && !upper.includes('RES') && !upper.includes('RS')) {
+            let cycleMatchRev = upper.match(/(?:^|[^A-Z0-9])(0?[1-9]|[1-9][0-9]|100)\s*[-_]?\s*([MEND])(?:$|[^A-Z])/);
+            if (cycleMatchRev && !upper.includes('RES') && !upper.includes('RS') && !upper.includes('PTW')) {
                 let num = parseInt(cycleMatchRev[1], 10);
                 return cycleMatchRev[2] + '-' + (num < 10 ? '0' + num : num);
             }
-            let cycleMatch = upper.match(/(?:^|[^A-Z])([MEN])\s*[-_]?\s*(0?[1-9]|[1-9][0-9]|100)(?!\d)/);
-            if (cycleMatch && !upper.includes('RES') && !upper.includes('RS')) {
+
+            let cycleMatch = upper.match(/(?:^|[^A-Z])([MEND])\s*[-_]?\s*(0?[1-9]|[1-9][0-9]|100)(?!\d)/);
+            if (cycleMatch && !upper.includes('RES') && !upper.includes('RS') && !upper.includes('PTW')) {
                 let num = parseInt(cycleMatch[2], 10);
                 return cycleMatch[1] + '-' + (num < 10 ? '0' + num : num);
             }
+            
+            // لو اليومية لقت ورشة أو PTW هترميها فوراً عشان تسكنها إنت مانيوال!
+            return null; 
         }
 
-        if (upper.includes('DRILL')) {
-            let matchDrill = upper.match(/^([MEN])[-_]?(.*DRILL.*)$/i);
-            if (matchDrill) { return matchDrill[1] + '-' + matchDrill[2].replace(/[\s_]+/g, '-'); }
-            return upper.replace(/[\s_]+/g, '-');
-        }
-
-        let matchShiftSpecial = upper.match(/^([MEN])[-_]?(TEST[\s_]?TRACK|TESTTRACK|TEST|TRACK|TT|MEDICAL|MED[-_]?CHK|MC)$/);
-        if (matchShiftSpecial) {
-            let prefix = matchShiftSpecial[1];
-            let suffix = matchShiftSpecial[2].replace(/[\s-_]/g, '');
-            if (['TESTTRACK', 'TEST', 'TRACK', 'TT'].includes(suffix)) return prefix + '-TEST TRACK';
-            if (['MEDICAL', 'MEDCHK', 'MC'].includes(suffix)) return prefix + '-MED-CHK';
-        }
-
-        let pureUpper = upper.replace(/[\s-_]/g, '');
-        if (['TESTTRACK', 'TEST', 'TRACK', 'TT'].includes(pureUpper)) return 'TEST TRACK';
-        if (['MEDICALCHECK', 'MEDICAL', 'MEDCHK', 'MC'].includes(pureUpper)) return 'MED-CHK';
-
-        if (upper.includes(' ') && !upper.includes('PTW') && !upper.includes('RES') && !upper.match(/[MEN][-]?\d/)) return null;
-        
-                let matchRES = upper.match(/(?:^|[^A-Z])([MEND][-_]?RES\d*)/); if (matchRES) return matchRES[1];
+        // 3. الفلتر الشامل (للروستر الشهري بس) -> بيقرا كل حاجة عشان الـ 30 يوم يكملوا!
+        let matchRES = upper.match(/(?:^|[^A-Z])([MEND][-_]?RES\d*)/); if (matchRES) return matchRES[1];
         let matchDigits = upper.match(/(?:^|[^A-Z])([MEND][-_]?\d{1,3})/); if (matchDigits) return matchDigits[1];
         let matchDT = upper.match(/(?:^|[^A-Z])([MEND][-_]?DT[A-Z]+)/); if (matchDT) return matchDT[1];
         let matchEXT = upper.match(/(?:^|[^A-Z])([MEND][-_]?EXT)/); if (matchEXT) return matchEXT[1];
         let matchPTW = upper.match(/([MEND][-_]?PTW[-_A-Z0-9]*)/); if (matchPTW) return matchPTW[1];
         let matchTRG = upper.match(/(TRG[-_]?[A-Z-_]*)/); if (matchTRG) return matchTRG[1];
-
         if (upper === 'PTW') return 'PTW';
-        
-        let pureEnglish = upper.replace(/[^A-Z0-9-/]/g, '');
-                const exact = ['R','AB','CL','AL','SL','PH','TRG','SV','N/A','OOO','AL-SV', 'OT', 'COML', 'PATL', 'MED-CHK', 'ABSENT', 'MRG'];
-        
-        if (exact.includes(pureEnglish)) {
-            if (pureEnglish === 'TRG' && isDailyMode) return null;
-            const strictlyUppercaseCodes = ['AL', 'AB', 'R', 'SL', 'CL'];
-            if (strictlyUppercaseCodes.includes(pureEnglish)) {
-                if (rawToken !== rawToken.toUpperCase()) return null; 
-            }
-            if (pureEnglish === 'REST' || pureEnglish === 'OFF') return 'R';
-            return pureEnglish;
-        }
+
         return null; 
     }
+
+
 
     let lines = rawText.split(/[\n\r]+/);
     let currentId = null;
@@ -3543,11 +3527,6 @@ function processRawTextInput() {
         if (!line) continue;
 
         // 🔥 المقص: بيشتغل بس لو رفعت اليومية الكاملة 🔥
-        if (isDailyMode) {
-            let stopKeywords = ['Abbassia Workshop', 'العباسية ورشة', 'Al Salam Workshop', 'السالم ورشة', 'Imbaba Workshop', 'امبابه ورشة', 'Leaves', 'أجازات', 'تدويرات الوردية'];
-            let shouldStop = stopKeywords.some(kw => line.includes(kw));
-            if (shouldStop) { break; }
-        }
 
         let cells = line.includes('\t') ? line.split('\t') : line.split(/\s+/);
         
@@ -3572,7 +3551,7 @@ function processRawTextInput() {
             }
             
             if (currentId) {
-                if (isDailyMode && (i - lineOfId > 4)) {
+                if (isDailyMode && (i - lineOfId > 10)) {
                     currentId = null;
                     continue;
                 }
